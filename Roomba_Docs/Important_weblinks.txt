@@ -1,0 +1,6 @@
+Explanation of pathfinding using A* algorithm:
+https://www.redblobgames.com/pathfinding/a-star/introduction.html
+
+Explanantion of using Accelerometer and Gyroscope data to determine orientation
+http://www.starlino.com/imu_guide.html
+http://www.starlino.com/dcm_tutorial.html
