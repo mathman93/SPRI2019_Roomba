@@ -26,10 +26,10 @@ def DisplayDateTime():
 def LEDflash(Switch_time,bool,start_time,stop_time,led):
 	if stop_time-start_time >=Switch_time:
 		bool = not bool
-		if bool==True:
-			GPIO.output(led,GPIO.LOW)
-		else:
+		if bool:
 			GPIO.output(led,GPIO.HIGH)
+		else:
+			GPIO.output(led,GPIO.LOW)
 		start_time = start_time+Switch_time
 	return start_time
 
@@ -66,13 +66,14 @@ start_time_g = time.time()
 r_bool=False
 y_bool=False
 g_bool=False
+
 while True:
 	try:
 		stop_time = time.time()
-		LEDflash(0.7,r_bool,start_time_r,stop_time,rled)
-		LEDflash(1.1,y_bool,start_time_y,stop_time,yled)
-		LEDflash(1.5,g_bool,start_time_g,stop_time,gled)
-	except KeyboardInterupt:
+		start_time_r = LEDflash(0.7,r_bool,start_time_r,stop_time,rled)
+		start_time_y = LEDflash(1.1,y_bool,start_time_y,stop_time,yled)
+		start_time_g = LEDflash(1.5,g_bool,start_time_g,stop_time,gled)
+	except KeyboardInterrupt:
 		break
 
 
