@@ -51,27 +51,26 @@ print(" ROOMBA Setup Complete")
 
 # Main Code #
 def LEDflash(Switch_time,bool,start_time,stop_time,led):
-	try:
-		if stop_time-start_time >=Switch_time:
-			bool = not bool
-			if bool==True:
-				GPIO.output(led,GPIO.LOW)
-			else:
-				GPIO.output(led,GPIO.HIGH)
-			start_time = start_time+Switch_time
-	except KeyboardInterupt:
-		break
+	if stop_time-start_time >=Switch_time:
+		bool = not bool
+		if bool==True:
+			GPIO.output(led,GPIO.LOW)
+		else:
+			GPIO.output(led,GPIO.HIGH)
+		start_time = start_time+Switch_time
 	return start_time
 
 
 start_time_r = time.time()
 bool=False
 while True:
-	stop_time = time.time()
-	LEDflash(0.7,bool,start_time,stop_time,rled)
-	LEDflash(1.1,bool,start_time,stop_time,yled)
-	LEDflash(1.5,bool,start_time,stop_time,gled)
-
+	try:
+		stop_time = time.time()
+		LEDflash(0.7,bool,start_time,stop_time,rled)
+		LEDflash(1.1,bool,start_time,stop_time,yled)
+		LEDflash(1.5,bool,start_time,stop_time,gled)
+	except KeyboardInterupt:
+		break
 
 
 
