@@ -50,53 +50,44 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 
 # Main Code #
+r_Switch_time=0.7
+y_Switch_time=1.1
+g_Switch_time=1.5
 r_bool = False
-
+y_bool = False
+g_bool = False
 start_time_r = time.time()
+start_time_y = time.time()
+start_time_g = time.time()
 while True:
 	try:
-		stop_time_r = time.time()
-		if stop_time_r-start_time_r >=0.7:
+		stop_time = time.time()
+		if stop_time_r-start_time >=r_Switch_time:
 			r_bool = not r_bool
 			if r_bool==True:
 				GPIO.output(rled,GPIO.LOW)
 			else:
 				GPIO.output(rled,GPIO.HIGH)
-			start_time_r = start_time_r+0.7
-	except KeyboardInterupt:
-		break
-
-y_bool = False
-
-start_time_y = time.time()
-while True:
-	try:
-		stop_time_y = time.time()
-		if stop_time_y-start_time_y >=1.1:
+			start_time_r = start_time_r+r_Switch_time
+		if stop_time_y-start_time >=y_Switch_time:
 			y_bool = not y_bool
 			if y_bool==True:
 				GPIO.output(yled,GPIO.LOW)
 			else:
 				GPIO.output(yled,GPIO.HIGH)
-			start_time_y = start_time_y+1.1
-	except KeyboardInterupt:
-		break
-
-g_bool = False
-
-start_time_g = time.time()
-while True:
-	try:
-		stop_time_g = time.time()
-		if stop_time_g-start_time_g >=1.5:
+			start_time_y = start_time_y+y_Switch_time
+		if stop_time_g-start_time >=g_Switch_time:
 			g_bool = not g_bool
 			if g_bool==True:
 				GPIO.output(gled,GPIO.LOW)
 			else:
 				GPIO.output(gled,GPIO.HIGH)
-			start_time_g = start_time_g+1.5
+			start_time_g = start_time_g+g_Switch_time
 	except KeyboardInterupt:
 		break
+
+
+
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
