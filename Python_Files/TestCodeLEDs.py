@@ -65,6 +65,38 @@ while True:
 			start_time_r = start_time_r+0.7
 	except KeyboardInterupt:
 		break
+
+y_bool = False
+
+start_time_y = time.time()
+while True:
+	try:
+		stop_time_y = time.time()
+		if stop_time_y-start_time_y >=1.1:
+			y_bool = not y_bool
+			if y_bool==True:
+				GPIO.output(yled,GPIO.LOW)
+			else:
+				GPIO.output(yled,GPIO.HIGH)
+			start_time_y = start_time_y+1.1
+	except KeyboardInterupt:
+		break
+
+g_bool = False
+
+start_time_g = time.time()
+while True:
+	try:
+		stop_time_g = time.time()
+		if stop_time_g-start_time_g >=1.5:
+			g_bool = not g_bool
+			if g_bool==True:
+				GPIO.output(gled,GPIO.LOW)
+			else:
+				GPIO.output(gled,GPIO.HIGH)
+			start_time_g = start_time_g+1.5
+	except KeyboardInterupt:
+		break
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
