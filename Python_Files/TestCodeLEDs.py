@@ -62,21 +62,21 @@ start_time_g = time.time()
 while True:
 	try:
 		stop_time = time.time()
-		if stop_time_r-start_time >=r_Switch_time:
+		if stop_time-start_time_r >=r_Switch_time:
 			r_bool = not r_bool
 			if r_bool==True:
 				GPIO.output(rled,GPIO.LOW)
 			else:
 				GPIO.output(rled,GPIO.HIGH)
 			start_time_r = start_time_r+r_Switch_time
-		if stop_time_y-start_time >=y_Switch_time:
+		if stop_time-start_time_y >=y_Switch_time:
 			y_bool = not y_bool
 			if y_bool==True:
 				GPIO.output(yled,GPIO.LOW)
 			else:
 				GPIO.output(yled,GPIO.HIGH)
 			start_time_y = start_time_y+y_Switch_time
-		if stop_time_g-start_time >=g_Switch_time:
+		if stop_time-start_time_g >=g_Switch_time:
 			g_bool = not g_bool
 			if g_bool==True:
 				GPIO.output(gled,GPIO.LOW)
