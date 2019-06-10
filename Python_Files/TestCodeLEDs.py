@@ -50,42 +50,32 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 
 # Main Code #
-r_Switch_time=0.7
-y_Switch_time=1.1
-g_Switch_time=1.5
-r_bool = False
-y_bool = False
-g_bool = False
-start_time_r = time.time()
-start_time_y = time.time()
-start_time_g = time.time()
-while True:
+def LEDflash(Switch_time,bool,start_time,stop_time,led):
 	try:
-		stop_time = time.time()
-		if stop_time-start_time_r >=r_Switch_time:
-			r_bool = not r_bool
-			if r_bool==True:
-				GPIO.output(rled,GPIO.LOW)
+		if stop_time-start_time >=Switch_time:
+			bool = not bool
+			if bool==True:
+				GPIO.output(led,GPIO.LOW)
 			else:
-				GPIO.output(rled,GPIO.HIGH)
-			start_time_r = start_time_r+r_Switch_time
-		if stop_time-start_time_y >=y_Switch_time:
-			y_bool = not y_bool
-			if y_bool==True:
-				GPIO.output(yled,GPIO.LOW)
-			else:
-				GPIO.output(yled,GPIO.HIGH)
-			start_time_y = start_time_y+y_Switch_time
-		if stop_time-start_time_g >=g_Switch_time:
-			g_bool = not g_bool
-			if g_bool==True:
-				GPIO.output(gled,GPIO.LOW)
-			else:
-				GPIO.output(gled,GPIO.HIGH)
-			start_time_g = start_time_g+g_Switch_time
+				GPIO.output(led,GPIO.HIGH)
+			start_time = start_time+Switch_time
 	except KeyboardInterupt:
 		break
+	return start_time
 
+
+start_time_r = time.time()
+bool=False
+while True:
+	stop_time = time.time()
+	LEDflash(0.7,bool,start_time,stop_time,rled)
+	LEDflash(1.1,bool,start_time,stop_time,yled)
+	LEDflash(1.5,bool,start_time,stop_time,gled)
+
+
+
+
+	
 
 
 ## -- Ending Code Starts Here -- ##
