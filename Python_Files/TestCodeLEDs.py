@@ -50,21 +50,21 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 
 # Main Code #
-Roomba.Move(100, 0) #Move forwards
-time.sleep(2.0)
-Roomba.Move(0,100) #Turn clockwise
-time.sleep(2.0)
-Roomba.Move(100,0) #Move forwards
-time.sleep(2.0)
-Roomba.Move(-100, 0) #Move backwards
-time.sleep(2.0)
-Roomba.Move(0, -100) #Move counterclockwise
-time.sleep(2.0)
-Roomba.Move(-100, 0) # Move backwards
-time.sleep(2.0)
-Roomba.Move(0, 0) #Stop
-time.sleep(1.0)
+r_bool = False
 
+start_time_r = time.time()
+while True:
+	try:
+		stop_time_r = time.time()
+		if stop_time_r-start_time_r >=0.7:
+			r_bool = not r_bool
+			if r_bool==True:
+				GPIO.output(rled,GPIO.LOW)
+			else:
+				GPIO.output(rled,GPIO.HIGH)
+			start_time_r = start_time_r+0.7
+	except KeyboardInterupt:
+		break
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
