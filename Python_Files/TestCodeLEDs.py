@@ -64,9 +64,9 @@ print(" ROOMBA Setup Complete")
 while True:
 	try:
 		stop_time = time.time()
-		LED_variables(0),LED_variables(3) = LEDflash(0.7,LED_variables(3),LED_variables(0),stop_time,rled)
-		LED_variables(1),LED_variables(4) = LEDflash(1.1,LED_variables(4),LED_variables(1),stop_time,yled)
-		LED_variables(2),LED_variables(5) = LEDflash(1.5,LED_variables(5),LED_variables(2),stop_time,gled)
+		LED_variables[0],LED_variables[3] = LEDflash(0.7,LED_variables[3],LED_variables[0],stop_time,rled)
+		LED_variables[1],LED_variables[4] = LEDflash(1.1,LED_variables[4],LED_variables[1],stop_time,yled)
+		LED_variables[2],LED_variables[5] = LEDflash(1.5,LED_variables[5],LED_variables[2],stop_time,gled)
 	except KeyboardInterrupt:
 		break
 
