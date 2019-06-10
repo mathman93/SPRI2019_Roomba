@@ -50,9 +50,13 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 
 # Main Code #
-Roomba.Move(50, 0) #Start moving#
-time.sleep(2.0) #Pause#
-Roomba.Move(0, 0) #Stop moving#
+Roomba.Move(100, 0)
+time.sleep(2.0)
+Roomba.Move(0,100)
+time.sleep(2.0)
+Roomba.Move(100,0)
+time.sleep(2.0)
+Roomba.Move(0, 0)
 time.sleep(1.0)
 
 ## -- Ending Code Starts Here -- ##
