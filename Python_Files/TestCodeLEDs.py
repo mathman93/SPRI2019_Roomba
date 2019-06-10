@@ -14,6 +14,7 @@ import RoombaCI_lib
 yled = 5
 rled = 6
 gled = 13
+LED_variables = [time.time(),time.time(),time.time(),False,False,False]
 
 ## Functions and Definitions ##
 ''' Displays current date and time to the screen
@@ -60,19 +61,12 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 
 # Main Code #
-start_time_r = time.time()
-start_time_y = time.time()
-start_time_g = time.time()
-r_bool=False
-y_bool=False
-g_bool=False
-
 while True:
 	try:
 		stop_time = time.time()
-		start_time_r,r_bool = LEDflash(0.7,r_bool,start_time_r,stop_time,rled)
-		start_time_y,y_bool = LEDflash(1.1,y_bool,start_time_y,stop_time,yled)
-		start_time_g,g_bool = LEDflash(1.5,g_bool,start_time_g,stop_time,gled)
+		LED_variables(0),LED_variables(3) = LEDflash(0.7,LED_variables(3),LED_variables(0),stop_time,rled)
+		LED_variables(1),LED_variables(4) = LEDflash(1.1,LED_variables(4),LED_variables(1),stop_time,yled)
+		LED_variables(2),LED_variables(5) = LEDflash(1.5,LED_variables(5),LED_variables(2),stop_time,gled)
 	except KeyboardInterrupt:
 		break
 
