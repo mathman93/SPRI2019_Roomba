@@ -6,6 +6,7 @@ Last Modified: 6/7/2019
 ## Import libraries ##
 import serial
 import time
+import RPi.GPIO as GPIO
 import RoombaCI_lib
 
 ## Variables and Constants ##
