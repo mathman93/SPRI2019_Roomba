@@ -31,7 +31,7 @@ def LEDflash(Switch_time,bool,start_time,stop_time,led):
 		else:
 			GPIO.output(led,GPIO.LOW)
 		start_time = start_time+Switch_time
-	return start_time
+	return start_time,bool
 
 ## -- Code Starts Here -- ##
 # Setup Code #
@@ -70,9 +70,9 @@ g_bool=False
 while True:
 	try:
 		stop_time = time.time()
-		start_time_r = LEDflash(0.7,r_bool,start_time_r,stop_time,rled)
-		start_time_y = LEDflash(1.1,y_bool,start_time_y,stop_time,yled)
-		start_time_g = LEDflash(1.5,g_bool,start_time_g,stop_time,gled)
+		start_time_r,r_bool = LEDflash(0.7,r_bool,start_time_r,stop_time,rled)
+		start_time_y,y_bool = LEDflash(1.1,y_bool,start_time_y,stop_time,yled)
+		start_time_g,g_bool = LEDflash(1.5,g_bool,start_time_g,stop_time,gled)
 	except KeyboardInterrupt:
 		break
 
