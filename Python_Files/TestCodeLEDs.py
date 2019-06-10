@@ -23,6 +23,16 @@ def DisplayDateTime():
 	date_time = time.strftime("%B %d, %Y, %H:%M:%S", time.gmtime())
 	print("Program run: ", date_time)
 
+def LEDflash(Switch_time,bool,start_time,stop_time,led):
+	if stop_time-start_time >=Switch_time:
+		bool = not bool
+		if bool==True:
+			GPIO.output(led,GPIO.LOW)
+		else:
+			GPIO.output(led,GPIO.HIGH)
+		start_time = start_time+Switch_time
+	return start_time
+
 ## -- Code Starts Here -- ##
 # Setup Code #
 GPIO.setmode(GPIO.BCM) # Use BCM pin numbering for GPIO
@@ -50,25 +60,18 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 
 # Main Code #
-def LEDflash(Switch_time,bool,start_time,stop_time,led):
-	if stop_time-start_time >=Switch_time:
-		bool = not bool
-		if bool==True:
-			GPIO.output(led,GPIO.LOW)
-		else:
-			GPIO.output(led,GPIO.HIGH)
-		start_time = start_time+Switch_time
-	return start_time
-
-
 start_time_r = time.time()
-bool=False
+start_time_y = time.time()
+start_time_g = time.time()
+r_bool=False
+y_bool=False
+g_bool=False
 while True:
 	try:
 		stop_time = time.time()
-		LEDflash(0.7,bool,start_time,stop_time,rled)
-		LEDflash(1.1,bool,start_time,stop_time,yled)
-		LEDflash(1.5,bool,start_time,stop_time,gled)
+		LEDflash(0.7,r_bool,start_time_r,stop_time,rled)
+		LEDflash(1.1,y_bool,start_time_y,stop_time,yled)
+		LEDflash(1.5,g_bool,start_time_g,stop_time,gled)
 	except KeyboardInterupt:
 		break
 
