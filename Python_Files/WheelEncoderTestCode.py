@@ -51,6 +51,8 @@ print(" ROOMBA Setup Complete")
 
 # Main Code #
 
+file = open("WheelEncoderData.txt", "w")
+
 start_time = time.time()
 
 Roomba.StartQueryStream(43,44)
@@ -64,10 +66,10 @@ for i in range(len(l)):
 			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
 			print("{0},{1}".format(left_encoder, right_encoder))
 			print("")
+			file.write("{0},{1}".format(left_encoder, right_encoder))
 	start_time = time.time()
-			
 Roomba.Move(0,0)
-
+file.close()
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
