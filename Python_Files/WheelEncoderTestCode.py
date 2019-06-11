@@ -55,7 +55,7 @@ start_time = time.time()
 
 Roomba.Move(100, 0) #Move forwards
 while time.time() - start_time >= 1.0:
-	
+	pass
 Roomba.Move(0,0)
 
 ## -- Ending Code Starts Here -- ##
