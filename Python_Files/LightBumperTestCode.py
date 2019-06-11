@@ -54,16 +54,16 @@ time1 = time.time()
 while True:	
 	try:
 		time2 = time.time()
-		if time2-time1 > 1:
+		if time2-time1 > .5:
 			[light_bumper,ll_bumper,lfl_bumper,lcl_bumper,rcl_bumper,rfl_bumper,rl_bumper] = Roomba.Query(45,46,47,48,49,50,51)
-			print ("{0:b}".format(light_bumper))
-			print (ll_bumper)
-			print (lfl_bumper)
-			print (lcl_bumper)
-			print (rcl_bumper)
-			print (rfl_bumper)
-			print (rl_bumper)
-			time1 = time1+1
+			print ("{0:0>8b}".format(light_bumper))
+			print ("ll_bumper:{0}".format(ll_bumper))
+			print ("lfl_bumper:{0}".format(lfl_bumper))
+			print ("lcl_bumper:{0}".format(lcl_bumper))
+			print ("rcl_bumper:{0}".format(rcl_bumper))
+			print ("rfl_bumper:{0}".format(rfl_bumper))
+			print ("rl_bumper:{0}".format(rl_bumper))
+			time1 = time1+.5
 	except KeyboardInterrupt:
 		break
 
