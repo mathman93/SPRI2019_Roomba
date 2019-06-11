@@ -56,7 +56,7 @@ while True:
 		time2 = time.time()
 		if time2-time1 > 1:
 			light_bumper = Roomba.QuerySingle(45)
-			print "{0:b}".format(light_bumper)
+			print ("{0:b}".format(light_bumper))
 			time1 = time1+1
 	except KeyboardInterrupt:
 		break
