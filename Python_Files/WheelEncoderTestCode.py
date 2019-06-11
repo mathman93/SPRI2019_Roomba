@@ -54,7 +54,7 @@ print(" ROOMBA Setup Complete")
 start_time = time.time()
 
 Roomba.Move(100, 0) #Move forwards
-while time.time() - start_time >= 1.0:
+while time.time() - start_time <= 1.0:
 	print("All good")
 	pass
 Roomba.Move(0,0)
