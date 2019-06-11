@@ -50,12 +50,10 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 
 # Main Code #
-time1 = time.time()
+Roomba.StartQueryStream(45,7)
+
 while True:	
 	try:
-		time2 = time.time()
-		if time2-time1 > .5:
-			Roomba.SendQuery(45,7)
 
 			#[Omni_IR,left_Omni,right_Omni] = Roomba.Query(17,52,53)
 			#print ("Omni IR:{0}".format(Omni_IR))
@@ -63,19 +61,17 @@ while True:
 			#print ("right_Omni:{0}".format(right_Omni))
 			#[light_bumper,bumper,l_cliff,fl_cliff,fr_cliff,r_cliff,strl_cliff,strfl_cliff,strfr_cliff,strr_cliff] = Roomba.Query(45,7,9,10,11,12,28,29,30,31)
 			#print ("Cliffs:{0}{1}{2}{3}".format(l_cliff,fl_cliff,fr_cliff,r_cliff))
-			#print ("strl_cliff:{0}".format(strl_cliff))
-			#print ("strfl_cliff:{0}".format(strfl_cliff))
-			#print ("strfr_cliff:{0}".format(strfr_cliff))
-			#print ("strr_cliff:{0}".format(strr_cliff))
-			time1 = time1+.5			
-		if Roomba.Available()>0:
-			[light_bumper,bumper]=Roomba.ReadQuery(45,7)	
+	if Roomba.Available()>0:
+			[light_bumper,bumper]=Roomba.ReadQueryStream(45,7)	
 			print ("{0:0>8b}".format(light_bumper))
 			print ("bumper:{0:0>8b}".format(bumper))
 	except KeyboardInterrupt:
 		break
 
-
+Roomba.PauseQueryStream()
+if Roomba.Available()>0:
+	y = Roomba.DirectRead(Roomba.Available())
+	print(y)
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
