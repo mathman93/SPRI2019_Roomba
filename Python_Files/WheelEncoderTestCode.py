@@ -53,7 +53,7 @@ print(" ROOMBA Setup Complete")
 
 start_time = time.time()
 
-Roomba.Move(100, 0) #Move forwards
+
 
 Roomba.StartQueryStream(43,44)
 
