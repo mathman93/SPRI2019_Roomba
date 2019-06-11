@@ -57,16 +57,19 @@ Roomba.Move(100, 0) #Move forwards
 
 Roomba.StartQueryStream(43,44)
 
-check = True
 
-while time.time() - start_time <= 4.0:
-	if Roomba.Available()>0:
-		[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
-		print("{0},{1}".format(left_encoder, right_encoder))
-		print("")
-	if time.time() - start_time >= 2.0 and check == True:
-		Roomba.Move(80,20)
-		check = False
+
+l = [(100,0),(0,50),(-100,0),(0,-25),(75,0),(0,-50),(100,0)]
+for i in range(8):
+	Roomba.Move(l(i))
+	while time.time() - start_time <= 4.0:
+		if Roomba.Available()>0:
+			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
+			print("{0},{1}".format(left_encoder, right_encoder))
+			print("")
+		
+			
+			
 Roomba.Move(0,0)
 
 ## -- Ending Code Starts Here -- ##
