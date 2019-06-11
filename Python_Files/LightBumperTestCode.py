@@ -78,6 +78,13 @@ Roomba.PauseQueryStream()
 if Roomba.Available()>0:
 	y = Roomba.DirectRead(Roomba.Available())
 	print(y)
+
+
+Roomba.DirectWrite(165)
+Roomba.DirectWrite(4)
+time.sleep(5)
+
+
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
