@@ -53,7 +53,7 @@ time1 = time.time()
 Roomba.StartQueryStream(45,7)
 while True:	
 	try:
-
+		
 			#[Omni_IR,left_Omni,right_Omni] = Roomba.Query(17,52,53)
 			#print ("Omni IR:{0}".format(Omni_IR))
 			#print ("left_Omni:{0}".format(left_Omni))
@@ -62,11 +62,12 @@ while True:
 			#print ("Cliffs:{0}{1}{2}{3}".format(l_cliff,fl_cliff,fr_cliff,r_cliff))
 		if Roomba.Available()>0:
 			[light_bumper,bumper]=Roomba.ReadQueryStream(45,7)
-			time2 = time.time()
-			print (time2-time1)	
+			
+		time2 = time.time()
+		if time2-time1 >.5:
 			print ("{0:0>8b}".format(light_bumper))
 			print ("bumper:{0:0>8b}".format(bumper))
-			
+			time1 = time1+.5
 	except KeyboardInterrupt:
 		break
 
