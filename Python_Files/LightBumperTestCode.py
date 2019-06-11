@@ -56,10 +56,6 @@ while True:
 		time2 = time.time()
 		if time2-time1 > .5:
 			Roomba.SendQuery(45,7)
-			if Roomba.Available()>0
-				[light_bumper,bumper]Roomba.ReadQuery(45,7)	
-				print ("{0:0>8b}".format(light_bumper))
-				print ("bumper:{0:0>8b}".format(bumper))
 
 			#[Omni_IR,left_Omni,right_Omni] = Roomba.Query(17,52,53)
 			#print ("Omni IR:{0}".format(Omni_IR))
@@ -71,7 +67,11 @@ while True:
 			#print ("strfl_cliff:{0}".format(strfl_cliff))
 			#print ("strfr_cliff:{0}".format(strfr_cliff))
 			#print ("strr_cliff:{0}".format(strr_cliff))
-			time1 = time1+.5
+			time1 = time1+.5			
+		if Roomba.Available()>0:
+			[light_bumper,bumper]Roomba.ReadQuery(45,7)	
+			print ("{0:0>8b}".format(light_bumper))
+			print ("bumper:{0:0>8b}".format(bumper))
 	except KeyboardInterrupt:
 		break
 
