@@ -50,7 +50,7 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 time1 = time.time()
 # Main Code #
-Roomba.StartQueryStream(45,7)
+Roomba.StartQueryStream(45,7,17,52,53)
 while True:	
 	try:
 		
@@ -61,12 +61,15 @@ while True:
 			#[light_bumper,bumper,l_cliff,fl_cliff,fr_cliff,r_cliff,strl_cliff,strfl_cliff,strfr_cliff,strr_cliff] = Roomba.Query(45,7,9,10,11,12,28,29,30,31)
 			#print ("Cliffs:{0}{1}{2}{3}".format(l_cliff,fl_cliff,fr_cliff,r_cliff))
 		if Roomba.Available()>0:
-			[light_bumper,bumper]=Roomba.ReadQueryStream(45,7)
+			[light_bumper,bumper]=Roomba.ReadQueryStream(45,7,17,52,53)
 			
 		time2 = time.time()
 		if time2-time1 >.5:
 			print ("{0:0>8b}".format(light_bumper))
 			print ("bumper:{0:0>8b}".format(bumper))
+			print ("Omni IR:{0}".format(Omni_IR))
+			print ("left_Omni:{0}".format(left_Omni))
+			print ("right_Omni:{0}".format(right_Omni))
 			time1 = time1+.5
 	except KeyboardInterrupt:
 		break
