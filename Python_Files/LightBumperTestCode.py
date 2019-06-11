@@ -56,8 +56,10 @@ while True:
 		time2 = time.time()
 		if time2-time1 > .1:
 			#
-			Omni_IR = Roomba.Query(17) 
+			[Omni_IR,left_Omni,right_Omni] = Roomba.Query(17,52,53)
 			print ("Omni IR:{0}".format(Omni_IR))
+			print ("left_Omni:{0}".format(left_Omni))
+			print ("right_Omni:{0}".format(right_Omni))
 			#[light_bumper,bumper,l_cliff,fl_cliff,fr_cliff,r_cliff,strl_cliff,strfl_cliff,strfr_cliff,strr_cliff] = Roomba.Query(45,7,9,10,11,12,28,29,30,31)
 			#print ("{0:0>8b}".format(light_bumper))
 			#print ("bumper:{0:0>8b}".format(bumper))
