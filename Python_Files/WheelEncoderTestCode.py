@@ -61,7 +61,7 @@ Roomba.StartQueryStream(43,44)
 
 l = [(100,0),(0,50),(-100,0),(0,-25),(75,0),(0,-50),(100,0)]
 for i in range(8):
-	Roomba.Move(l(i))
+	Roomba.Move(l[i][0],l[i][1])
 	while time.time() - start_time <= 4.0:
 		if Roomba.Available()>0:
 			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
