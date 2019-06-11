@@ -60,8 +60,8 @@ Roomba.StartQueryStream(43,44)
 while time.time() - start_time <= 2.0:
 	if Roomba.Available()>0:
 		[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
-		print("left_encoder:{0:0>8b}".format(left_encoder))
-		print("right_encoder:{0:0>8b}".format(right_encoder))
+		print("left_encoder:{0}".format(left_encoder))
+		print("right_encoder:{0}".format(right_encoder))
 Roomba.Move(0,0)
 
 ## -- Ending Code Starts Here -- ##
