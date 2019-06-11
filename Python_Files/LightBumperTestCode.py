@@ -50,20 +50,17 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 
 # Main Code #
-Roomba.Move(100, 0) #Move forwards
-time.sleep(2.0)
-Roomba.Move(0,100) #Turn clockwise
-time.sleep(2.0)
-Roomba.Move(100,0) #Move forwards
-time.sleep(2.0)
-Roomba.Move(-100, 0) #Move backwards
-time.sleep(2.0)
-Roomba.Move(0, -100) #Move counterclockwise
-time.sleep(2.0)
-Roomba.Move(-100, 0) # Move backwards
-time.sleep(2.0)
-Roomba.Move(0, 0) #Stop
-time.sleep(1.0)
+time = time.time()
+while True:	
+	try:
+		time2 = time.time
+		if time2-time > 1
+			light_bumper = QuerySingle(45)
+			print(light_bumper)
+			time = time+1
+	except KeyboardInterrupt:
+		break
+
 
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
