@@ -66,7 +66,7 @@ while True:
 			#print ("strfl_cliff:{0}".format(strfl_cliff))
 			#print ("strfr_cliff:{0}".format(strfr_cliff))
 			#print ("strr_cliff:{0}".format(strr_cliff))
-			time1 = time1+.5
+			time1 = time1+.1
 	except KeyboardInterrupt:
 		break
 
