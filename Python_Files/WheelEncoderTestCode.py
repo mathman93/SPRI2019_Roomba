@@ -64,7 +64,7 @@ while time.time() - start_time <= 4.0:
 		[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
 		print("{0},{1}".format(left_encoder, right_encoder))
 		print("")
-	if time.time() - start_time >= 2.0 and check = True:
+	if time.time() - start_time >= 2.0 and check == True:
 		Roomba.Move(80,20)
 		check = False
 Roomba.Move(0,0)
