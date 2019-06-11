@@ -54,7 +54,7 @@ time1 = time.time()
 while True:	
 	try:
 		time2 = time.time()
-		if time2-time1 > .5:
+		if time2-time1 > .1:
 			#
 			Omni_IR = Roomba.Query(17) 
 			print ("Omni IR:{0}".format(Omni_IR))
