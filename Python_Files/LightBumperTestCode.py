@@ -79,11 +79,11 @@ if Roomba.Available()>0:
 	y = Roomba.DirectRead(Roomba.Available())
 	print(y)
 
-Roomba.DirectWrite(128) # Passive Mode
-Roomba.DirectWrite(165) # Push a button
-Roomba.DirectWrite(4) # Dock
-#Roomba.conn.write(b'\xa5\x04')
-time.sleep(8.0)
+#Roomba.DirectWrite(128) # Passive Mode
+#Roomba.DirectWrite(165) # Push a button
+#Roomba.DirectWrite(4) # Dock
+Roomba.conn.write(b'\x80\xa5\x04')
+time.sleep(10.0)
 
 
 ## -- Ending Code Starts Here -- ##
