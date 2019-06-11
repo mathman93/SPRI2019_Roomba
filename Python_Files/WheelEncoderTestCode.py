@@ -53,19 +53,12 @@ print(" ROOMBA Setup Complete")
 
 start_time = time.time()
 
-
-
 Roomba.StartQueryStream(43,44)
-
-
 
 l = [(100,0),(0,50),(-100,0),(0,-25),(75,0),(0,-50),(100,0)]
 
 for i in range(len(l)):
-	forward = l[i][0]
-	spin = l[i][1]
-	print("{0},{1}".format(forward, spin))
-	Roomba.Move(forward,spin)
+	Roomba.Move(l[i][0],l[i][1])
 	while time.time() - start_time <= 4.0:
 		if Roomba.Available()>0:
 			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
