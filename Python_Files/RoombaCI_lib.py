@@ -598,6 +598,12 @@ class Create_2:
 		# 131 = Safe Mode; 132 = Full Mode (Be ready to catch it!)
 		time.sleep(0.1)
 
+	''' Dock the Roomba Sequence
+		'''
+	def Dock(self):
+		self.conn.write(b'\x80\xa5\x04') # Send to Passive Mode, and push Dock button
+		time.sleep(2.0)) # Wait for Dock "happy noise" to play.
+
 	''' Roomba Shut-down Sequence
 		Run at end of code to completely close Create_2 connection '''
 	def ShutDown(self):

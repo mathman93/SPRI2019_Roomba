@@ -79,14 +79,9 @@ if Roomba.Available()>0:
 	y = Roomba.DirectRead(Roomba.Available())
 	print(y)
 
-#Roomba.DirectWrite(128) # Passive Mode
-#Roomba.DirectWrite(165) # Push a button
-#Roomba.DirectWrite(4) # Dock
-Roomba.conn.write(b'\x80\xa5\x04')
-time.sleep(10.0)
-
-
 ## -- Ending Code Starts Here -- ##
+
+Roomba.Dock()
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
 GPIO.cleanup() # Reset GPIO pins for next program
