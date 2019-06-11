@@ -50,14 +50,14 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 
 # Main Code #
-time = time.time()
+time1 = time.time()
 while True:	
 	try:
-		time2 = time.time
-		if time2-time > 1:
+		time2 = time.time()
+		if time2-time1 > 1:
 			light_bumper = QuerySingle(45)
 			print(light_bumper)
-			time = time+1
+			time1 = time1+1
 	except KeyboardInterrupt:
 		break
 
