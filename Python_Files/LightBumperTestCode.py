@@ -81,7 +81,7 @@ if Roomba.Available()>0:
 
 ## -- Ending Code Starts Here -- ##
 
-Roomba.Dock()
+Roomba.Dock() # Dock the Roomba (if you want)
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
 GPIO.cleanup() # Reset GPIO pins for next program

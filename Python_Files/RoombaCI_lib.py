@@ -3,7 +3,7 @@ Purpose: Python Library with LSM9DS1 class and specific functions
 	and iRobot Create 2 (Roomba) class and specific functions
 Import this file in main Python file to access functions
 Made by: Timothy Anglea, Joshua Harvey, Madeline Corvin
-Last Modified: 06/06/2019
+Last Modified: 06/11/2019
 '''
 ## Import Libraries ##
 from ctypes import * # May not need this anymore
@@ -602,7 +602,7 @@ class Create_2:
 		'''
 	def Dock(self):
 		self.conn.write(b'\x80\xa5\x04') # Send to Passive Mode, and push Dock button
-		time.sleep(2.0)) # Wait for Dock "happy noise" to play.
+		time.sleep(2.0) # Wait for Dock "happy noise" to play.
 
 	''' Roomba Shut-down Sequence
 		Run at end of code to completely close Create_2 connection '''
