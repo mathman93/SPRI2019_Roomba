@@ -69,7 +69,7 @@ while True:
 			#print ("strr_cliff:{0}".format(strr_cliff))
 			time1 = time1+.5			
 		if Roomba.Available()>0:
-			[light_bumper,bumper]Roomba.ReadQuery(45,7)	
+			[light_bumper,bumper]=Roomba.ReadQuery(45,7)	
 			print ("{0:0>8b}".format(light_bumper))
 			print ("bumper:{0:0>8b}".format(bumper))
 	except KeyboardInterrupt:
