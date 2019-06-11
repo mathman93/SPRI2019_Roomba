@@ -14,6 +14,8 @@ import RoombaCI_lib
 yled = 5
 rled = 6
 gled = 13
+# Variables to run LED flash function
+# r_start_time,y_start_time,g_start_time,r_bool,y_bool,g_bool
 LED_variables = [time.time(),time.time(),time.time(),False,False,False]
 
 ## Functions and Definitions ##
@@ -24,8 +26,11 @@ def DisplayDateTime():
 	date_time = time.strftime("%B %d, %Y, %H:%M:%S", time.gmtime())
 	print("Program run: ", date_time)
 
+# Makes the LEDs flash at differnt time intervals 
 def LEDflash(Switch_time,bool,start_time,stop_time,led):
+	# Check to see if enough time has passed 
 	if stop_time-start_time >=Switch_time:
+		# Switch the LED from on to off or off to on
 		bool = not bool
 		if bool:
 			GPIO.output(led,GPIO.HIGH)
@@ -61,6 +66,7 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 
 # Main Code #
+# Run LED function continually for each LED
 while True:
 	try:
 		stop_time = time.time()
