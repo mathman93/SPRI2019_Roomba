@@ -61,7 +61,7 @@ while True:
 			#[light_bumper,bumper,l_cliff,fl_cliff,fr_cliff,r_cliff,strl_cliff,strfl_cliff,strfr_cliff,strr_cliff] = Roomba.Query(45,7,9,10,11,12,28,29,30,31)
 			#print ("Cliffs:{0}{1}{2}{3}".format(l_cliff,fl_cliff,fr_cliff,r_cliff))
 		if Roomba.Available()>0:
-			[light_bumper,bumper]=Roomba.ReadQueryStream(45,7,17,52,53)
+			[light_bumper,bumper,Omni_IR,left_Omni,right_Omni]=Roomba.ReadQueryStream(45,7,17,52,53)
 			
 		time2 = time.time()
 		if time2-time1 >.5:
