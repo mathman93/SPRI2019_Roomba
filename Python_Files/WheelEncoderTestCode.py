@@ -61,7 +61,7 @@ Roomba.StartQueryStream(43,44)
 
 l = [(100,0),(0,50),(-100,0),(0,-25),(75,0),(0,-50),(100,0)]
 
-for i in range(8):
+for i in range(len(l)):
 	forward = l[i][0]
 	spin = l[i][1]
 	print("{0},{1}".format(forward, spin))
@@ -71,6 +71,7 @@ for i in range(8):
 			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
 			print("{0},{1}".format(left_encoder, right_encoder))
 			print("")
+	start_time = time.time()
 			
 Roomba.Move(0,0)
 
