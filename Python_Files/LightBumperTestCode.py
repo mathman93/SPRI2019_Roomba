@@ -54,7 +54,7 @@ time = time.time()
 while True:	
 	try:
 		time2 = time.time
-		if time2-time > 1
+		if time2-time > 1:
 			light_bumper = QuerySingle(45)
 			print(light_bumper)
 			time = time+1
