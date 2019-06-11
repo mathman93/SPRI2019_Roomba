@@ -80,9 +80,10 @@ if Roomba.Available()>0:
 	print(y)
 
 
-Roomba.DirectWrite(165)
-Roomba.DirectWrite(4)
-time.sleep(5)
+#Roomba.DirectWrite(165)
+#Roomba.DirectWrite(4)
+Roomba.conn.write(b'\xa5\x04')
+time.sleep(8.0)
 
 
 ## -- Ending Code Starts Here -- ##
