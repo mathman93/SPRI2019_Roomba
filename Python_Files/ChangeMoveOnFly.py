@@ -101,12 +101,16 @@ while time.time() - start_time <=30:
 		file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
 		left_start = left_encoder
 		right_start = right_encoder
-		if y_position > 1:
+		if (y_position > 0 and theta>0):
 			Roomba.Move(100,-10)
-		elif y_position < -1:
-			Roomba.Move(100,10)
-		elif y_position < 1 and y_position > -1:
+		elif (y_position > 0 and theta == 0) or (y_position==0 and theta>0):
+			Roomba.Move(100,-5)
+		elif (y>_position0 and theta<0) or (y_position<0 and theta>0) or (y_position==0 and theta==0):
 			Roomba.Move(100,0)
+		elif (y_position<0 and theta==0) or (y_position==0 and theta<0):
+			Roomba.Move(100,5)
+		elif (y_position<0 and theta<0)
+			Roomba.Move(100,10)
 	#start_time = time.time()
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
