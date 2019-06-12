@@ -91,8 +91,8 @@ for i in range(len(dict.keys())):
 			else:
 				delta_d = 2*(235(delta_l/(delta_l-delta_r)-.5)*sin(delta_theta/2)
 			
-			x_pos += delta_d*cos(theta-.5*delta_theta)
-			y_pos += delta_d*sin(theta-.5*delta_theta)
+			x_pos = x_pos + delta_d*cos(theta-.5*delta_theta)
+			y_pos = y_pos + delta_d*sin(theta-.5*delta_theta)
 			print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_pos,y_pos,theta))
 			print("")
 			file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_pos,y_pos,theta))
