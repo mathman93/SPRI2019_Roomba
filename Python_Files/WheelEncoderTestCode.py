@@ -69,7 +69,10 @@ dict = {0:[100,0,10],
 
 
 
-
+y_pos = 0
+x_pos= 0
+theta = 0
+counter=0
 data_time = time.time()
 for i in range(len(dict.keys())):
 	[f,s,t] = dict[i]
@@ -78,15 +81,27 @@ for i in range(len(dict.keys())):
 		if Roomba.Available()>0:
 			data_time2 = time.time()
 			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
-			print("{0},{1},{2}".format(data_time2-data_time,left_encoder,right_encoder))
+			counter += 1
+			delta_l = left_encoder(counter)-left_encoder(counter-1)
+			delta_r = right_encoder(counter)-right_encoder(counter-1)
+			countdifference = delta_l-delta_r
+			delta_theta = (delta_l-delta_r)*((72*180)/(508.8*235))
+			theta += delta_theta
+			if countdifference == 0:
+				delta_d = 0.5*(delta_l+delta_r)*((72*pi)/508.8)
+			else:
+				delta_d = 2*(235(delta_l/(delta_l-delta_r)-.5)*sin(theta/2)
+			x_pos += delta_d*cos(delta_theta-.5*theta)
+			y_pos += delta_d*sin(delta_theta-.5*theta)
+			print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_pos,y_pos,theta))
 			print("")
-			file.write("{0},{1},{2}\n".format(data_time2-data_time,left_encoder, right_encoder))
+			file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_pos,y_pos,theta))
 	start_time = time.time()
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
 if Roomba.Available()>0:
-	y = Roomba.DirectRead(Roomba.Available())
-	print(y)
+	z = Roomba.DirectRead(Roomba.Available())
+	print(z)
 file.close()
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
