@@ -63,12 +63,7 @@ file = open(file_name, "w") # Open a text file for storing data
 start_time = time.time()
 
 
-dict = {0:[100,100,10],
-	1:[0,100,5],
-	2:[50,50,5],
-	3:[20,40,3],
-	4:[45,10,3],
-	5:[100,0,3]}
+# dict = {0:[100,0,30]}
 [left_start,right_start]=Roomba.Query(43,44)
 
 
@@ -102,6 +97,7 @@ for i in range(len(dict.keys())):
 			
 			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
+			
 			print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
 			print("")
 			file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
