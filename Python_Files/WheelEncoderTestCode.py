@@ -73,7 +73,7 @@ x_position = 0
 theta = 0
 counter=0
 data_time = time.time()
-file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time,left_start, right_start,x_position,y_position,theta))
+file.write("{0},{1},{2},{3},{4},{5}\n".format(0,left_start, right_start,x_position,y_position,theta))
 Roomba.StartQueryStream(43,44)
 
 for i in range(len(dict.keys())):
