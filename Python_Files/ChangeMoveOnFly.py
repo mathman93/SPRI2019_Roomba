@@ -102,9 +102,9 @@ while time.time() - start_time <=30:
 		left_start = left_encoder
 		right_start = right_encoder
 		if y_position > 1:
-			Roomba.Move(100,-1)
+			Roomba.Move(100,-10)
 		elif y_position < -1:
-			Roomba.Move(100,1)
+			Roomba.Move(100,10)
 		elif y_position < 1 and y_position > -1:
 			Roomba.Move(100,0)
 	#start_time = time.time()
