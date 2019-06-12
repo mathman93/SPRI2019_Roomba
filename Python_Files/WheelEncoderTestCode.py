@@ -1,6 +1,6 @@
-''' TestCode.py
-Purpose: Simple test of running Python code
-Last Modified: 6/7/2019
+''' WheelEncoderTestCode.py
+Purpose: Read wheel encoder values and calculate trajecotry
+Last Modified: 6/12/2019
 '''
 
 ## Import libraries ##

@@ -1,6 +1,6 @@
-''' TestCode.py
-Purpose: Simple test of running Python code
-Last Modified: 6/7/2019
+''' TestCodeLEDs.py
+Purpose: Blink the LEDs independently.
+Last Modified: 6/10/2019
 '''
 
 ## Import libraries ##
