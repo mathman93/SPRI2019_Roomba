@@ -101,11 +101,11 @@ while time.time() - start_time <=30:
 		file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
 		left_start = left_encoder
 		right_start = right_encoder
-	if y > 1
+	if y > 1:
 		Roomba.move(100,-1)
-	elseif y < -1
+	elseif y < -1:
 		Roomba.move(100,1)
-	elseif y < 1 and y > -1
+	elseif y < 1 and y > -1:
 		Roomba.move(100,0)
 	#start_time = time.time()
 Roomba.Move(0,0)
