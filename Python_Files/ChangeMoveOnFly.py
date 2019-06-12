@@ -103,9 +103,9 @@ while time.time() - start_time <=30:
 		right_start = right_encoder
 	if y_position > 1:
 		Roomba.move(100,-1)
-	elseif y_position < -1:
+	elif y_position < -1:
 		Roomba.move(100,1)
-	elseif y_position < 1 and y_position > -1:
+	elif y_position < 1 and y_position > -1:
 		Roomba.move(100,0)
 	#start_time = time.time()
 Roomba.Move(0,0)
