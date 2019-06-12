@@ -8,6 +8,7 @@ import serial
 import time
 import RPi.GPIO as GPIO
 import RoombaCI_lib
+import os.path
 
 ## Variables and Constants ##
 # LED pin numbers
@@ -50,8 +51,12 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 
 # Main Code #
-
-file = open("WheelEncoderData.txt", "w")
+# Open a text file for data retrieval
+file_name_input = input("Name for data file: ")
+dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
+file = open(file_name, "w") # Open a text file for storing data
+	# Will overwrite anything that was in the text file previously
 
 start_time = time.time()
 
