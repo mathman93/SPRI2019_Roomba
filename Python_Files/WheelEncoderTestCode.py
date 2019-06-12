@@ -61,12 +61,11 @@ file = open(file_name, "w") # Open a text file for storing data
 
 start_time = time.time()
 
-Roomba.StartQueryStream(43,44)
 
 dict = {0:[100,0,10],
 	1:[0,100,5],
 	2:[50,50,5]}
-
+[left_start,right_start]=Roomba.Query(43,44)
 
 
 y_position = 0
@@ -74,6 +73,9 @@ x_position = 0
 theta = 0
 counter=0
 data_time = time.time()
+file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time,left_start, right_start,x_position,y_position,theta))
+Roomba.StartQueryStream(43,44)
+
 for i in range(len(dict.keys())):
 	[f,s,t] = dict[i]
 	Roomba.Move(f,s)
@@ -82,8 +84,8 @@ for i in range(len(dict.keys())):
 			data_time2 = time.time()
 			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
 			counter += 1
-			delta_l = left_encoder(counter)-left_encoder(counter-1)
-			delta_r = right_encoder(counter)-right_encoder(counter-1)
+			delta_l = left_encoder-left_start
+			delta_r = right_encoder-right_start
 			delta_theta = (delta_l-delta_r)*((72*180)/(508.8*235))
 			theta += delta_theta
 			if delta_l-delta_r == 0:
@@ -93,9 +95,11 @@ for i in range(len(dict.keys())):
 			
 			x_position = x_position + delta_d*cos(theta-.5*delta_theta)
 			y_position = y_position + delta_d*sin(theta-.5*delta_theta)
-			print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_pos,y_pos,theta))
+			print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
 			print("")
-			file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_pos,y_pos,theta))
+			file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
+			left_start = left_encoder
+			right_start = right_encoder
 	start_time = time.time()
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
