@@ -50,7 +50,7 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 time1 = time.time()
 # Main Code #
-Roomba.StartQueryStream(45,7,17,52,53)
+Roomba.StartQueryStream(45,7,17,52,53) #Begins querying for the light bumpers, regular bumpers, and IR sensors
 while True:	
 	try:
 		
@@ -63,18 +63,18 @@ while True:
 		if Roomba.Available()>0:
 			[light_bumper,bumper,Omni_IR,left_Omni,right_Omni]=Roomba.ReadQueryStream(45,7,17,52,53)
 			
-		time2 = time.time()
-		if time2-time1 >.5:
-			print ("{0:0>8b}".format(light_bumper))
-			print ("bumper:{0:0>8b}".format(bumper))
-			print ("Omni IR:{0}".format(Omni_IR))
-			print ("left_Omni:{0}".format(left_Omni))
-			print ("right_Omni:{0}".format(right_Omni))
-			time1 = time1+.5
-	except KeyboardInterrupt:
+		time2 = time.time() #Sets up timer for data return
+		if time2-time1 >.5: #Timer returns data every .5 seconds
+			print ("{0:0>8b}".format(light_bumper)) #Prints light bumper output in binary, shows if any light bumpers are triggered
+			print ("bumper:{0:0>8b}".format(bumper)) #Prints bumper output in binary, shows if any bumpers are triggered
+			print ("Omni IR:{0}".format(Omni_IR)) #Prints omni IR sensor output
+			print ("left_Omni:{0}".format(left_Omni)) #Prints left IR sensor output
+			print ("right_Omni:{0}".format(right_Omni)) #Prints right IR sensor output
+			time1 = time1+.5 #Makes time1 catch up with time 2, resetting the timer
+	except KeyboardInterrupt: #Allows for input of "Ctrl+c" to end code without error
 		break
 
-Roomba.PauseQueryStream()
+Roomba.PauseQueryStream() #Ends querying of sensors
 if Roomba.Available()>0:
 	y = Roomba.DirectRead(Roomba.Available())
 	print(y)
