@@ -70,9 +70,9 @@ for i in range(len(l)):
 		if Roomba.Available()>0:
 			data_time2 = time.time()
 			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
-			print("{0},{1},{2}".format(left_encoder, right_encoder,data_time2-data_time))
+			print("{0},{1},{2}".format(data_time2-data_time,left_encoder,right_encoder))
 			print("")
-			file.write("{0},{1},{2}\n".format(left_encoder, right_encoder,data_time2-data_time))
+			file.write("{0},{1},{2}\n".format(data_time2-data_time,left_encoder, right_encoder))
 	start_time = time.time()
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
