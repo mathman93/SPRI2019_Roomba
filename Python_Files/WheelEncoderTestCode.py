@@ -63,16 +63,16 @@ start_time = time.time()
 Roomba.StartQueryStream(43,44)
 
 l = [(100,0),(0,50),(-100,0),(0,-25),(75,0),(0,-50),(100,0)]
-
+data_time = time.time()
 for i in range(len(l)):
-	data_time = time.time()
 	Roomba.Move(l[i][0],l[i][1])
 	while time.time() - start_time <=4.0:
 		if Roomba.Available()>0:
+			data_time2 = time.time()
 			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
-			print("{0},{1},{2}".format(left_encoder, right_encoder,data_time))
+			print("{0},{1},{2}".format(data_time2-data_time,left_encoder,right_encoder))
 			print("")
-			file.write("{0},{1},{2}\n".format(left_encoder, right_encoder,data_time))
+			file.write("{0},{1},{2}\n".format(data_time2-data_time,left_encoder, right_encoder))
 	start_time = time.time()
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
