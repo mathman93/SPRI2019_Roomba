@@ -84,15 +84,15 @@ for i in range(len(dict.keys())):
 			counter += 1
 			delta_l = left_encoder(counter)-left_encoder(counter-1)
 			delta_r = right_encoder(counter)-right_encoder(counter-1)
-			countdifference = delta_l-delta_r
 			delta_theta = (delta_l-delta_r)*((72*180)/(508.8*235))
 			theta += delta_theta
-			if countdifference == 0:
+			if delta_l-delta_r == 0:
 				delta_d = 0.5*(delta_l+delta_r)*((72*pi)/508.8)
 			else:
-				delta_d = 2*(235(delta_l/(delta_l-delta_r)-.5)*sin(theta/2)
-			x_pos += delta_d*cos(delta_theta-.5*theta)
-			y_pos += delta_d*sin(delta_theta-.5*theta)
+				delta_d = 2*(235(delta_l/(delta_l-delta_r)-.5)*sin(delta_theta/2)
+			
+			x_pos += delta_d*cos(theta-.5*delta_theta)
+			y_pos += delta_d*sin(theta-.5*delta_theta)
 			print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_pos,y_pos,theta))
 			print("")
 			file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_pos,y_pos,theta))
