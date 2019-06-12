@@ -9,6 +9,7 @@ import time
 import RPi.GPIO as GPIO
 import RoombaCI_lib
 import os.path
+import math
 
 ## Variables and Constants ##
 # LED pin numbers
@@ -50,7 +51,7 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	#print(x) # Include for debugging
 
 print(" ROOMBA Setup Complete")
-
+GPIO.output(gled, GPIO.LOW)
 # Main Code #
 # Open a text file for data retrieval
 file_name_input = input("Name for data file: ")
@@ -86,15 +87,15 @@ for i in range(len(dict.keys())):
 			counter += 1
 			delta_l = left_encoder-left_start
 			delta_r = right_encoder-right_start
-			delta_theta = (delta_l-delta_r)*((72*180)/(508.8*235))
+			delta_theta = (delta_l-delta_r)*((72*math.pi)/(508.8*235))
 			theta += delta_theta
 			if delta_l-delta_r == 0:
-				delta_d = 0.5*(delta_l+delta_r)*((72*pi)/508.8)
+				delta_d = 0.5*(delta_l+delta_r)*((72*math.pi)/508.8)
 			else:
-				delta_d = 2*(235(delta_l/(delta_l-delta_r)-.5))*sin(delta_theta/2)
+				delta_d = 2*(235(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
 			
-			x_position = x_position + delta_d*cos(theta-.5*delta_theta)
-			y_position = y_position + delta_d*sin(theta-.5*delta_theta)
+			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
+			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
 			print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
 			print("")
 			file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
