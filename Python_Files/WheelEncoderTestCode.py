@@ -92,7 +92,7 @@ for i in range(len(dict.keys())):
 			if delta_l-delta_r == 0:
 				delta_d = 0.5*(delta_l+delta_r)*((72*math.pi)/508.8)
 			else:
-				delta_d = 2*(235(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
+				delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
 			
 			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
