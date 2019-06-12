@@ -24,6 +24,7 @@ def DisplayDateTime():
 	date_time = time.strftime("%B %d, %Y, %H:%M:%S", time.gmtime())
 	print("Program run: ", date_time)
 
+
 ## -- Code Starts Here -- ##
 # Setup Code #
 GPIO.setmode(GPIO.BCM) # Use BCM pin numbering for GPIO
@@ -62,11 +63,18 @@ start_time = time.time()
 
 Roomba.StartQueryStream(43,44)
 
-l = [(100,0),(0,50),(-100,0),(0,-25),(75,0),(0,-50),(100,0)]
+dict = {0:[100,0,10],
+	1:[0,100,5],
+	2:[50,50,5]}
+
+
+
+
 data_time = time.time()
-for i in range(len(l)):
-	Roomba.Move(l[i][0],l[i][1])
-	while time.time() - start_time <=4.0:
+for i in range(len(dict.keys())):
+	[f,s,t] = dict[i]
+	Roomba.Move(f,s)
+	while time.time() - start_time <=t:
 		if Roomba.Available()>0:
 			data_time2 = time.time()
 			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
