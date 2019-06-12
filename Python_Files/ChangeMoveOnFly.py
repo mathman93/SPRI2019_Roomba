@@ -79,34 +79,34 @@ file.write("{0},{1},{2},{3},{4},{5}\n".format(0,left_start, right_start,x_positi
 Roomba.StartQueryStream(43,44)
 
 
-	Roomba.Move(100,0)
-	while time.time() - start_time <=30:
-		if Roomba.Available()>0:
-			data_time2 = time.time()
-			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
-			delta_l = left_encoder-left_start
-			delta_r = right_encoder-right_start
-			delta_theta = (delta_l-delta_r)*C_theta
-			theta += delta_theta
-			if delta_l-delta_r == 0:
-				delta_d = 0.5*(delta_l+delta_r)*distance_per_count
-			else:
-				delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
+Roomba.Move(100,0)
+while time.time() - start_time <=30:
+	if Roomba.Available()>0:
+		data_time2 = time.time()
+		[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
+		delta_l = left_encoder-left_start
+		delta_r = right_encoder-right_start
+		delta_theta = (delta_l-delta_r)*C_theta
+		theta += delta_theta
+		if delta_l-delta_r == 0:		
+			delta_d = 0.5*(delta_l+delta_r)*distance_per_count
+		else:
+			delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
 			
-			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
-			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
+		x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
+		y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
 			
-			print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
-			print("")
-			file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
-			left_start = left_encoder
-			right_start = right_encoder
-		if y > 1
-			Roomba.move(100,-1)
-		elseif y < -1
-			Roomba.move(100,1)
-		elseif y < 1 and y > -1
-			Roomba.move(100,0)
+		print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
+		print("")
+		file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
+		left_start = left_encoder
+		right_start = right_encoder
+	if y > 1
+		Roomba.move(100,-1)
+	elseif y < -1
+		Roomba.move(100,1)
+	elseif y < 1 and y > -1
+		Roomba.move(100,0)
 	#start_time = time.time()
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
