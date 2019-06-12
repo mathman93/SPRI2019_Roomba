@@ -105,7 +105,7 @@ while time.time() - start_time <=30:
 			Roomba.Move(100,-10)
 		elif (y_position > 0 and theta == 0) or (y_position==0 and theta>0):
 			Roomba.Move(100,-5)
-		elif (y>_position0 and theta<0) or (y_position<0 and theta>0) or (y_position==0 and theta==0):
+		elif (y_position>0 and theta<0) or (y_position<0 and theta>0) or (y_position==0 and theta==0):
 			Roomba.Move(100,0)
 		elif (y_position<0 and theta==0) or (y_position==0 and theta<0):
 			Roomba.Move(100,5)
