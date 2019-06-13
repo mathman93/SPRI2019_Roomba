@@ -90,7 +90,7 @@ print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(0,left_start,righ
 
 #file.write("{0},{1},{2},{3},{4},{5}\n".format(0,left_start, right_start,x_position,y_position,theta))
 Roomba.StartQueryStream(43,44)
-whynot = False
+
 while True:
 	try:
 		# Tell the roomba to move
@@ -171,15 +171,9 @@ while True:
 				break
 		Roomba.Move(0,0)
 		time.sleep(.01)
-		while whynot == False:
-			try:
-				x_final = float(input("x position:"))
-				y_final = float(input("y position:"))
-				whynot = True
-			except ValueError:
-				print("Please input a number")
-				continue
-		whynot = False
+		while True:
+			x_final = float(input("x position:"))
+			y_final = float(input("y position:"))
 	except KeyboardInterrupt:
 		break
 Roomba.Move(0,0)
