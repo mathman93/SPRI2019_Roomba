@@ -101,12 +101,12 @@ while True:
 				# Get left and right encoder values and find the change in each
 				[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
 				delta_l = left_encoder-left_start
-				if delta_l < (2**15): #Checks if the encoder values have rolled over, and if so, subtracts/adds accordingly to assure normal delta values
+				if delta_l < -1*(2**15): #Checks if the encoder values have rolled over, and if so, subtracts/adds accordingly to assure normal delta values
 					delta_l += (2**16)
 				elif delta_l > (2**15):
 					delta_l -+ (2**16)
 				delta_r = right_encoder-right_start
-				if delta_r < (2**15):
+				if delta_r < -1*(2**15):
 					delta_r += (2**16)
 				elif delta_r > (2**15):
 					delta_r -+ (2**16)
