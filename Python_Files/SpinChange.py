@@ -175,6 +175,7 @@ while True:
 			x_final = float(input("x position:"))
 			y_final = float(input("y position:"))
 			distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
+			break
 	except KeyboardInterrupt:
 		break
 Roomba.Move(0,0)
