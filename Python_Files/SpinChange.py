@@ -152,6 +152,8 @@ while True:
 						s = s_set
 					elif theta_d < 0: #Rotates counterclockwise if theta_d is negative
 						s = s_set * -1
+					else:
+						s = 0
 					if theta_d > (math.pi / 2) or theta_d < (math.pi / -2): #If the end point is beyond 90 degrees in either direction, the roomba will rotate in place
 						f = 0
 					elif abs(2*radius*math.sin(theta_d)) > distance_to_end: #If the end point is within the circle that is drawn by the roomba's turn path, then the roomba will rotate in place 
