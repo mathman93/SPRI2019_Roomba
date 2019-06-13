@@ -99,6 +99,7 @@ while distance_to_end>3:
 			# Determine the change in theta and what that is currently
 			delta_theta = (delta_l-delta_r)*C_theta
 			theta += delta_theta
+			# If theta great than 2pi subtract 2pi and vice versus. Normalize theta to 0-2pi to show what my heading is.
 			if theta >= 2*math.pi:
 				theta -= 2*math.pi
 			elif theta < 0:
@@ -111,12 +112,14 @@ while distance_to_end>3:
 			# Find new x and y position
 			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
+			# Find distance to end and theta_initial
 			distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
 		
 			theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
-			
+			# Normalize what theta initial is to between 0-2pi
 			if theta_initial <0:
 				theta_initial += 2*math.pi
+			# Calculate theta_d and normalize it to 0-2pi
 			theta_d = ((theta_initial-theta)%(2*math.pi))
 			if theta_d > math.pi:
 				theta_d -= 2*math.pi
