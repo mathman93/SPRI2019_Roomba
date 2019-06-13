@@ -137,9 +137,9 @@ while distance_to_end>3:
 			else:
 				s_set = 50
 			if distance_to_end > 500: #If distance_to_end is greater than 500, the roomba will be faster, and if 100 or less, will slow down
-				f_set = 150
-			elif distance_to_end > 100:
 				f_set = 100
+			elif distance_to_end > 100:
+				f_set = 75
 			else:
 				s_set = 50
 
