@@ -76,8 +76,8 @@ C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
 distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 data_time = time.time()
 
-x_final = 1000
-y_final = 500
+x_final = 0
+y_final = 100
 distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
 theta_initial = math.atan((y_final-y_position)/(x_final-x_position))
 
