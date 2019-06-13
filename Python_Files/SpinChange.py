@@ -86,7 +86,7 @@ print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(0,left_start,righ
 Roomba.StartQueryStream(43,44)
 
 f_set = 100 #Base forward speed to be used
-s_set = 10 #Base spin speed to be used
+s_set = 15 #Base spin speed to be used
 f = 0 #Placeholder of forward speed that will be modified to suit the situation
 s = 0 #Placeholder of spin speed that will be mofidied to suit the situation
 
