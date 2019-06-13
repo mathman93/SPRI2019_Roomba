@@ -75,8 +75,8 @@ distance_between_wheels = 235
 C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
 distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 data_time = time.time()
-x_final = 600
-y_final = 1200
+x_final = -800
+y_final = 800
 distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
 theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
 theta_d = theta_initial-theta
@@ -133,9 +133,9 @@ while distance_to_end>3:
 			if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 or pi/12, roomba will spin faster
 				s_set = 100
 			elif abs(theta_d) > (math.pi / 12):
-				s_set = 50
+				s_set = 75
 			else:
-				s_set = 15
+				s_set = 50
 			if distance_to_end > 500: #If distance_to_end is greater than 500, the roomba will be faster, and if 100 or less, will slow down
 				f_set = 150
 			elif distance_to_end > 100:
