@@ -97,11 +97,6 @@ while True:
 		try:
 			if Roomba.Available()>0:
 
-				f_set = 100 #Base forward speed to be used
-				s_set = 15 #Base spin speed to be used
-				f = 0 #Placeholder of forward speed that will be modified to suit the situation
-				s = 0 #Placeholder of spin speed that will be mofidied to suit the situation
-
 				data_time2 = time.time()
 				# Get left and right encoder values and find the change in each
 				[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
@@ -148,7 +143,7 @@ while True:
 				elif distance_to_end > 100:
 					f_set = 75
 				else:
-					s_set = 50
+					f_set = 50
 
 				radius = ((235 / 2) * (f_set / s_set)) #Radius of circle of the roomba's turn for the given f_set and s_set values
 
@@ -171,17 +166,18 @@ while True:
 				right_start = right_encoder
 		except KeyboardInterrupt:
 			break
+	Roomba.Move(0,0)
+	time.sleep(.01)
 	while True:
 		try:
-			try:
-				x_final = float(input("x position:"))
-				y_final = float(input("y position:"))
-				break
-			except ValueError:
-				print("Please input a number")
-				continue
-		except KeyboardInterrupt:
+			x_final = float(input("x position:"))
+			y_final = float(input("y position:"))
 			break
+		except ValueError:
+			print("Please input a number")
+			continue
+	except KeyboardInterrupt:
+		break
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
 if Roomba.Available()>0:
