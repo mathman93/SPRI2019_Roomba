@@ -89,49 +89,53 @@ Roomba.StartQueryStream(43,44)
 # Tell the roomba to move
 Roomba.Move(100,0)
 while distance_to_end>3:
-	if Roomba.Available()>0:
-		data_time2 = time.time()
-		# Get left and right encoder values and find the change in each
-		[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
-		delta_l = left_encoder-left_start
-		delta_r = right_encoder-right_start
-		# Determine the change in theta and what that is currently
-		delta_theta = (delta_l-delta_r)*C_theta
-		theta += delta_theta
-		if theta >= 2*math.pi:
-			theta -= 2*math.pi
-		elif theta < 0:
-			theta += 2*math.pi
-		# Determine what method to use to find the change in distance
-		if delta_l-delta_r == 0:		
-			delta_d = 0.5*(delta_l+delta_r)*distance_per_count
-		else:
-			delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
-		# Find new x and y position
-		x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
-		y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
-		distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
+	try:
+		if Roomba.Available()>0:
+			data_time2 = time.time()
+			# Get left and right encoder values and find the change in each
+			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
+			delta_l = left_encoder-left_start
+			delta_r = right_encoder-right_start
+			# Determine the change in theta and what that is currently
+			delta_theta = (delta_l-delta_r)*C_theta
+			theta += delta_theta
+			if theta >= 2*math.pi:
+				theta -= 2*math.pi
+			elif theta < 0:
+				theta += 2*math.pi
+			# Determine what method to use to find the change in distance
+			if delta_l-delta_r == 0:		
+				delta_d = 0.5*(delta_l+delta_r)*distance_per_count
+			else:
+				delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
+			# Find new x and y position
+			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
+			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
+			distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
 		
-		theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
-		
-		if theta_initial <0:
-			theta_initial += 2*math.pi
-		theta_d = ((theta_initial-theta)%(2*math.pi))
-		if theta_d > math.pi:
-			theta_d -= 2*math.pi
-		if theta_d > 0:
-			Roomba.Move(100,30)
-		elif theta_d <0:
-			Roomba.Move(100,-30)
-		elif theta_d==0:
-			Roomba.Move(100,0)
+			theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
+			
+			if theta_initial <0:
+				theta_initial += 2*math.pi
+			theta_d = ((theta_initial-theta)%(2*math.pi))
+			if theta_d > math.pi:
+				theta_d -= 2*math.pi
 
-		# Print and write the time, left encoder, right encoder, x position, y position, and theta
-		print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d))
-		print("")
-		#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
-		left_start = left_encoder
-		right_start = right_encoder
+			if theta_d > 0:
+				Roomba.Move(50,30)
+			elif theta_d <0:
+				Roomba.Move(50,-30)
+			elif theta_d==0:
+				Roomba.Move(50,0)	
+
+			# Print and write the time, left encoder, right encoder, x position, y position, and theta
+			print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d))
+			print("")
+			#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
+			left_start = left_encoder
+			right_start = right_encoder
+	except KeyboardInterrupt:
+		break
 	
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
