@@ -93,90 +93,90 @@ Roomba.StartQueryStream(43,44)
 
 while True:
 	try:
-	# Tell the roomba to move
-	while distance_to_end > 3:
-		try:
-			if Roomba.Available()>0:
+		# Tell the roomba to move
+		while distance_to_end > 3:
+			try:
+				if Roomba.Available()>0:
 
-				data_time2 = time.time()
-				# Get left and right encoder values and find the change in each
-				[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
-				delta_l = left_encoder-left_start
-				delta_r = right_encoder-right_start
-				# Determine the change in theta and what that is currently
-				delta_theta = (delta_l-delta_r)*C_theta
-				theta += delta_theta
-				# If theta great than 2pi subtract 2pi and vice versus. Normalize theta to 0-2pi to show what my heading is.
-				if theta >= 2*math.pi:
-					theta -= 2*math.pi
-				elif theta < 0:
-					theta += 2*math.pi
-				# Determine what method to use to find the change in distance
-				if delta_l-delta_r == 0:		
-					delta_d = 0.5*(delta_l+delta_r)*distance_per_count
-				else:
-					delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
-				# Find new x and y position
-				x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
-				y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
-				# Find distance to end and theta_initial
-				distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
+					data_time2 = time.time()
+					# Get left and right encoder values and find the change in each
+					[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
+					delta_l = left_encoder-left_start
+					delta_r = right_encoder-right_start
+					# Determine the change in theta and what that is currently
+					delta_theta = (delta_l-delta_r)*C_theta
+					theta += delta_theta
+					# If theta great than 2pi subtract 2pi and vice versus. Normalize theta to 0-2pi to show what my heading is.
+					if theta >= 2*math.pi:
+						theta -= 2*math.pi
+					elif theta < 0:
+						theta += 2*math.pi
+					# Determine what method to use to find the change in distance
+					if delta_l-delta_r == 0:		
+						delta_d = 0.5*(delta_l+delta_r)*distance_per_count
+					else:
+						delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
+					# Find new x and y position
+					x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
+					y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
+					# Find distance to end and theta_initial
+					distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
 		
-				theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
-				# Normalize what theta initial is to between 0-2pi
-				if theta_initial <0:
-					theta_initial += 2*math.pi
-				# Calculate theta_d and normalize it to 0-2pi
-				# This value is the difference between the direction were supposed to be going and the direction we are going
-				theta_d = ((theta_initial-theta)%(2*math.pi))
-				# get theta_d between -pi and pi
-				if theta_d > math.pi:
-					theta_d -= 2*math.pi
+					theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
+					# Normalize what theta initial is to between 0-2pi
+					if theta_initial <0:
+						theta_initial += 2*math.pi
+					# Calculate theta_d and normalize it to 0-2pi
+					# This value is the difference between the direction were supposed to be going and the direction we are going
+					theta_d = ((theta_initial-theta)%(2*math.pi))
+					# get theta_d between -pi and pi
+					if theta_d > math.pi:
+						theta_d -= 2*math.pi
 
-				if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 or pi/12, roomba will spin faster
-					s_set = 100
-				elif abs(theta_d) > (math.pi / 12):
-					s_set = 75
-				else:
-					s_set = 50
-				if distance_to_end > 500: #If distance_to_end is greater than 500, the roomba will be faster, and if 100 or less, will slow down
-					f_set = 100
-				elif distance_to_end > 100:
-					f_set = 75
-				else:
-					f_set = 50
+					if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 or pi/12, roomba will spin faster
+						s_set = 100
+					elif abs(theta_d) > (math.pi / 12):
+						s_set = 75
+					else:
+						s_set = 50
+					if distance_to_end > 500: #If distance_to_end is greater than 500, the roomba will be faster, and if 100 or less, will slow down
+						f_set = 100
+					elif distance_to_end > 100:
+						f_set = 75
+					else:
+						f_set = 50
 
-				radius = ((235 / 2) * (f_set / s_set)) #Radius of circle of the roomba's turn for the given f_set and s_set values
+					radius = ((235 / 2) * (f_set / s_set)) #Radius of circle of the roomba's turn for the given f_set and s_set values
 
-				if theta_d > 0: #Rotates clockwise if theta_d is positive
-					s = s_set
-				elif theta_d < 0: #Rotates counterclockwise if theta_d is negative
-					s = s_set * -1
-				if theta_d > (math.pi / 2) or theta_d < (math.pi / -2): #If the end point is beyond 90 degrees in either direction, the roomba will rotate in place
-					f = 0
-				elif abs(2*radius*math.sin(theta_d)) > distance_to_end: #If the end point is within the circle that is drawn by the roomba's turn path, then the roomba will rotate in place 
-					f = 0
-				else:
-					f = f_set
-				Roomba.Move(f,s) #Makes the roomba move with the parameters given to
-				# Print and write the time, left encoder, right encoder, x position, y position, and theta
-				print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d))
-				print("")
-				#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
-				left_start = left_encoder
-				right_start = right_encoder
-		except KeyboardInterrupt:
-			break
-	Roomba.Move(0,0)
-	time.sleep(.01)
-	while True:
-		try:
-			x_final = float(input("x position:"))
-			y_final = float(input("y position:"))
-			break
-		except ValueError:
-			print("Please input a number")
-			continue
+					if theta_d > 0: #Rotates clockwise if theta_d is positive
+						s = s_set
+					elif theta_d < 0: #Rotates counterclockwise if theta_d is negative
+						s = s_set * -1
+					if theta_d > (math.pi / 2) or theta_d < (math.pi / -2): #If the end point is beyond 90 degrees in either direction, the roomba will rotate in place
+						f = 0
+					elif abs(2*radius*math.sin(theta_d)) > distance_to_end: #If the end point is within the circle that is drawn by the roomba's turn path, then the roomba will rotate in place 
+						f = 0
+					else:
+						f = f_set
+					Roomba.Move(f,s) #Makes the roomba move with the parameters given to
+					# Print and write the time, left encoder, right encoder, x position, y position, and theta
+					print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d))
+					print("")
+					#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
+					left_start = left_encoder
+					right_start = right_encoder
+			except KeyboardInterrupt:
+				break
+		Roomba.Move(0,0)
+		time.sleep(.01)
+		while True:
+			try:
+				x_final = float(input("x position:"))
+				y_final = float(input("y position:"))
+				break
+			except ValueError:
+				print("Please input a number")
+				continue
 	except KeyboardInterrupt:
 		break
 Roomba.Move(0,0)
