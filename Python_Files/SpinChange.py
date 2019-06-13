@@ -151,9 +151,9 @@ while distance_to_end>3:
 
 			radius = ((235 / 2) * (f_set / s_set)) #Radius of circle of the roomba's turn for the given f_set and s_set values
 
-			if theta_d > 0: #Rotates clockwise if theta_d is positive
+			if theta_d > (math.pi / 180): #Rotates clockwise if theta_d is positive
 				s = s_set
-			elif theta_d < 0: #Rotates counterclockwise if theta_d is negative
+			elif theta_d < (math.pi / 180): #Rotates counterclockwise if theta_d is negative
 				s = s_set * -1
 			if theta_d > (math.pi / 2) or theta_d < (math.pi / -2): #If the end point is beyond 90 degrees in either direction, the roomba will rotate in place
 				f = 0
