@@ -75,7 +75,6 @@ distance_between_wheels = 235
 C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
 distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 data_time = time.time()
-
 x_final = 0
 y_final = 100
 distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
@@ -120,10 +119,12 @@ while distance_to_end>3:
 			if theta_initial <0:
 				theta_initial += 2*math.pi
 			# Calculate theta_d and normalize it to 0-2pi
+			# This value is the difference between the direction were supposed to be going and the direction we are going
 			theta_d = ((theta_initial-theta)%(2*math.pi))
+			# get theta_d between -pi and pi
 			if theta_d > math.pi:
 				theta_d -= 2*math.pi
-
+			# theta_d in range 0 to pi turn right, 0 to -pi turn left
 			if theta_d > 0:
 				Roomba.Move(50,30)
 			elif theta_d <0:
