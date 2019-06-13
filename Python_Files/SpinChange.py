@@ -75,7 +75,7 @@ distance_between_wheels = 235
 C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
 distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 data_time = time.time()
-while True:
+while True: #Loop that asks for initial x and y coordinates
 	try:
 		x_final = float(input("x position:"))
 		y_final = float(input("y position:"))
@@ -166,18 +166,21 @@ while True:
 				#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
 				left_start = left_encoder
 				right_start = right_encoder
-		Roomba.PauseQueryStream()
+		Roomba.PauseQueryStream() #Pauses the query stream while new coordinates are being input
+		if Roomba.Available()>0:
+			z = Roomba.DirectRead(Roomba.Available())
+			print(z)
 		Roomba.Move(0,0)
-		while True:
+		while True: #Loop that asks the user for another set of x and y coordinates for the roomba to go to
 			try:
 				x_final = float(input("x position:"))
 				y_final = float(input("y position:"))
 				break
-			except ValueError:
+			except ValueError: #Prints the message if anything but a number is input, then re asks for th coordinates
 				print("Please enter a number")
 				continue
-		distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
-		Roomba.ResumeQueryStream()
+		distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2) #Recalculates distance_to_end before the main loop starts
+		Roomba.ResumeQueryStream() #Resumes the query stream to continue as the roomba moves again
 	except KeyboardInterrupt:
 		break
 Roomba.Move(0,0)
