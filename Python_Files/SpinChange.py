@@ -98,7 +98,7 @@ while distance_to_end>3:
 		# Determine the change in theta and what that is currently
 		delta_theta = (delta_l-delta_r)*C_theta
 		theta += delta_theta
-		if theta > 2*math.pi:
+		if theta >= 2*math.pi:
 			theta -= 2*math.pi
 		elif theta < 0:
 			theta += 2*math.pi
@@ -113,7 +113,13 @@ while distance_to_end>3:
 		distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
 		
 		theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
-		theta_d = theta_initial-theta
+		if theta_initial <0
+			theta_initial += 2*math.pi
+			theta_d = mod(theta_initial-theta,2*math.pi)
+			if theta_d > math.pi
+				theta_d -= 2*math.pi
+		else:
+			theta_d = theta_initial-theta
 		if theta_d > 0:
 			Roomba.Move(100,10)
 		elif theta_d <0:
