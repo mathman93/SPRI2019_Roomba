@@ -106,7 +106,7 @@ while distance_to_end>3:
 		y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
 		distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
 		
-		theta_initial = math.atan((y_final-y_position)/(x_final-x_position))
+		theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
 		theta_d = theta_initial-theta
 		if theta_d > 0:
 			Roomba.Move(100,10)
