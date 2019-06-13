@@ -79,6 +79,7 @@ while True:
 	try:
 		x_final = float(input("x position:"))
 		y_final = float(input("y position:"))
+		break
 	except ValueError:
 		print("Please input a number")
 		continue
