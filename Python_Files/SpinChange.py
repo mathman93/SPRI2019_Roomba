@@ -166,6 +166,7 @@ while True:
 				#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
 				left_start = left_encoder
 				right_start = right_encoder
+		Roomba.PauseQueryStream()
 		Roomba.Move(0,0)
 		while True:
 			try:
@@ -176,6 +177,7 @@ while True:
 				print("Please enter a number")
 				continue
 		distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
+		Roomba.ResumeQueryStream()
 	except KeyboardInterrupt:
 		break
 Roomba.Move(0,0)
