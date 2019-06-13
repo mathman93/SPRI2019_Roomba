@@ -79,7 +79,9 @@ data_time = time.time()
 x_final = 0
 y_final = 100
 distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
-
+theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
+theta_d = theta_initial-theta
+print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(0,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d))
 
 #file.write("{0},{1},{2},{3},{4},{5}\n".format(0,left_start, right_start,x_position,y_position,theta))
 Roomba.StartQueryStream(43,44)
