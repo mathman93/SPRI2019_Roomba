@@ -98,6 +98,10 @@ while distance_to_end>3:
 		# Determine the change in theta and what that is currently
 		delta_theta = (delta_l-delta_r)*C_theta
 		theta += delta_theta
+		if theta > 2*math.pi:
+			theta -= 2*math.pi
+		elif theta < 0:
+			theta += 2*math.pi
 		# Determine what method to use to find the change in distance
 		if delta_l-delta_r == 0:		
 			delta_d = 0.5*(delta_l+delta_r)*distance_per_count
