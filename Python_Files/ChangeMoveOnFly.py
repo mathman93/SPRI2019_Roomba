@@ -65,7 +65,7 @@ start_time = time.time()
 
 [left_start,right_start]=Roomba.Query(43,44)
 
-
+# Variables and Constants
 y_position = 0
 x_position = 0
 theta = 0
@@ -78,29 +78,33 @@ data_time = time.time()
 file.write("{0},{1},{2},{3},{4},{5}\n".format(0,left_start, right_start,x_position,y_position,theta))
 Roomba.StartQueryStream(43,44)
 
-
+# Tell the roomba to move
 Roomba.Move(100,0)
 while time.time() - start_time <=30:
 	if Roomba.Available()>0:
 		data_time2 = time.time()
+		# Get left and right encoder values and find the change in each
 		[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
 		delta_l = left_encoder-left_start
 		delta_r = right_encoder-right_start
+		# Determine the change in theta and what that is currently
 		delta_theta = (delta_l-delta_r)*C_theta
 		theta += delta_theta
+		# Determine what method to use to find the change in distance
 		if delta_l-delta_r == 0:		
 			delta_d = 0.5*(delta_l+delta_r)*distance_per_count
 		else:
 			delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
-			
+		# Find new x and y position
 		x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 		y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
-			
+		# Print and write the time, left encoder, right encoder, x position, y position, and theta
 		print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
 		print("")
 		file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
 		left_start = left_encoder
 		right_start = right_encoder
+		# If the roomba moves out off a certain y position and theta is off the specified angle move it back
 		if (y_position > 0 and theta>0):
 			Roomba.Move(100,-10)
 		elif (y_position > 0 and theta == 0) or (y_position==0 and theta>0):
