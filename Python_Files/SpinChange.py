@@ -139,15 +139,15 @@ while distance_to_end>3:
 			#elif theta_d==0:
 				#Roomba.Move(50,0)	
 
-			if theta_d > 0 #Rotates clockwise if theta_d is positive
+			if theta_d > 0: #Rotates clockwise if theta_d is positive
 				s = s_set
-			if theta_d < 0 #Rotates counterclockwise if theta_d is negative
+			if theta_d < 0: #Rotates counterclockwise if theta_d is negative
 				s = s_set * -1
-			if theta_d > (math.pi / 2) or theta_d < (math.pi / -2) #If the end point is beyond 90 degrees in either direction, the roomba will rotate in place
+			if theta_d > (math.pi / 2) or theta_d < (math.pi / -2): #If the end point is beyond 90 degrees in either direction, the roomba will rotate in place
 				f = 0
-			elif abs(2*radius*math.sin(theta_d)) > distance_to_end #If the end point is within the circle that is drawn by the roomba's turn path, then the roomba will rotate in place 
+			elif abs(2*radius*math.sin(theta_d)) > distance_to_end: #If the end point is within the circle that is drawn by the roomba's turn path, then the roomba will rotate in place 
 				f = 0
-			else
+			else:
 				f = f_set
 			Roomba.Move(f,s)
 			# Print and write the time, left encoder, right encoder, x position, y position, and theta
