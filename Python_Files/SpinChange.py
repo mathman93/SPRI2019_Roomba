@@ -82,7 +82,7 @@ distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
 theta_initial = math.atan((y_final-y_position)/(x_final-x_position))
 
 
-file.write("{0},{1},{2},{3},{4},{5}\n".format(0,left_start, right_start,x_position,y_position,theta))
+#file.write("{0},{1},{2},{3},{4},{5}\n".format(0,left_start, right_start,x_position,y_position,theta))
 Roomba.StartQueryStream(43,44)
 
 # Tell the roomba to move
@@ -105,24 +105,25 @@ while distance_to_end>3:
 		# Find new x and y position
 		x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 		y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
-		# Print and write the time, left encoder, right encoder, x position, y position, and theta
-		print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
-		print("")
-		file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
-		left_start = left_encoder
-		right_start = right_encoder
 		distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
 		
 		actual_theta = math.atan((y_final-y_position)/(x_final-x_position))
 		theta_d = theta_initial-actual_theta
 
-		# 
 		if theta_d > 0:
 			Roomba.Move(100,10)
 		elif theta_d <0:
 			Roomba.Move(100,-10)
 		elif theta_d==0:
 			Roomba.Move(100,0)
+
+		# Print and write the time, left encoder, right encoder, x position, y position, and theta
+		print("{0},{1},{2},{3},{4},{5},{6},{7}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d))
+		print("")
+		#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
+		left_start = left_encoder
+		right_start = right_encoder
+	
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
 if Roomba.Available()>0:
