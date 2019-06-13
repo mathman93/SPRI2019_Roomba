@@ -149,7 +149,7 @@ while distance_to_end>3:
 				f = 0
 			else:
 				f = f_set
-			Roomba.Move(f,s)
+		Roomba.Move(f,s)
 			# Print and write the time, left encoder, right encoder, x position, y position, and theta
 			print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d))
 			print("")
