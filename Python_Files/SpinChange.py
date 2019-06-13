@@ -140,18 +140,18 @@ while True:
 				if theta_d > math.pi:
 					theta_d -= 2*math.pi
 
-				if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 or pi/12, roomba will spin faster
-					s_set = 100
-				elif abs(theta_d) > (math.pi / 36):
-					s_set = 60
-				else:
-					s_set = 20
-				if distance_to_end > 150: #If distance_to_end is greater than 500, the roomba will be faster, and if 100 or less, will slow down
-					f_set = 120
-				elif distance_to_end > 50:
-					f_set = 80
-				else:
-					f_set = 40
+				if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 radians...
+					s_set = 100 # Spin faster
+				elif abs(theta_d) > (math.pi / 36): #If theta_d is getting closer...
+					s_set = 60 # Spin normal speed
+				else: # otherwise, if theta_d is fairly small
+					s_set = 20 # Spin slow
+				if distance_to_end > 150: #If distance_to_end is greater than 150 mm...
+					f_set = 120 #Go faster
+				elif distance_to_end > 50: # If distance_to_end is greater than 50 mm...
+					f_set = 80 #Go fast
+				else: #otherwise, if distance_to_end is less than 50 mm...
+					f_set = 40 #Go slow
 
 				radius = ((235 / 2) * (f_set / s_set)) #Radius of circle of the roomba's turn for the given f_set and s_set values
 
