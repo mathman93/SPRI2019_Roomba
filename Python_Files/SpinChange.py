@@ -54,10 +54,10 @@ print(" ROOMBA Setup Complete")
 GPIO.output(gled, GPIO.LOW)
 # Main Code #
 # Open a text file for data retrieval
-file_name_input = input("Name for data file: ")
-dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
-file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
-file = open(file_name, "w") # Open a text file for storing data
+#file_name_input = input("Name for data file: ")
+#dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+#file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
+#file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
 
 start_time = time.time()
@@ -117,7 +117,7 @@ while distance_to_end>3:
 			Roomba.Move(100,0)
 
 		# Print and write the time, left encoder, right encoder, x position, y position, and theta
-		print("{0},{1},{2},{3},{4},{5},{6},{7}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d))
+		print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d))
 		print("")
 		#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
 		left_start = left_encoder
@@ -128,7 +128,7 @@ Roomba.PauseQueryStream()
 if Roomba.Available()>0:
 	z = Roomba.DirectRead(Roomba.Available())
 	print(z)
-file.close()
+#file.close()
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
