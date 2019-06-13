@@ -92,6 +92,7 @@ print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(0,left_start,righ
 Roomba.StartQueryStream(43,44)
 
 while True:
+	try:
 	# Tell the roomba to move
 	while distance_to_end > 3:
 		try:
