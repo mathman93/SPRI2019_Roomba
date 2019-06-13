@@ -75,8 +75,13 @@ distance_between_wheels = 235
 C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
 distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 data_time = time.time()
-x_final = float(input("x position:"))
-y_final = float(input("y position:"))
+while True:
+	try:
+		x_final = float(input("x position:"))
+		y_final = float(input("y position:"))
+	except ValueError:
+		print("Please input a number")
+		continue
 distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
 theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
 theta_d = theta_initial-theta
