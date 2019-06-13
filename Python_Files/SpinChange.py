@@ -85,6 +85,11 @@ print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(0,left_start,righ
 #file.write("{0},{1},{2},{3},{4},{5}\n".format(0,left_start, right_start,x_position,y_position,theta))
 Roomba.StartQueryStream(43,44)
 
+f_set = 100 #Base forward speed to be used
+s_set = 10 #Base spin speed to be used
+f = 0 #Placeholder of forward speed that will be modified to suit the situation
+s = 0 #Placeholder of spin speed that will be mofidied to suit the situation
+
 # Tell the roomba to move
 Roomba.Move(100,0)
 while distance_to_end>3:
@@ -113,6 +118,8 @@ while distance_to_end>3:
 			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
 			# Find distance to end and theta_initial
 			distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
+
+			radius = ((235 / 2) * (f_set / s_set)) #Radius of circle of the roomba's turn for the given f_set and s_set values
 		
 			theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
 			# Normalize what theta initial is to between 0-2pi
@@ -125,13 +132,24 @@ while distance_to_end>3:
 			if theta_d > math.pi:
 				theta_d -= 2*math.pi
 			# theta_d in range 0 to pi turn right, 0 to -pi turn left
-			if theta_d > 0:
-				Roomba.Move(50,30)
-			elif theta_d <0:
-				Roomba.Move(50,-30)
-			elif theta_d==0:
-				Roomba.Move(50,0)	
+			#if theta_d > 0:
+				#Roomba.Move(50, 30)
+			#elif theta_d <0:
+				#Roomba.Move(50,-30)
+			#elif theta_d==0:
+				#Roomba.Move(50,0)	
 
+			if theta_d > 0 #Rotates clockwise if theta_d is positive
+				s = s_set
+			if theta_d < 0 #Rotates counterclockwise if theta_d is negative
+				s = s_set * -1
+			if theta_d > (math.pi / 2) or theta_d < (math.pi / -2) #If the end point is beyond 90 degrees in either direction, the roomba will rotate in place
+				f = 0
+			elif abs(2*radius*math.sin(theta_d)) > distance_to_end #If the end point is within the circle that is drawn by the roomba's turn path, then the roomba will rotate in place 
+				f = 0
+			else
+				f = f_set
+			Roomba.Move(f,s)
 			# Print and write the time, left encoder, right encoder, x position, y position, and theta
 			print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d))
 			print("")
@@ -142,6 +160,7 @@ while distance_to_end>3:
 		break
 	
 Roomba.Move(0,0)
+time.sleep(0.01)
 Roomba.PauseQueryStream()
 if Roomba.Available()>0:
 	z = Roomba.DirectRead(Roomba.Available())
