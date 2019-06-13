@@ -91,7 +91,7 @@ f = 0 #Placeholder of forward speed that will be modified to suit the situation
 s = 0 #Placeholder of spin speed that will be mofidied to suit the situation
 
 # Tell the roomba to move
-Roomba.Move(100,0)
+Roomba.Move(f_set,s_set)
 while distance_to_end>3:
 	try:
 		if Roomba.Available()>0:
