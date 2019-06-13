@@ -79,7 +79,7 @@ data_time = time.time()
 x_final = 1000
 y_final = 500
 distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
-theta_initial = math.arctan((y_final-y_position)/(x_final-x_position))
+theta_initial = math.atan((y_final-y_position)/(x_final-x_position))
 
 
 file.write("{0},{1},{2},{3},{4},{5}\n".format(0,left_start, right_start,x_position,y_position,theta))
@@ -113,10 +113,10 @@ while distance_to_end>3:
 		right_start = right_encoder
 		distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
 		
-		actual_theta = math.arctan((y_final-y_position)/(x_final-x_position))
+		actual_theta = math.atan((y_final-y_position)/(x_final-x_position))
 		theta_d = theta_initial-actual_theta
 
-		# If the roomba moves out off a certain y position and theta is off the specified angle move it back
+		# 
 		if theta_d > 0:
 			Roomba.Move(100,10)
 		elif theta_d <0:
