@@ -141,7 +141,7 @@ while distance_to_end>3:
 
 			if theta_d > 0: #Rotates clockwise if theta_d is positive
 				s = s_set
-			if theta_d < 0: #Rotates counterclockwise if theta_d is negative
+			elif theta_d < 0: #Rotates counterclockwise if theta_d is negative
 				s = s_set * -1
 			if theta_d > (math.pi / 2) or theta_d < (math.pi / -2): #If the end point is beyond 90 degrees in either direction, the roomba will rotate in place
 				f = 0
@@ -149,22 +149,22 @@ while distance_to_end>3:
 				f = 0
 			else:
 				f = f_set
+			Roomba.Move(f,s)
 			# Print and write the time, left encoder, right encoder, x position, y position, and theta
 			print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d))
 			print("")
 			#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
 			left_start = left_encoder
 			right_start = right_encoder
-		Roomba.Move(f,s)
 	except KeyboardInterrupt:
 		break
 	
 Roomba.Move(0,0)
-time.sleep(0.01)
 Roomba.PauseQueryStream()
 if Roomba.Available()>0:
 	z = Roomba.DirectRead(Roomba.Available())
 	print(z)
+time.sleep(0.1)
 #file.close()
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
