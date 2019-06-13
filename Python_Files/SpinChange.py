@@ -121,9 +121,9 @@ while distance_to_end>3:
 		else:
 			theta_d = theta_initial-theta
 		if theta_d > 0:
-			Roomba.Move(100,10)
+			Roomba.Move(100,30)
 		elif theta_d <0:
-			Roomba.Move(100,-10)
+			Roomba.Move(100,-30)
 		elif theta_d==0:
 			Roomba.Move(100,0)
 
