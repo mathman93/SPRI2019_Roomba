@@ -175,7 +175,7 @@ while True:
 			except ValueError:
 				print("Please enter a number")
 				continue
-	distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
+		distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
 	except KeyboardInterrupt:
 		break
 Roomba.Move(0,0)
