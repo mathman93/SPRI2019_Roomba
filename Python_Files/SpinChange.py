@@ -113,11 +113,15 @@ while True:
 				# Determine what method to use to find the change in distance
 				if delta_l-delta_r == 0:		
 					delta_d = 0.5*(delta_l+delta_r)*distance_per_count
+					delta_distance = delta_d
 				else:
 					delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
+					delta_distance = 235*(delta_l/(delta_l-delta_r)-.5) * delta_theta
+				
 				# Find new x and y position
 				x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 				y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
+				delta_distance += delta_distance
 				# Find distance to end and theta_initial
 				distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
 		
@@ -161,7 +165,7 @@ while True:
 					f = f_set
 				Roomba.Move(f,s) #Makes the roomba move with the parameters given to
 				# Print and write the time, left encoder, right encoder, x position, y position, and theta
-				print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d))
+				print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7},{8}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d,delta_distance))
 				print("")
 				#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
 				left_start = left_encoder
