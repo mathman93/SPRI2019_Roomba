@@ -75,7 +75,7 @@ distance_between_wheels = 235
 C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
 distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 data_time = time.time()
-while True:
+while True: #Loop that asks for initial x and y coordinates
 	try:
 		x_final = float(input("x position:"))
 		y_final = float(input("y position:"))
@@ -101,7 +101,15 @@ while True:
 				# Get left and right encoder values and find the change in each
 				[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
 				delta_l = left_encoder-left_start
+				if delta_l < -1*(2**15): #Checks if the encoder values have rolled over, and if so, subtracts/adds accordingly to assure normal delta values
+					delta_l += (2**16)
+				elif delta_l > (2**15):
+					delta_l -+ (2**16)
 				delta_r = right_encoder-right_start
+				if delta_r < -1*(2**15):
+					delta_r += (2**16)
+				elif delta_r > (2**15):
+					delta_r -+ (2**16)
 				# Determine the change in theta and what that is currently
 				delta_theta = (delta_l-delta_r)*C_theta
 				theta += delta_theta
@@ -136,18 +144,18 @@ while True:
 				if theta_d > math.pi:
 					theta_d -= 2*math.pi
 
-				if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 or pi/12, roomba will spin faster
-					s_set = 100
-				elif abs(theta_d) > (math.pi / 12):
-					s_set = 75
-				else:
-					s_set = 50
-				if distance_to_end > 500: #If distance_to_end is greater than 500, the roomba will be faster, and if 100 or less, will slow down
-					f_set = 100
-				elif distance_to_end > 100:
-					f_set = 75
-				else:
-					f_set = 50
+				if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 radians...
+					s_set = 100 # Spin faster
+				elif abs(theta_d) > (math.pi / 36): #If theta_d is getting closer...
+					s_set = 60 # Spin normal speed
+				else: # otherwise, if theta_d is fairly small
+					s_set = 20 # Spin slow
+				if distance_to_end > 150: #If distance_to_end is greater than 150 mm...
+					f_set = 120 #Go faster
+				elif distance_to_end > 50: # If distance_to_end is greater than 50 mm...
+					f_set = 80 #Go fast
+				else: #otherwise, if distance_to_end is less than 50 mm...
+					f_set = 40 #Go slow
 
 				radius = ((235 / 2) * (f_set / s_set)) #Radius of circle of the roomba's turn for the given f_set and s_set values
 
@@ -170,18 +178,21 @@ while True:
 				#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
 				left_start = left_encoder
 				right_start = right_encoder
-		Roomba.PauseQueryStream()
+		Roomba.PauseQueryStream() #Pauses the query stream while new coordinates are being input
+		if Roomba.Available()>0:
+			z = Roomba.DirectRead(Roomba.Available())
+			print(z)
 		Roomba.Move(0,0)
-		while True:
+		while True: #Loop that asks the user for another set of x and y coordinates for the roomba to go to
 			try:
 				x_final = float(input("x position:"))
 				y_final = float(input("y position:"))
 				break
-			except ValueError:
+			except ValueError: #Prints the message if anything but a number is input, then re asks for th coordinates
 				print("Please enter a number")
 				continue
-		distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
-		Roomba.ResumeQueryStream()
+		distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2) #Recalculates distance_to_end before the main loop starts
+		Roomba.ResumeQueryStream() #Resumes the query stream to continue as the roomba moves again
 	except KeyboardInterrupt:
 		break
 Roomba.Move(0,0)
