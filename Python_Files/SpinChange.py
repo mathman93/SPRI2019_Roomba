@@ -1,6 +1,6 @@
-''' ChangeMoveOnFly.py
+''' SpinChange.py
 Purpose: Change movement while robot is moving
-Last Modified: 6/12/2019
+Last Modified: 6/14/2019
 '''
 
 ## Import libraries ##
