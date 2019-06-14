@@ -69,6 +69,7 @@ start_time = time.time()
 y_position = 0
 x_position = 0
 theta = 0
+distance = 0
 wheel_diameter = 72
 counts_per_rev = 508.8
 distance_between_wheels = 235
@@ -129,7 +130,7 @@ while True:
 				# Find new x and y position
 				x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 				y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
-				delta_distance += delta_distance
+				distance += delta_distance
 				# Find distance to end and theta_initial
 				distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
 		
@@ -173,7 +174,7 @@ while True:
 					f = f_set
 				Roomba.Move(f,s) #Makes the roomba move with the parameters given to
 				# Print and write the time, left encoder, right encoder, x position, y position, and theta
-				print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7},{8}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d,delta_distance))
+				print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7},{8}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d,distance))
 				print("")
 				#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
 				left_start = left_encoder
