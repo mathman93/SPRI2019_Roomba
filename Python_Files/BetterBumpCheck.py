@@ -68,7 +68,7 @@ start_time = time.time()
 # Variables and Constants
 ba_time = 1.0
 sp_time = 1.0
-fw_time = 1.0
+#fw_time = 1.0
 bump_time = time.time() - (ba_time + sp_time + fw_time)
 y_position = 0
 x_position = 0
@@ -173,47 +173,48 @@ while True:
 					if bump_code == 3: #If bump center
 						f = 0
 						s = 100 #Spin clockwise faster
-				if fl_l_bump or cl_l_bump or cr_l_bump or fr_l_bump: #If any center four light sensors are tripped...
-					if cr_l_bump or fr_l_bump: #If one of the right sensors is tripped...
-						f = 0
-						s = -50 #Spin counterclockwise
-					else:	#If one of the left sensors is tripped...
-						f = 0
-						s = 50
-				elif l_l_bump or r_l_bump:
-					f = 80
-					s = 0
-				#elif time.time() - bump_time < (ba_time + sp_time + fw_time):
-					#f = 120 #Forward
-					#s = 0
 				else:
-					if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 radians...
-						s_set = 100 # Spin faster
-					elif abs(theta_d) > (math.pi / 36): #If theta_d is getting closer...
-						s_set = 60 # Spin normal speed
-					else: # otherwise, if theta_d is fairly small
-						s_set = 20 # Spin slow
-					if distance_to_end > 150: #If distance_to_end is greater than 150 mm...
-						f_set = 120 #Go faster
-					elif distance_to_end > 50: # If distance_to_end is greater than 50 mm...
-						f_set = 80 #Go fast
-					else: #otherwise, if distance_to_end is less than 50 mm...
-						f_set = 40 #Go slow
-
-					radius = ((235 / 2) * (f_set / s_set)) #Radius of circle of the roomba's turn for the given f_set and s_set values
-
-					if theta_d > 0: #Rotates clockwise if theta_d is positive
-						s = s_set
-					elif theta_d < 0: #Rotates counterclockwise if theta_d is negative
-						s = s_set * -1
-					else:
+					if fl_l_bump or cl_l_bump or cr_l_bump or fr_l_bump: #If any center four light sensors are tripped...
+						if cr_l_bump or fr_l_bump: #If one of the right sensors is tripped...
+							f = 0
+							s = -50 #Spin counterclockwise
+						else:	#If one of the left sensors is tripped...
+							f = 0
+							s = 50
+					elif l_l_bump or r_l_bump:
+						f = 80
 						s = 0
-					if theta_d > (math.pi / 2) or theta_d < (math.pi / -2): #If the end point is beyond 90 degrees in either direction, the roomba will rotate in place
-						f = 0
-					elif abs(2*radius*math.sin(theta_d)) > distance_to_end: #If the end point is within the circle that is drawn by the roomba's turn path, then the roomba will rotate in place 
-						f = 0
+					#elif time.time() - bump_time < (ba_time + sp_time + fw_time):
+						#f = 120 #Forward
+						#s = 0
 					else:
-						f = f_set
+						if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 radians...
+							s_set = 100 # Spin faster
+						elif abs(theta_d) > (math.pi / 36): #If theta_d is getting closer...
+							s_set = 60 # Spin normal speed
+						else: # otherwise, if theta_d is fairly small
+							s_set = 20 # Spin slow
+						if distance_to_end > 150: #If distance_to_end is greater than 150 mm...
+							f_set = 120 #Go faster
+						elif distance_to_end > 50: # If distance_to_end is greater than 50 mm...
+							f_set = 80 #Go fast
+						else: #otherwise, if distance_to_end is less than 50 mm...
+							f_set = 40 #Go slow
+
+						radius = ((235 / 2) * (f_set / s_set)) #Radius of circle of the roomba's turn for the given f_set and s_set values
+	
+						if theta_d > 0: #Rotates clockwise if theta_d is positive
+							s = s_set
+						elif theta_d < 0: #Rotates counterclockwise if theta_d is negative
+							s = s_set * -1
+						else:
+							s = 0
+						if theta_d > (math.pi / 2) or theta_d < (math.pi / -2): #If the end point is beyond 90 degrees in either direction, the roomba will rotate in place
+							f = 0
+						elif abs(2*radius*math.sin(theta_d)) > distance_to_end: #If the end point is within the circle that is drawn by the roomba's turn path, then the roomba will rotate in place 
+							f = 0
+						else:
+							f = f_set
 				Roomba.Move(f,s) #Makes the roomba move with the parameters given to
 				# Print and write the time, left encoder, right encoder, x position, y position, and theta
 				print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7},{8}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d,distance))
