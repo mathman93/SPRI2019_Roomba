@@ -67,7 +67,7 @@ Roomba.Move(0,50)
 while time.time()-start_time<20:
 	mag_x, mag_y, mag_z = imu.magnetic
 	print('{0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
-	file.write('{0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
+	file.write('{0:0.5f},{1:0.5f},{2:0.5f}\n'.format(mag_x, mag_y, mag_z))
 Roomba.Move(0,0)
 imu.CalibrateGyro()
 GPIO.setup(yled, GPIO.OUT, initial=GPIO.LOW)
