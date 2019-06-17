@@ -1,5 +1,5 @@
 ''' IMUDataTest.py
-Purpose: Read and save data from IMU while Roomba is moving
+Purpose: Read and display data from IMU
 Last Modified: 6/17/2019
 '''
 
@@ -50,32 +50,25 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	#print(x) # Include for debugging
 
 print(" ROOMBA Setup Complete")
-GPIO.setup(yled, GPIO.OUT, initial=GPIO.HIGH)
-# IMU Setup
+GPIO.output(yled, GPIO.HIGH)
+print(" Starting IMU...")
 imu = RoombaCI_lib.LSM9DS1_I2C()
-
-# Open a text file for data retrieval
-#file_name_input = input("Name for data file: ")
-#dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
-#file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
-#file = open(file_name, "w") # Open a text file for storing data
-	# Will overwrite anything that was in the text file previously
-
-# Add code here to calibrate IMU
-
+print(" Calibrating IMU...")
 Roomba.Move(0,100)
 imu.CalibrateMag()
 Roomba.Move(0,0)
-time.sleep(.1)
+time.sleep(0.1)
 imu.CalibrateGyro()
-GPIO.setup(yled, GPIO.OUT, initial=GPIO.LOW)
+print(" Calibration Complete")
+time.sleep(0.1)
 GPIO.output(gled, GPIO.LOW)
+GPIO.output(yled, GPIO.LOW)
+
 # Main Code #
 delay = 0.25 # time delay for data (in seconds)
 delay_time = delay
 base_time = time.time()
 # At this point the loop will repeat until 'Ctrl+C' is typed.
-Roomba.Move(100,40)
 while True:
 	try:
 		if time.time() - base_time > delay_time:
@@ -88,9 +81,9 @@ while True:
 			
 			# Print values
 			print('Time: {0:0.6f}'.format(data_time))
-			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f}'.format(time.time()-base_time,accel_x, accel_y, accel_z))
-			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f}'.format(time.time()-base_time,mag_x, mag_y, mag_z))
-			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f}'.format(time.time()-base_time,gyro_x, gyro_y, gyro_z))
+			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
+			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
+			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(gyro_x, gyro_y, gyro_z))
 			print('Temperature: {0:0.3f}C'.format(temp))
 			
 			# Add delay for next iteration
@@ -98,7 +91,7 @@ while True:
 
 	except KeyboardInterrupt:
 		break
-#file.close()
+
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection

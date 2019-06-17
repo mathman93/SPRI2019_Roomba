@@ -1,6 +1,6 @@
-''' WheelEncoderTestCode.py
-Purpose: Read wheel encoder values and calculate trajecotry
-Last Modified: 6/12/2019
+''' IMUtest.py
+Purpose: Read and save data from IMU while Roomba is moving
+Last Modified: 6/17/2019
 '''
 
 ## Import libraries ##
@@ -79,14 +79,19 @@ dict = {0:[0,0,2],
 	2:[0,0,2],
 	3:[0,50,5],
 	4:[0,0,2],
-	5:[50,50,2],
-	6:[0,0,2]}
+	5:[50,-50,5],
+	6:[50,50,5],
+	7:[0,0,2]
+	}
+
+# Get initial wheel encoder values
 [left_start,right_start]=Roomba.Query(43,44)
 
 # Variables and Constants
-y_position = 0
-x_position = 0
-theta = 0
+y_position = 0 # Position of Roomba along y-axis (in mm)
+x_position = 0 # Position of Roomba along x-axis (in mm)
+theta = 0 # Heading of Roomba (in radians)
+# Roomba Constants
 wheel_diameter = 72
 counts_per_rev = 508.8
 distance_between_wheels = 235
@@ -105,14 +110,34 @@ for i in range(len(dict.keys())):
 	while time.time() - start_time <=t:
 		# If data is available
 		if Roomba.Available()>0:
-			data_time2 = time.time()
+			data_time2 = time.time() - data_time
 			# Get left and right encoder values and find the change in each
 			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
+			# Read acceleration, magnetometer, gyroscope, and temperature data
+			accel_x, accel_y, accel_z = imu.acceleration
+			mag_x, mag_y, mag_z = imu.magnetic
+			gyro_x, gyro_y, gyro_z = imu.gyro
+			temp = imu.temperature
+			# Finds the change in the left and right wheel encoder values
 			delta_l = left_encoder-left_start
 			delta_r = right_encoder-right_start
+			#Checks if the encoder values have rolled over, and if so, subtracts/adds accordingly to assure normal delta values
+			if delta_l < -1*(2**15):
+				delta_l += (2**16)
+			elif delta_l > (2**15):
+				delta_l -+ (2**16)
+			if delta_r < -1*(2**15):
+				delta_r += (2**16)
+			elif delta_r > (2**15):
+				delta_r -+ (2**16)
 			# Determine the change in theta and what that is currently
 			delta_theta = (delta_l-delta_r)*C_theta
 			theta += delta_theta
+			# If theta great than 2pi subtract 2pi and vice versus. Normalize theta to 0-2pi to show what my heading is.
+			if theta >= 2*math.pi:
+				theta -= 2*math.pi
+			elif theta < 0:
+				theta += 2*math.pi
 			# Determine what method to use to find the change in distance
 			if delta_l-delta_r == 0:
 				delta_d = 0.5*(delta_l+delta_r)*distance_per_count
@@ -121,31 +146,32 @@ for i in range(len(dict.keys())):
 			# Find new x and y position
 			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
-			# Read acceleration, magnetometer, gyroscope, and temperature data
-			accel_x, accel_y, accel_z = imu.acceleration
-			mag_x, mag_y, mag_z = imu.magnetic
-			gyro_x, gyro_y, gyro_z = imu.gyro
-			temp = imu.temperature
 			
 			# Print values
-			print('Time: {0:0.6f}'.format(data_time2-data_time))
+			print('Time: {0:0.6f}'.format(data_time2))
 			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
 			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
 			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(gyro_x, gyro_y, gyro_z))
 			print('Temperature: {0:0.3f}C'.format(temp))
-			# Print and write the time, left encoder, right encoder, x position, y position, and theta
-			print("{0:0.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
-			#print("")
-			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f}\n".format(data_time2-data_time,accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z))
+			# Print the left encoder, right encoder, x position, y position, and theta
+			print('L/R Wheel Encoders (counts): {0},{1}'.format(left_encoder,right_encoder))
+			print('Roomba X/Y Position (mm): {0:.3f},{1:.3f}'.format(x_position,y_position))
+			print('Roomba Orientation (radians): {0:.6f}'.format(theta))
+			# Write IMU data and wheel encoder data to a file.
+			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11}\n"\
+				.format(data_time2, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_encoder, right_encoder))
 			left_start = left_encoder
 			right_start = right_encoder
+		# End if Roomba.Available()
+	# End while time.time() - start_time <=t:
 	start_time = time.time()
-Roomba.Move(0,0)
-Roomba.PauseQueryStream()
-if Roomba.Available()>0:
-	z = Roomba.DirectRead(Roomba.Available())
-	print(z)
-file.close()
+# End for i in range(len(dict.keys())):
+Roomba.Move(0,0) # Stop Roomba
+Roomba.PauseQueryStream() # Pause data stream
+if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
+	z = Roomba.DirectRead(Roomba.Available()) # Clear out excess Roomba data
+	#print(z) # Include for debugging
+file.close() # Close data file
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
