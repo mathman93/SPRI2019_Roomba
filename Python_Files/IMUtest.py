@@ -59,7 +59,7 @@ dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
 file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
 file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
-
+imu = RoombaCI_lib.LSM9DS1_I2C()
 Roomba.Move(0,100)
 imu.CalibrateMag()
 Roomba.Move(0,0)
