@@ -75,6 +75,7 @@ delay = 0.25 # time delay for data (in seconds)
 delay_time = delay
 base_time = time.time()
 # At this point the loop will repeat until 'Ctrl+C' is typed.
+Roomba.Move(100,40)
 while True:
 	try:
 		if time.time() - base_time > delay_time:
@@ -87,9 +88,9 @@ while True:
 			
 			# Print values
 			print('Time: {0:0.6f}'.format(data_time))
-			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
-			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
-			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(gyro_x, gyro_y, gyro_z))
+			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f}'.format(time.time()-base_time,accel_x, accel_y, accel_z))
+			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f}'.format(time.time()-base_time,mag_x, mag_y, mag_z))
+			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f}'.format(time.time()-base_time,gyro_x, gyro_y, gyro_z))
 			print('Temperature: {0:0.3f}C'.format(temp))
 			
 			# Add delay for next iteration
