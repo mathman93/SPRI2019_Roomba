@@ -69,9 +69,13 @@ imu.CalibrateGyro()
 start_time = time.time()
 
 # Dictionary of move commands
-dict = {0:[100,0,30],
-	1:[50,50,20],
-	2:[0,200,20],}
+dict = {0:[0,0,2],
+	1:[100,0,5],
+	2:[0,0,2],
+	3:[0,50,5],
+	0:[0,0,2]
+	4:[50,50,2],
+	5:[0,0,2]}
 [left_start,right_start]=Roomba.Query(43,44)
 
 # Variables and Constants
@@ -126,9 +130,9 @@ for i in range(len(dict.keys())):
 			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f}'.format(data_time2-data_time,gyro_x, gyro_y, gyro_z))
 			print('Temperature: {0:0.3f}C'.format(temp))
 			# Print and write the time, left encoder, right encoder, x position, y position, and theta
-			print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
-			print("")
-			file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
+			#print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
+			#print("")
+			file.write("{0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f}\n".format(data_time2-data_time,accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z))
 			left_start = left_encoder
 			right_start = right_encoder
 	start_time = time.time()
