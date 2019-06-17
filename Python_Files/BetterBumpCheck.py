@@ -68,8 +68,7 @@ start_time = time.time()
 # Variables and Constants
 ba_time = 1.0
 sp_time = 1.0
-#fw_time = 1.0
-bump_time = time.time() - (ba_time + sp_time + fw_time)
+bump_time = time.time() - (ba_time + sp_time)
 y_position = 0
 x_position = 0
 theta = 0
