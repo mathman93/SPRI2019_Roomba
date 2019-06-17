@@ -53,12 +53,21 @@ print(" ROOMBA Setup Complete")
 GPIO.setup(yled, GPIO.OUT, initial=GPIO.HIGH)
 # IMU Setup
 imu = RoombaCI_lib.LSM9DS1_I2C()
+
+# Open a text file for data retrieval
+#file_name_input = input("Name for data file: ")
+#dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+#file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
+#file = open(file_name, "w") # Open a text file for storing data
+	# Will overwrite anything that was in the text file previously
+
 # Add code here to calibrate IMU
 start_time = time.time()
 Roomba.Move(0,50)
 while time.time()-start_time<20:
 	mag_x, mag_y, mag_z = imu.magnetic
-	print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
+	print('{0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
+	file.write('{0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
 Roomba.Move(0,0)
 imu.CalibrateGyro()
 GPIO.setup(yled, GPIO.OUT, initial=GPIO.LOW)
