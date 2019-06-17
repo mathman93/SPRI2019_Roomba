@@ -1,6 +1,6 @@
-''' ChangeMoveOnFly.py
-Purpose: Change movement while robot is moving
-Last Modified: 6/12/2019
+''' BetterBumpCheck.py
+Purpose: Go to designated coordinate position while using bumpers and light bumpers to navigate around obstacles
+Last Modified: 6/17/2019
 '''
 
 ## Import libraries ##
@@ -105,7 +105,9 @@ while True:
 				# Get bump value, light bumper value, then get left and right encoder values and find the change in each
 				[bump, l_bump, left_encoder, right_encoder]=Roomba.ReadQueryStream(7,45,43,44)
 				delta_l = left_encoder-left_start
-				if delta_l < -1*(2**15): #Checks if the encoder values have rolled over, and if so, subtracts/adds accordingly to assure normal delta values
+
+				#Checks if the encoder values have rolled over, and if so, subtracts/adds accordingly to assure normal delta values
+				if delta_l < -1*(2**15):
 					delta_l += (2**16)
 				elif delta_l > (2**15):
 					delta_l -+ (2**16)
@@ -114,6 +116,7 @@ while True:
 					delta_r += (2**16)
 				elif delta_r > (2**15):
 					delta_r -+ (2**16)
+
 				# Determine the change in theta and what that is currently
 				delta_theta = (delta_l-delta_r)*C_theta
 				theta += delta_theta
@@ -156,13 +159,14 @@ while True:
 				fr_l_bump = int((l_bump % 32) / 16)
 				r_l_bump = int((l_bump % 64) / 32)				
 				
-				if(bump%4) > 0:
+				#Main code determining movement of the roomba				
+				if(bump%4) > 0: #If a bump is detected...
 					bump_time = time.time() #Sets up timer
 					bump_code = (bump%4) #Will tell if left/right/center bump
-				if time.time() - bump_time < ba_time:
+				if time.time() - bump_time < ba_time: #If before backing up time is up...
 					f = -40 #Back up
 					s = 0
-				elif time.time() - bump_time < (ba_time + sp_time):
+				elif time.time() - bump_time < (ba_time + sp_time): #If before spinning time is up...
 					if bump_code == 1: #If bump right
 						f = 0
 						s = -50 #Spin counterclockwise
@@ -172,26 +176,23 @@ while True:
 					if bump_code == 3: #If bump center
 						f = 0
 						s = 100 #Spin clockwise faster
-				else:
+				else: #Gives movement commands based on light sensor detection
 					if fl_l_bump or cl_l_bump or cr_l_bump or fr_l_bump: #If any center four light sensors are tripped...
 						if cr_l_bump or fr_l_bump: #If one of the right sensors is tripped...
 							f = 0
 							s = -50 #Spin counterclockwise
 						else:	#If one of the left sensors is tripped...
 							f = 0
-							s = 50
-					elif l_l_bump or r_l_bump:
-						f = 80
+							s = 50 #Spin clockwise
+					elif l_l_bump or r_l_bump: #If only the far left or far right sensors are tripped...
+						f = 80 #Go forward
 						s = 0
-					#elif time.time() - bump_time < (ba_time + sp_time + fw_time):
-						#f = 120 #Forward
-						#s = 0
-					else:
+					else: #Gives movement if nothing is in the way
 						if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 radians...
 							s_set = 100 # Spin faster
 						elif abs(theta_d) > (math.pi / 36): #If theta_d is getting closer...
 							s_set = 60 # Spin normal speed
-						else: # otherwise, if theta_d is fairly small
+						else: # otherwise, if theta_d is fairly small...
 							s_set = 20 # Spin slow
 						if distance_to_end > 150: #If distance_to_end is greater than 150 mm...
 							f_set = 120 #Go faster
@@ -214,7 +215,7 @@ while True:
 							f = 0
 						else:
 							f = f_set
-				Roomba.Move(f,s) #Makes the roomba move with the parameters given to
+				Roomba.Move(f,s) #Makes the roomba move with the parameters given to it
 				# Print and write the time, left encoder, right encoder, x position, y position, and theta
 				print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7},{8}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d,distance))
 				print("")
