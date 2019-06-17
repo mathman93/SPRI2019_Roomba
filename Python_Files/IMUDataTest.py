@@ -100,7 +100,7 @@ while True:
 
 	except KeyboardInterrupt:
 		break
-
+file.close()
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
