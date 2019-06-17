@@ -1,6 +1,6 @@
-''' SpinChange.py
-Purpose: Change movement while robot is moving
-Last Modified: 6/14/2019
+''' IMUDataTest.py
+Purpose: Read and save data from IMU while Roomba is moving
+Last Modified: 6/17/2019
 '''
 
 ## Import libraries ##
@@ -24,7 +24,6 @@ def DisplayDateTime():
 	# Month day, Year, Hour:Minute:Seconds
 	date_time = time.strftime("%B %d, %Y, %H:%M:%S", time.gmtime())
 	print("Program run: ", date_time)
-
 
 ## -- Code Starts Here -- ##
 # Setup Code #
@@ -52,7 +51,8 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 
 print(" ROOMBA Setup Complete")
 # IMU Setup
-sensor = RoombaCI_lib.LSM9DS1_I2C()
+imu = RoombaCI_lib.LSM9DS1_I2C()
+# Add code here to calibrate IMU
 
 GPIO.output(gled, GPIO.LOW)
 
@@ -66,10 +66,10 @@ while True:
 		if time.time() - base_time > delay_time:
 			# Read acceleration, magnetometer, gyroscope, and temperature data
 			data_time = time.time() - base_time
-			accel_x, accel_y, accel_z = sensor.acceleration
-			mag_x, mag_y, mag_z = sensor.magnetic
-			gyro_x, gyro_y, gyro_z = sensor.gyro
-			temp = sensor.temperature
+			accel_x, accel_y, accel_z = imu.acceleration
+			mag_x, mag_y, mag_z = imu.magnetic
+			gyro_x, gyro_y, gyro_z = imu.gyro
+			temp = imu.temperature
 			
 			# Print values
 			print('Time: {0:0.6f}'.format(data_time))
