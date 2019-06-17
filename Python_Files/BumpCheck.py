@@ -66,6 +66,10 @@ start_time = time.time()
 [left_start,right_start]=Roomba.Query(43,44)
 
 # Variables and Constants
+ba_time = 1.0
+sp_time = 1.0
+fw_time = 1.0
+bump_time = time.time() - (ba_time + sp_time + fw_time)
 y_position = 0
 x_position = 0
 theta = 0
@@ -90,7 +94,7 @@ theta_d = theta_initial-theta
 print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(0,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d))
 
 #file.write("{0},{1},{2},{3},{4},{5}\n".format(0,left_start, right_start,x_position,y_position,theta))
-Roomba.StartQueryStream(43,44)
+Roomba.StartQueryStream(43,44,7)
 
 while True:
 	try:
@@ -99,8 +103,8 @@ while True:
 			if Roomba.Available()>0:
 
 				data_time2 = time.time()
-				# Get left and right encoder values and find the change in each
-				[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
+				# Get bump value, then get left and right encoder values and find the change in each
+				[bump, left_encoder, right_encoder]=Roomba.ReadQueryStream(7,43,44)
 				delta_l = left_encoder-left_start
 				if delta_l < -1*(2**15): #Checks if the encoder values have rolled over, and if so, subtracts/adds accordingly to assure normal delta values
 					delta_l += (2**16)
@@ -144,34 +148,51 @@ while True:
 				# get theta_d between -pi and pi
 				if theta_d > math.pi:
 					theta_d -= 2*math.pi
-
-				if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 radians...
-					s_set = 100 # Spin faster
-				elif abs(theta_d) > (math.pi / 36): #If theta_d is getting closer...
-					s_set = 60 # Spin normal speed
-				else: # otherwise, if theta_d is fairly small
-					s_set = 20 # Spin slow
-				if distance_to_end > 150: #If distance_to_end is greater than 150 mm...
-					f_set = 120 #Go faster
-				elif distance_to_end > 50: # If distance_to_end is greater than 50 mm...
-					f_set = 80 #Go fast
-				else: #otherwise, if distance_to_end is less than 50 mm...
-					f_set = 40 #Go slow
-
-				radius = ((235 / 2) * (f_set / s_set)) #Radius of circle of the roomba's turn for the given f_set and s_set values
-
-				if theta_d > 0: #Rotates clockwise if theta_d is positive
-					s = s_set
-				elif theta_d < 0: #Rotates counterclockwise if theta_d is negative
-					s = s_set * -1
-				else:
+				
+				if(bump%4) > 0:
+					bump_time = time.time() #Sets up timer
+					bump_code = (bump%4) #Will tell if left/right/center bump
+				if time.time() - bump_time < ba_time:
+					f = -100 #Back up
 					s = 0
-				if theta_d > (math.pi / 2) or theta_d < (math.pi / -2): #If the end point is beyond 90 degrees in either direction, the roomba will rotate in place
-					f = 0
-				elif abs(2*radius*math.sin(theta_d)) > distance_to_end: #If the end point is within the circle that is drawn by the roomba's turn path, then the roomba will rotate in place 
-					f = 0
+				elif time.time() - bump_time < (ba_time + sp_time):
+					if bump_code == 1: #If bump right
+						f = 0
+						s = -50 #Spin counterclockwise
+					if bump_code == 2 or bump_code == 3: #If bump left or center
+						f = 0
+						s = 50 #Spin clockwise
+				elif time.time() - bump_time < (ba_time + sp_time + fw_time)
+					f = 120 #Forward
+					s = 0
 				else:
-					f = f_set
+					if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 radians...
+						s_set = 100 # Spin faster
+					elif abs(theta_d) > (math.pi / 36): #If theta_d is getting closer...
+						s_set = 60 # Spin normal speed
+					else: # otherwise, if theta_d is fairly small
+						s_set = 20 # Spin slow
+					if distance_to_end > 150: #If distance_to_end is greater than 150 mm...
+						f_set = 120 #Go faster
+					elif distance_to_end > 50: # If distance_to_end is greater than 50 mm...
+						f_set = 80 #Go fast
+					else: #otherwise, if distance_to_end is less than 50 mm...
+						f_set = 40 #Go slow
+
+					radius = ((235 / 2) * (f_set / s_set)) #Radius of circle of the roomba's turn for the given f_set and s_set values
+
+					if theta_d > 0: #Rotates clockwise if theta_d is positive
+						s = s_set
+					elif theta_d < 0: #Rotates counterclockwise if theta_d is negative
+						s = s_set * -1
+					else:
+						s = 0
+					if theta_d > (math.pi / 2) or theta_d < (math.pi / -2): #If the end point is beyond 90 degrees in either direction, the roomba will rotate in place
+						f = 0
+					elif abs(2*radius*math.sin(theta_d)) > distance_to_end: #If the end point is within the circle that is drawn by the roomba's turn path, then the roomba will rotate in place 
+						f = 0
+					else:
+						f = f_set
 				Roomba.Move(f,s) #Makes the roomba move with the parameters given to
 				# Print and write the time, left encoder, right encoder, x position, y position, and theta
 				print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7},{8}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d,distance))
