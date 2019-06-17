@@ -91,7 +91,7 @@ while True: #Loop that asks for initial x and y coordinates
 
 distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2) #Calculates distance to endpoint at designated coordinates
 theta_initial = math.atan2((y_final-y_position),(x_final-x_position)) #Angle of the line between the roomba and the endpoint from zero
-theta_d = theta_initial-theta #How many radians the roomba must rotate before it is facing the endpoint
+theta_d = ((theta_initial-theta)%(2 * math.pi)) #How many radians the roomba must rotate before it is facing the endpoint
 print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(0,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d))
 
 Roomba.StartQueryStream(43,44,7,45) #Begins receiving data from the left and right wheel encoders, the bumper, and the light bumper
@@ -103,16 +103,18 @@ while True:
 			if Roomba.Available()>0:
 
 				data_time2 = time.time()
-				# Get bump value, light bumper value, then get left and right encoder values and find the change in each
+				# Get bump value, light bumper value, left and right encoder values
 				[bump, l_bump, left_encoder, right_encoder]=Roomba.ReadQueryStream(7,45,43,44)
+				
+				# Finds the change in the left and right wheel encoder values
 				delta_l = left_encoder-left_start
+				delta_r = right_encoder-right_start
 
 				#Checks if the encoder values have rolled over, and if so, subtracts/adds accordingly to assure normal delta values
 				if delta_l < -1*(2**15):
 					delta_l += (2**16)
 				elif delta_l > (2**15):
 					delta_l -+ (2**16)
-				delta_r = right_encoder-right_start
 				if delta_r < -1*(2**15):
 					delta_r += (2**16)
 				elif delta_r > (2**15):
@@ -126,8 +128,9 @@ while True:
 					theta -= 2*math.pi
 				elif theta < 0:
 					theta += 2*math.pi
-				# Determine what method to use to find the change in distance
-				if delta_l-delta_r == 0:		
+
+				#Conditional statements that calculate change in distance according to whether or not the roomba is going straight(delta_l - delta_r = 0)
+				if delta_l-delta_r == 0:
 					delta_d = 0.5*(delta_l+delta_r)*distance_per_count
 					delta_distance = delta_d
 				else:
@@ -146,7 +149,7 @@ while True:
 				if theta_initial <0:
 					theta_initial += 2*math.pi
 				# Calculate theta_d and normalize it to 0-2pi
-				# This value is the difference between the direction were supposed to be going and the direction we are going
+				# This value is the difference between the direction the roomba is supposed to be going and the direction it is actually going
 				theta_d = ((theta_initial-theta)%(2*math.pi))
 				# get theta_d between -pi and pi
 				if theta_d > math.pi:
