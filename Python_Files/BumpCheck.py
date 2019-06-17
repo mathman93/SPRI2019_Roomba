@@ -104,7 +104,7 @@ while True:
 
 				data_time2 = time.time()
 				# Get bump value, light bumper value, then get left and right encoder values and find the change in each
-				[bump, l_bump left_encoder, right_encoder]=Roomba.ReadQueryStream(7,45,43,44)
+				[bump, l_bump, left_encoder, right_encoder]=Roomba.ReadQueryStream(7,45,43,44)
 				delta_l = left_encoder-left_start
 				if delta_l < -1*(2**15): #Checks if the encoder values have rolled over, and if so, subtracts/adds accordingly to assure normal delta values
 					delta_l += (2**16)
