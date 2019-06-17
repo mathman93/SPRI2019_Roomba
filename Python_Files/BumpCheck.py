@@ -94,7 +94,7 @@ theta_d = theta_initial-theta
 print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(0,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d))
 
 #file.write("{0},{1},{2},{3},{4},{5}\n".format(0,left_start, right_start,x_position,y_position,theta))
-Roomba.StartQueryStream(43,44,7)
+Roomba.StartQueryStream(43,44,7,45)
 
 while True:
 	try:
@@ -103,8 +103,8 @@ while True:
 			if Roomba.Available()>0:
 
 				data_time2 = time.time()
-				# Get bump value, then get left and right encoder values and find the change in each
-				[bump, left_encoder, right_encoder]=Roomba.ReadQueryStream(7,43,44)
+				# Get bump value, light bumper value, then get left and right encoder values and find the change in each
+				[bump, l_bump left_encoder, right_encoder]=Roomba.ReadQueryStream(7,45,43,44)
 				delta_l = left_encoder-left_start
 				if delta_l < -1*(2**15): #Checks if the encoder values have rolled over, and if so, subtracts/adds accordingly to assure normal delta values
 					delta_l += (2**16)
@@ -196,6 +196,8 @@ while True:
 						f = 0
 					else:
 						f = f_set
+				if l_bump > 0:
+					f = f / 2
 				Roomba.Move(f,s) #Makes the roomba move with the parameters given to
 				# Print and write the time, left encoder, right encoder, x position, y position, and theta
 				print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7},{8}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d,distance))
