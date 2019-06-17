@@ -72,7 +72,7 @@ while True:
 			temp = sensor.temperature
 			
 			# Print values
-			print('Time: ({0:0.6f})'.format(data_time))
+			print('Time: {0:0.6f}'.format(data_time))
 			print('Acceleration (m/s^2): ({0:0.5f},{1:0.5f},{2:0.5f})'.format(accel_x, accel_y, accel_z))
 			print('Magnetometer (gauss): ({0:0.5f},{1:0.5f},{2:0.5f})'.format(mag_x, mag_y, mag_z))
 			print('Gyroscope (degrees/sec): ({0:0.5f},{1:0.5f},{2:0.5f})'.format(gyro_x, gyro_y, gyro_z))
