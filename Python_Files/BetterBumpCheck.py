@@ -66,19 +66,20 @@ start_time = time.time()
 [left_start,right_start]=Roomba.Query(43,44)
 
 # Variables and Constants
-ba_time = 1.0
-sp_time = 1.0
-bump_time = time.time() - (ba_time + sp_time)
-y_position = 0
-x_position = 0
-theta = 0
-distance = 0
+ba_time = 1.0 #Amount of time that the roomba will back up after bumping into an object
+sp_time = 1.0 #Amount of time that the roomba will rotate after backing up after bumping into an object
+bump_time = time.time() - (ba_time + sp_time) #Initializes the bump timer, make sure the code starts in "goal mode"
+y_position = 0 #Initial y position that the roomba thinks it is at
+x_position = 0 #Initial x position that the roomba thinks it is at
+theta = 0 #Starting rotation (in radians) that the roomba thinks it stars at
+distance = 0 #Total distance the roomba thinks it has travelled
 wheel_diameter = 72
 counts_per_rev = 508.8
 distance_between_wheels = 235
-C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
+C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels) 
 distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 data_time = time.time()
+
 while True: #Loop that asks for initial x and y coordinates
 	try:
 		x_final = float(input("x position:"))
@@ -87,13 +88,13 @@ while True: #Loop that asks for initial x and y coordinates
 	except ValueError:
 		print("Please input a number")
 		continue
-distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
-theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
-theta_d = theta_initial-theta
+
+distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2) #Calculates distance to endpoint at designated coordinates
+theta_initial = math.atan2((y_final-y_position),(x_final-x_position)) #Angle of the line between the roomba and the endpoint from zero
+theta_d = theta_initial-theta #How many radians the roomba must rotate before it is facing the endpoint
 print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7}".format(0,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d))
 
-#file.write("{0},{1},{2},{3},{4},{5}\n".format(0,left_start, right_start,x_position,y_position,theta))
-Roomba.StartQueryStream(43,44,7,45)
+Roomba.StartQueryStream(43,44,7,45) #Begins receiving data from the left and right wheel encoders, the bumper, and the light bumper
 
 while True:
 	try:
@@ -219,7 +220,6 @@ while True:
 				# Print and write the time, left encoder, right encoder, x position, y position, and theta
 				print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7},{8}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d,distance))
 				print("")
-				#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
 				left_start = left_encoder
 				right_start = right_encoder
 		Roomba.PauseQueryStream() #Pauses the query stream while new coordinates are being input
@@ -245,7 +245,7 @@ if Roomba.Available()>0:
 	z = Roomba.DirectRead(Roomba.Available())
 	print(z)
 time.sleep(0.1)
-#file.close()
+
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
