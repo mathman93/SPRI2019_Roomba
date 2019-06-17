@@ -74,7 +74,7 @@ Roomba.Move(0,40)
 while time.time()-start_time<20:
 	accel_x, accel_y, accel_z = imu.acceleration
 	print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
-	file.write({0:0.5f},{1:0.5f},{2:0.5f}\n'.format(accel_x, accel_y, accel_z))
+	file.write('{0:0.5f},{1:0.5f},{2:0.5f}\n'.format(accel_x, accel_y, accel_z))
 # Main Code #
 delay = 0.25 # time delay for data (in seconds)
 delay_time = delay
