@@ -55,10 +55,10 @@ GPIO.setup(yled, GPIO.OUT, initial=GPIO.HIGH)
 imu = RoombaCI_lib.LSM9DS1_I2C()
 
 # Open a text file for data retrieval
-file_name_input = input("Name for data file: ")
-dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
-file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
-file = open(file_name, "w") # Open a text file for storing data
+#file_name_input = input("Name for data file: ")
+#dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+#file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
+#file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
 
 # Add code here to calibrate IMU
@@ -70,13 +70,6 @@ time.sleep(.1)
 imu.CalibrateGyro()
 GPIO.setup(yled, GPIO.OUT, initial=GPIO.LOW)
 GPIO.output(gled, GPIO.LOW)
-start_time = time.time()
-Roomba.Move(0,40)
-while time.time()-start_time<20:
-	accel_x, accel_y, accel_z = imu.acceleration
-	print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
-	file.write('{0:0.5f},{1:0.5f},{2:0.5f}\n'.format(accel_x, accel_y, accel_z))
-Roomba.Move(0,0)
 # Main Code #
 delay = 0.25 # time delay for data (in seconds)
 delay_time = delay
@@ -104,7 +97,7 @@ while True:
 
 	except KeyboardInterrupt:
 		break
-file.close()
+#file.close()
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
