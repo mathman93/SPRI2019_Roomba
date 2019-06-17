@@ -160,7 +160,7 @@ while True:
 					bump_time = time.time() #Sets up timer
 					bump_code = (bump%4) #Will tell if left/right/center bump
 				if time.time() - bump_time < ba_time:
-					f = -100 #Back up
+					f = -25 #Back up
 					s = 0
 				elif time.time() - bump_time < (ba_time + sp_time):
 					if bump_code == 1: #If bump right
