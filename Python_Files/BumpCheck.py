@@ -159,9 +159,12 @@ while True:
 					if bump_code == 1: #If bump right
 						f = 0
 						s = -50 #Spin counterclockwise
-					if bump_code == 2 or bump_code == 3: #If bump left or center
+					if bump_code == 2: #If bump left
 						f = 0
-						s = 100 #Spin clockwise
+						s = 50 #Spin clockwise
+					if bump_code == 3: #If bump center
+						f = 0
+						s = 100 #Spin clockwise faster
 				elif time.time() - bump_time < (ba_time + sp_time + fw_time):
 					f = 120 #Forward
 					s = 0
