@@ -123,10 +123,10 @@ for i in range(len(dict.keys())):
 			temp = imu.temperature
 			
 			# Print values
-			print('Time: {0:0.6f}'.format(data_time))
-			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f}'.format(data_time2-data_time,accel_x, accel_y, accel_z))
-			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f}'.format(data_time2-data_time,mag_x, mag_y, mag_z))
-			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f}'.format(data_time2-data_time,gyro_x, gyro_y, gyro_z))
+			print('Time: {0:0.6f}'.format(data_time2-data_time))
+			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
+			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
+			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(gyro_x, gyro_y, gyro_z))
 			print('Temperature: {0:0.3f}C'.format(temp))
 			# Print and write the time, left encoder, right encoder, x position, y position, and theta
 			#print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
