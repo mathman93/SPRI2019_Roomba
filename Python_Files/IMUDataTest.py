@@ -62,7 +62,7 @@ file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
 
 # Add code here to calibrate IMU
-start_time = time.time()
+
 Roomba.Move(0,100)
 imu.CalibrateMag()
 Roomba.Move(0,0)
@@ -70,11 +70,13 @@ time.sleep(.1)
 imu.CalibrateGyro()
 GPIO.setup(yled, GPIO.OUT, initial=GPIO.LOW)
 GPIO.output(gled, GPIO.LOW)
+start_time = time.time()
 Roomba.Move(0,40)
 while time.time()-start_time<20:
 	accel_x, accel_y, accel_z = imu.acceleration
 	print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
 	file.write('{0:0.5f},{1:0.5f},{2:0.5f}\n'.format(accel_x, accel_y, accel_z))
+Roomba.Move(0,0)
 # Main Code #
 delay = 0.25 # time delay for data (in seconds)
 delay_time = delay
