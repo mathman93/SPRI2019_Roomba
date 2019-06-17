@@ -55,8 +55,8 @@ GPIO.setup(yled, GPIO.OUT, initial=GPIO.HIGH)
 imu = RoombaCI_lib.LSM9DS1_I2C()
 # Add code here to calibrate IMU
 start_time = time.time()
+Roomba.Move(0,50)
 while time.time()-start_time<20:
-	Roomba.Move(0,50)
 	mag_x, mag_y, mag_z = imu.magnetic
 	print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
 Roomba.Move(0,0)
