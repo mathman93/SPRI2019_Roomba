@@ -148,6 +148,14 @@ while True:
 				# get theta_d between -pi and pi
 				if theta_d > math.pi:
 					theta_d -= 2*math.pi
+
+				#Variables indicating which light bumpers have been tripped
+				l_l_bump = int(l_bump % 2)
+				fl_l_bump = int((l_bump % 4) / 2)
+				cl_l_bump = int((l_bump % 8) / 4)
+				cr_l_bump = int((l_bump % 16) / 8)
+				fr_l_bump = int((l_bump % 32) / 16)
+				r_l_bump = int((l_bump % 64) / 32)				
 				
 				if(bump%4) > 0:
 					bump_time = time.time() #Sets up timer
@@ -165,9 +173,19 @@ while True:
 					if bump_code == 3: #If bump center
 						f = 0
 						s = 100 #Spin clockwise faster
-				elif time.time() - bump_time < (ba_time + sp_time + fw_time):
-					f = 120 #Forward
+				if fl_l_bump or cl_l_bump or cr_l_bump or fr_l_bump: #If any center four light sensors are tripped...
+					if cr_l_bump or fr_l_bump: #If one of the right sensors is tripped...
+						f = 0
+						s = -50 #Spin counterclockwise
+					else:	#If one of the left sensors is tripped...
+						f = 0
+						s = 50
+				elif l_l_bump or r_l_bump:
+					f = 80
 					s = 0
+				#elif time.time() - bump_time < (ba_time + sp_time + fw_time):
+					#f = 120 #Forward
+					#s = 0
 				else:
 					if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 radians...
 						s_set = 100 # Spin faster
@@ -196,8 +214,6 @@ while True:
 						f = 0
 					else:
 						f = f_set
-					if l_bump > 0: #If the light bumper detects anything
-						f = int(f_set / 2) #Goes forward at half speed
 				Roomba.Move(f,s) #Makes the roomba move with the parameters given to
 				# Print and write the time, left encoder, right encoder, x position, y position, and theta
 				print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7},{8}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d,distance))
