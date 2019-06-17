@@ -54,14 +54,25 @@ print(" ROOMBA Setup Complete")
 GPIO.output(yled, GPIO.HIGH)
 print(" Starting IMU...")
 imu = RoombaCI_lib.LSM9DS1_I2C()
+time.sleep(0.1)
+# Clear out first reading from all sensors (They can sometimes be bad)
+x = imu.magnetic
+x = imu.acceleration
+x = imu.gyro
+# Calibrate the magnetometer and the gyroscope
 print(" Calibrating IMU...")
-Roomba.Move(0,100)
-imu.CalibrateMag()
-Roomba.Move(0,0)
-time.sleep(0.1)
-imu.CalibrateGyro()
+Roomba.Move(0,100) # Start the Roomba spinning
+imu.CalibrateMag() # Determine magnetometer offset values
+Roomba.Move(0,0) # Stop the Roomba
+time.sleep(0.1) # Wait for the Roomba to settle
+imu.CalibrateGyro() # Determine gyroscope offset values
+# Display offset values
+print("mx_offset = {:f}; my_offset = {:f}; mz_offset = {:f}"\
+	.format(imu.m_offset[0], imu.m_offset[1], imu.m_offset[2]))
+print("gx_offset = {:f}; gy_offset = {:f}; gz_offset = {:f}"\
+	.format(imu.g_offset[0], imu.g_offset[1], imu.g_offset[2]))
 print(" Calibration Complete")
-time.sleep(0.1)
+time.sleep(1.0) # Give some time to read the offset values
 GPIO.output(gled, GPIO.LOW)
 GPIO.output(yled, GPIO.LOW)
 
