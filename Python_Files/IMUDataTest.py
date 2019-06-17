@@ -58,24 +58,26 @@ GPIO.output(gled, GPIO.LOW)
 
 # Main Code #
 delay = 0.25 # time delay for data (in seconds)
+base_time = time.time()
 # At this point the loop will repeat until 'Ctrl+C' is typed.
 while True:
 	try:
-		# Read acceleration, magnetometer, gyroscope, and temperature data
-		accel_x, accel_y, accel_z = sensor.acceleration
-		mag_x, mag_y, mag_z = sensor.magnetic
-		gyro_x, gyro_y, gyro_z = sensor.gyro
-		temp = sensor.temperature
-		
-		# Print values
-		print('Acceleration (m/s^2): ({0:0.5f},{1:0.5f},{2:0.5f})'.format(accel_x, accel_y, accel_z))
-		print('Magnetometer (gauss): ({0:0.5f},{1:0.5f},{2:0.5f})'.format(mag_x, mag_y, mag_z))
-		print('Gyroscope (degrees/sec): ({0:0.5f},{1:0.5f},{2:0.5f})'.format(gyro_x, gyro_y, gyro_z))
-		print('Temperature: {0:0.3f}C'.format(temp))
-		print('\n')
-		
-		#Delay
-		time.sleep(delay)
+		if time.time() - base_time > delay:
+			# Read acceleration, magnetometer, gyroscope, and temperature data
+			accel_x, accel_y, accel_z = sensor.acceleration
+			mag_x, mag_y, mag_z = sensor.magnetic
+			gyro_x, gyro_y, gyro_z = sensor.gyro
+			temp = sensor.temperature
+			
+			# Print values
+			print('Acceleration (m/s^2): ({0:0.5f},{1:0.5f},{2:0.5f})'.format(accel_x, accel_y, accel_z))
+			print('Magnetometer (gauss): ({0:0.5f},{1:0.5f},{2:0.5f})'.format(mag_x, mag_y, mag_z))
+			print('Gyroscope (degrees/sec): ({0:0.5f},{1:0.5f},{2:0.5f})'.format(gyro_x, gyro_y, gyro_z))
+			print('Temperature: {0:0.3f}C'.format(temp))
+			
+			# Add delay for next iteration
+			base_time += delay
+
 	except KeyboardInterrupt:
 		break
 
