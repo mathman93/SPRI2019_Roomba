@@ -117,7 +117,6 @@ for i in range(len(dict.keys())):
 			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
 			# Read acceleration, magnetometer, gyroscope, and temperature data
-			data_time = time.time() - base_time
 			accel_x, accel_y, accel_z = imu.acceleration
 			mag_x, mag_y, mag_z = imu.magnetic
 			gyro_x, gyro_y, gyro_z = imu.gyro
