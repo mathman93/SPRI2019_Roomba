@@ -162,7 +162,7 @@ while True:
 					if bump_code == 2 or bump_code == 3: #If bump left or center
 						f = 0
 						s = 50 #Spin clockwise
-				elif time.time() - bump_time < (ba_time + sp_time + fw_time)
+				elif time.time() - bump_time < (ba_time + sp_time + fw_time):
 					f = 120 #Forward
 					s = 0
 				else:
