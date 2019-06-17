@@ -353,7 +353,7 @@ class LSM9DS1_I2C(I2CDevice):
 	def temperature(self):
 		# The temperature of the sensor in degrees Celsius.
 		temp = self.read_temp_raw()
-		temp = 27.5 + temp/16
+		temp = 25.0 + temp/16
 		return temp
 	
 	''' Determines offset parameters for magnetometer
