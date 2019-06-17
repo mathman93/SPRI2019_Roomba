@@ -50,6 +50,7 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	#print(x) # Include for debugging
 
 print(" ROOMBA Setup Complete")
+GPIO.setup(yled, GPIO.OUT, initial=GPIO.HIGH)
 # IMU Setup
 imu = RoombaCI_lib.LSM9DS1_I2C()
 # Add code here to calibrate IMU
@@ -59,7 +60,7 @@ while time.time<20
 	print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
 Roomba.Move(0,0)
 imu.CalibrateGyro()
-
+GPIO.setup(yled, GPIO.OUT, initial=GPIO.LOW)
 GPIO.output(gled, GPIO.LOW)
 
 # Main Code #
