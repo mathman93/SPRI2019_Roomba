@@ -53,7 +53,7 @@ print(" ROOMBA Setup Complete")
 # IMU Setup
 imu = RoombaCI_lib.LSM9DS1_I2C()
 # Add code here to calibrate IMU
-imu.CalibrateGryo
+imu.CalibrateGryo()
 
 GPIO.output(gled, GPIO.LOW)
 
