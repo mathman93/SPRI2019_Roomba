@@ -197,7 +197,7 @@ while True:
 					else:
 						f = f_set
 				if l_bump > 0:
-					f = f / 2
+					f = int(f / 2)
 				Roomba.Move(f,s) #Makes the roomba move with the parameters given to
 				# Print and write the time, left encoder, right encoder, x position, y position, and theta
 				print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6},{7},{8}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta,distance_to_end,theta_d,distance))
