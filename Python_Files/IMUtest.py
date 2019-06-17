@@ -51,7 +51,20 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	#print(x) # Include for debugging
 
 print(" ROOMBA Setup Complete")
+GPIO.output(yled, GPIO.HIGH)
+print(" Starting IMU...")
+imu = RoombaCI_lib.LSM9DS1_I2C()
+print(" Calibrating IMU...")
+Roomba.Move(0,100)
+imu.CalibrateMag()
+Roomba.Move(0,0)
+time.sleep(0.1)
+imu.CalibrateGyro()
+print(" Calibration Complete")
+time.sleep(0.1)
 GPIO.output(gled, GPIO.LOW)
+GPIO.output(yled, GPIO.LOW)
+
 # Main Code #
 # Open a text file for data retrieval
 file_name_input = input("Name for data file: ")
@@ -59,14 +72,6 @@ dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
 file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
 file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
-imu = RoombaCI_lib.LSM9DS1_I2C()
-Roomba.Move(0,100)
-imu.CalibrateMag()
-Roomba.Move(0,0)
-time.sleep(.1)
-imu.CalibrateGyro()
-
-start_time = time.time()
 
 # Dictionary of move commands
 dict = {0:[0,0,2],
@@ -87,11 +92,11 @@ counts_per_rev = 508.8
 distance_between_wheels = 235
 C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
 distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
+
+start_time = time.time()
 data_time = time.time()
 
-file.write("{0},{1},{2},{3},{4},{5}\n".format(0,left_start, right_start,x_position,y_position,theta))
 Roomba.StartQueryStream(43,44)
-
 
 for i in range(len(dict.keys())):
 	# Get peices of dictionary and tell the roomba to move
@@ -129,9 +134,9 @@ for i in range(len(dict.keys())):
 			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(gyro_x, gyro_y, gyro_z))
 			print('Temperature: {0:0.3f}C'.format(temp))
 			# Print and write the time, left encoder, right encoder, x position, y position, and theta
-			#print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
+			print("{0:0.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
 			#print("")
-			file.write("{0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f}\n".format(data_time2-data_time,accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z))
+			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f}\n".format(data_time2-data_time,accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z))
 			left_start = left_encoder
 			right_start = right_encoder
 	start_time = time.time()
