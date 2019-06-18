@@ -153,7 +153,7 @@ for i in range(len(dict.keys())):
 			# Get left and right encoder values and find the change in each
 			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
 			# Read acceleration, magnetometer, gyroscope, and temperature data
-			accel_xyz = imu.acceleration
+			accel_x, accel_y, accel_z = imu.acceleration
 			mag_xyz = imu.magnetic
 			gyro_xyz = imu.gyro
 			temp = imu.temperature
@@ -188,7 +188,7 @@ for i in range(len(dict.keys())):
 
 			# Calculate inertial force vector (i.e., direction of "up")
 			# Get readings from the accelerometer
-			R_acc = np.array(accel_xyz)
+			R_acc = np.array([accel_x, accel_y, accel_z]))
 			R_acc_length = np.linalg.norm(R_acc)
 			R_acc = (1/R_acc_length) * R_acc # Normalize acceleration values
 			# Calculate updated angles of the force vector using the gyroscope
