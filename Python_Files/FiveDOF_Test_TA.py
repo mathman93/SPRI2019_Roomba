@@ -154,8 +154,8 @@ for i in range(len(dict.keys())):
 			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
 			# Read acceleration, magnetometer, gyroscope, and temperature data
 			accel_x, accel_y, accel_z = imu.acceleration
-			mag_xyz = imu.magnetic
-			gyro_xyz = imu.gyro
+			mag_x, mag_y, mag_z = imu.magnetic
+			gyro_x, gyro_y, gyro_z = imu.gyro
 			temp = imu.temperature
 			# Finds the change in the left and right wheel encoder values
 			delta_l = left_encoder-left_start
@@ -192,8 +192,8 @@ for i in range(len(dict.keys())):
 			R_acc_length = np.linalg.norm(R_acc)
 			R_acc = (1/R_acc_length) * R_acc # Normalize acceleration values
 			# Calculate updated angles of the force vector using the gyroscope
-			theta_xz = math.atan2(R_est[0],R_est[2]) + (math.radians(0.5*(gyro_xyz[0]+gyro_init[0]))*delta_time)
-			theta_yz = math.atan2(R_est[1],R_est[2]) + (math.radians(0.5*(gyro_xyz[1]+gyro_init[1]))*delta_time)
+			theta_xz = math.atan2(R_est[0],R_est[2]) + (math.radians(0.5*(gyro_y+gyro_init[1]))*delta_time)
+			theta_yz = math.atan2(R_est[1],R_est[2]) + (math.radians(0.5*(gyro_x+gyro_init[0]))*delta_time)
 
 			R_gyro = np.zeros(R_acc.shape)
 			R_gyro[0] = math.sin(theta_xz)/math.sqrt(1 + (math.cos(theta_xz)*math.tan(theta_yz))**2)
@@ -229,7 +229,7 @@ for i in range(len(dict.keys())):
 			left_start = left_encoder
 			right_start = right_encoder
 			data_time_init = data_time2
-			gyro_init = gyro_xyz
+			gyro_init = [gyro_x, gyro_y, gyro_z]
 		# End if Roomba.Available()
 	# End while time.time() - start_time <=t:
 	start_time = time.time()
