@@ -205,9 +205,12 @@ for i in range(len(dict.keys())):
 			print('L/R Wheel Encoders (counts): {0},{1}'.format(left_encoder,right_encoder))
 			print('Roomba X/Y Position (mm): {0:.3f},{1:.3f}'.format(x_position,y_position))
 			print('Roomba Orientation (radians): {0:.6f}'.format(theta))
+			print('X estimate: {0:.6f}'.format(r_estimate_x))
+			print('Y estimate: {0:.6f}'.format(r_estimate_y))
+			print('Z estimate: {0:.6f}'.format(r_estimate_z))
 			# Write IMU data and wheel encoder data to a file.
-			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11}\n"\
-				.format(data_time2, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_encoder, right_encoder))
+			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:.6f},{13:.6f},{14:.6f}\n"\
+				.format(data_time2, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_encoder, right_encoder, r_estimate_x, r_estimate_y, r_estimate_z))
 			left_start = left_encoder
 			right_start = right_encoder
 			init_gyro_x = gyro_x
