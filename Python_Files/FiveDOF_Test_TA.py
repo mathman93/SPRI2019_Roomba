@@ -97,13 +97,6 @@ dict = {0:[0,0,2],
 	7:[0,0,2]
 	}
 
-# Get initial wheel encoder values
-[left_start,right_start]=Roomba.Query(43,44)
-
-# Variables and Constants
-y_position = 0 # Position of Roomba along y-axis (in mm)
-x_position = 0 # Position of Roomba along x-axis (in mm)
-theta = 0 # Heading of Roomba (in radians)
 # Roomba Constants
 wheel_diameter = 72
 counts_per_rev = 508.8
@@ -111,8 +104,40 @@ distance_between_wheels = 235
 C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
 distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 
+# Get initial wheel encoder values
+[left_start,right_start]=Roomba.Query(43,44)
 start_time = time.time()
 data_time = time.time()
+data_time_init = time.time() - data_time
+# Read initial acceleration, magnetometer, gyroscope, and temperature data
+accel_x, accel_y, accel_z = imu.acceleration
+mag_x, mag_y, mag_z = imu.magnetic
+gyro_x, gyro_y, gyro_z = imu.gyro
+temp = imu.temperature
+
+accel_length = math.sqrt(accel_x**2 + accel_y**2 + accel_z**2)
+
+R_est = (1/accel_length) * np.array([accel_x, accel_y, accel_z])
+gyro_init = [gyro_x, gyro_y, gyro_z]
+
+# Variables and Constants
+y_position = 0 # Position of Roomba along y-axis (in mm)
+x_position = 0 # Position of Roomba along x-axis (in mm)
+theta = 0 # Heading of Roomba (in radians)
+
+# Print values
+print('Time: {0:0.6f}'.format(data_time_init))
+print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
+print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
+print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(gyro_x, gyro_y, gyro_z))
+print('Temperature: {0:0.3f}C'.format(temp))
+# Print the left encoder, right encoder, x position, y position, and theta
+print('L/R Wheel Encoders (counts): {0},{1}'.format(left_start,right_start))
+print('Roomba X/Y Position (mm): {0:.3f},{1:.3f}'.format(x_position,y_position))
+print('Roomba Orientation (radians): {0:.6f}'.format(theta))
+# Write IMU data and wheel encoder data to a file.
+file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11}\n"\
+	.format(data_time_init, accel_x, accel_y, accel_z, mag_x, mag_y, mag_z, gyro_x, gyro_y, gyro_z, left_start, right_start))
 
 Roomba.StartQueryStream(43,44)
 
@@ -124,12 +149,13 @@ for i in range(len(dict.keys())):
 		# If data is available
 		if Roomba.Available()>0:
 			data_time2 = time.time() - data_time
+			delta_time = data_time2 - data_time_init
 			# Get left and right encoder values and find the change in each
 			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
 			# Read acceleration, magnetometer, gyroscope, and temperature data
-			accel_x, accel_y, accel_z = imu.acceleration
-			mag_x, mag_y, mag_z = imu.magnetic
-			gyro_x, gyro_y, gyro_z = imu.gyro
+			accel_xyz = imu.acceleration
+			mag_xyz = imu.magnetic
+			gyro_xyz = imu.gyro
 			temp = imu.temperature
 			# Finds the change in the left and right wheel encoder values
 			delta_l = left_encoder-left_start
@@ -160,7 +186,27 @@ for i in range(len(dict.keys())):
 			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
 
-			# Calculate inertial foce vector (i.e., direction of "up")
+			# Calculate inertial force vector (i.e., direction of "up")
+			# Get readings from the accelerometer
+			R_acc = np.array(accel_xyz)
+			R_acc = math.sqrt(R_acc.dot(R_acc)) * R_acc # Normalize acceleration values
+			# Calculate updated angles of the force vector using the gyroscope
+			theta_xz = math.atan2(R_est[0],R_est[2]) + (math.radians(0.5*(gyro_xyz[0]+gyro_init[0]))*delta_time)
+			theta_yz = math.atan2(R_est[1],R_est[2]) + (math.radians(0.5*(gyro_xyz[1]+gyro_init[1]))*delta_time)
+
+			R_gyro = np.zeros( (1,3) )
+			R_gyro[0] = math.sin(theta_xz)/math.sqrt(1 + (math.cos(theta_xz)*math.tan(theta_yz))**2)
+			R_gyro[1] = math.sin(theta_yz)/math.sqrt(1 + (math.cos(theta_yz)*math.tan(theta_xz))**2)
+			R_gyro[2] = math.sqrt(1 - R_gyro[0]**2 - R_gyro[1]**2) * np.sign(R_est[2])
+			
+			w_gyro = 10 # gyro weight value in range [5, 20]
+			
+			R_est = (R_acc + (w_gyro * R_gyro))/(1 + w_gyro) # New estimate of inertial force vector
+			R_est = math.sqrt(R_est.dot(R_est)) * R_est # Normalize estimated values
+			# Split up vector for easy reading
+			R_estX = R_est[0]
+			R_estY = R_est[1]
+			R_estZ = R_est[2]
 			
 			# Print values
 			print('Time: {0:0.6f}'.format(data_time2))
@@ -172,11 +218,16 @@ for i in range(len(dict.keys())):
 			print('L/R Wheel Encoders (counts): {0},{1}'.format(left_encoder,right_encoder))
 			print('Roomba X/Y Position (mm): {0:.3f},{1:.3f}'.format(x_position,y_position))
 			print('Roomba Orientation (radians): {0:.6f}'.format(theta))
-			# Write IMU data and wheel encoder data to a file.
-			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11}\n"\
-				.format(data_time2, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_encoder, right_encoder))
+			# Print estimated inertial force values
+			print('Estimated Force Vector: {0:0.5f},{1:0.5f},{2:0.5f}'.format(R_estX, R_estY, R_estZ))
+			# Write IMU data, wheel encoder data, and estimated inertial force vector values to a file.
+			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f}\n"\
+				.format(data_time2, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_encoder, right_encoder, R_estX, R_estY, R_estZ))
+			# Save values for next iteration
 			left_start = left_encoder
 			right_start = right_encoder
+			data_time_init = data_time2
+			gyro_init = gyro_xyz
 		# End if Roomba.Available()
 	# End while time.time() - start_time <=t:
 	start_time = time.time()
