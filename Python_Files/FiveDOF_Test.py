@@ -190,10 +190,14 @@ for i in range(len(dict.keys())):
 			theta_y_z = (math.atan2(r_estimate_y, r_estimate_z)) +(0.5*(gyro_x + init_gyro_x)*delta_time) # Angle formed by the vector on the y,z plane
 			r_gyro_x = (math.sin(theta_x_z))/(math.sqrt(1 + ((math.cos(theta_x_z)**2) * (math.tan(theta_y_z)**2)))) # Normalized gyroscope values
 			r_gyro_y = (math.sin(theta_y_z))/(math.sqrt(1 + ((math.cos(theta_y_z)**2) * (math.tan(theta_x_z)**2))))
-			r_gyro_z = math.copysign((math.sqrt(1 - (r_gyro_x **2) - (r_gyro_y))),r_estimate_z)
+			r_gyro_z = math.copysign((math.sqrt(1 - (r_gyro_x **2) - (r_gyro_y **2))),r_estimate_z)
 			r_estimate_x = (r_accel_x + (2 * r_gyro_x)) / (1 + w_gyro) # Updated estimates coming from new acceleration values
 			r_estimate_y = (r_accel_y + (2 * r_gyro_y)) / (1 + w_gyro)
 			r_estimate_z = (r_accel_z + (2 * r_gyro_z)) / (1 + w_gyro)
+			estimate_length = math.sqrt((r_estimate_x**2)+(r_estimate_y**2)+(r_estimate_z**2))
+			r_estimate_x = r_estimate_x / estimate_length
+			r_estimate_y = r_estimate_y / estimate_length
+			r_estimate_z = r_estimate_z / estimate_length
 
 			# Print values
 			print('Time: {0:0.6f}'.format(data_time2))
