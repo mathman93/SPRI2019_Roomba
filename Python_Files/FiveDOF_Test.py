@@ -11,6 +11,7 @@ import RPi.GPIO as GPIO
 import RoombaCI_lib
 import os.path
 import math
+import numpy as np
 
 ## Variables and Constants ##
 # LED pin numbers
