@@ -118,6 +118,10 @@ temp = imu.temperature
 accel_length = math.sqrt(accel_x**2 + accel_y**2 + accel_z**2)
 
 R_est = (1/accel_length) * np.array([accel_x, accel_y, accel_z])
+# Split up vector for easy reading
+R_estX = R_est[0]
+R_estY = R_est[1]
+R_estZ = R_est[2]
 gyro_init = [gyro_x, gyro_y, gyro_z]
 
 # Variables and Constants
@@ -135,10 +139,12 @@ print('Temperature: {0:0.3f}C'.format(temp))
 print('L/R Wheel Encoders (counts): {0},{1}'.format(left_start,right_start))
 print('Roomba X/Y Position (mm): {0:.3f},{1:.3f}'.format(x_position,y_position))
 print('Roomba Orientation (radians): {0:.6f}'.format(theta))
-# Write IMU data and wheel encoder data to a file.
-file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11}\n"\
-	.format(data_time_init, accel_x, accel_y, accel_z, mag_x, mag_y, mag_z, gyro_x, gyro_y, gyro_z, left_start, right_start))
-
+# Print estimated inertial force values
+print('Estimated Force Vector: {0:0.5f},{1:0.5f},{2:0.5f}'.format(R_estX, R_estY, R_estZ))
+# Write IMU data, wheel encoder data, and estimated inertial force vector values to a file.
+file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f}\n"\
+	.format(data_time2, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_encoder, right_encoder, R_estX, R_estY, R_estZ))
+			
 Roomba.StartQueryStream(43,44)
 
 for i in range(len(dict.keys())):
