@@ -120,7 +120,7 @@ r_accel_z = accel_z / accel_length
 r_estimate_x = r_accel_x #Estimates of normalized values, in first iteration, estimate is just initial reading
 r_estimate_y = r_accel_y
 r_estimate_z = r_accel_z
-init_gyro_x = gyro_x = #Sets initial gyro readings for later usage
+init_gyro_x = gyro_x #Sets initial gyro readings for later usage
 init_gyro_y = gyro_y
 w_gyro = 5 #Constant used to determine reliability of function
 
