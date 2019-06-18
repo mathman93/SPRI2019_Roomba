@@ -189,7 +189,8 @@ for i in range(len(dict.keys())):
 			# Calculate inertial force vector (i.e., direction of "up")
 			# Get readings from the accelerometer
 			R_acc = np.array(accel_xyz)
-			R_acc = math.sqrt(R_acc.dot(R_acc)) * R_acc # Normalize acceleration values
+			R_acc_length = np.linalg.norm(R_acc)
+			R_acc = (1/R_acc_length) * R_acc # Normalize acceleration values
 			# Calculate updated angles of the force vector using the gyroscope
 			theta_xz = math.atan2(R_est[0],R_est[2]) + (math.radians(0.5*(gyro_xyz[0]+gyro_init[0]))*delta_time)
 			theta_yz = math.atan2(R_est[1],R_est[2]) + (math.radians(0.5*(gyro_xyz[1]+gyro_init[1]))*delta_time)
@@ -202,7 +203,8 @@ for i in range(len(dict.keys())):
 			w_gyro = 10 # gyro weight value in range [5, 20]
 			
 			R_est = (R_acc + (w_gyro * R_gyro))/(1 + w_gyro) # New estimate of inertial force vector
-			R_est = math.sqrt(R_est.dot(R_est)) * R_est # Normalize estimated values
+			R_est_length = np.linalg.norm(R_est)
+			R_est = (1/R_est_length) * R_est # Normalize estimated values
 			# Split up vector for easy reading
 			R_estX = R_est[0]
 			R_estY = R_est[1]
