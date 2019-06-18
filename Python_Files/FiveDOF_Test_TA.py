@@ -195,7 +195,7 @@ for i in range(len(dict.keys())):
 			theta_xz = math.atan2(R_est[0],R_est[2]) + (math.radians(0.5*(gyro_xyz[0]+gyro_init[0]))*delta_time)
 			theta_yz = math.atan2(R_est[1],R_est[2]) + (math.radians(0.5*(gyro_xyz[1]+gyro_init[1]))*delta_time)
 
-			R_gyro = np.zeros( (1,3) )
+			R_gyro = np.zeros(R_acc.shape)
 			R_gyro[0] = math.sin(theta_xz)/math.sqrt(1 + (math.cos(theta_xz)*math.tan(theta_yz))**2)
 			R_gyro[1] = math.sin(theta_yz)/math.sqrt(1 + (math.cos(theta_yz)*math.tan(theta_xz))**2)
 			R_gyro[2] = math.sqrt(1 - R_gyro[0]**2 - R_gyro[1]**2) * np.sign(R_est[2])
