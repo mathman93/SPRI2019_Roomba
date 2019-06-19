@@ -189,8 +189,8 @@ for i in range(len(dict.keys())):
 			r_accel_x = accel_x / accel_length # Normalized acceleration values for current iteration
 			r_accel_y = accel_y / accel_length
 			r_accel_z = accel_z / accel_length
-			theta_x_z = (math.atan2(r_estimate_x, r_estimate_z)) + (0.5*math.pi(gyro_y + init_gyro_y)*delta_time) # Angle formed by the vector on the x,z plane
-			theta_y_z = (math.atan2(r_estimate_y, r_estimate_z)) +(0.5*math.pi(gyro_x + init_gyro_x)*delta_time) # Angle formed by the vector on the y,z plane
+			theta_x_z = (math.atan2(r_estimate_x, r_estimate_z)) + (0.5*math.radians(gyro_y + init_gyro_y)*delta_time) # Angle formed by the vector on the x,z plane
+			theta_y_z = (math.atan2(r_estimate_y, r_estimate_z)) +(0.5*math.radians(gyro_x + init_gyro_x)*delta_time) # Angle formed by the vector on the y,z plane
 			r_gyro_x = (math.sin(theta_x_z))/(math.sqrt(1 + ((math.cos(theta_x_z)**2) * (math.tan(theta_y_z)**2)))) # Normalized gyroscope values
 			r_gyro_y = (math.sin(theta_y_z))/(math.sqrt(1 + ((math.cos(theta_y_z)**2) * (math.tan(theta_x_z)**2))))
 			r_gyro_z = math.copysign((math.sqrt(1 - (r_gyro_x **2) - (r_gyro_y **2))),r_estimate_z)
