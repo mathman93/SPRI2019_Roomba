@@ -136,6 +136,8 @@ init_gyro_y = gyro_y
 w_gyro = 15 #Constant used to determine reliability of function
 k_current = [r_estimate_x, r_estimate_y, r_estimate_z] #Initial K vector in regards to body is set to initial normalized estimate vector
 i_current = [1, 0, 0] #Initial I vector is set to standard vector unit length, but can be set to initial magnetometer readings if using magnetometer
+S_gyro = 10 # Weight of gyro
+S_accel = 1 # Weight of acceleromater
 
 # Roomba Constants
 wheel_diameter = 72
@@ -224,8 +226,30 @@ for i in range(len(dict.keys())):
 			delta_theta_accel = CrossProduct(k_current, delta_k) #Calculates difference in radians between vectors detected by accelerometer
 			delta_theta_gyro_par = [DotProduct(delta_theta_gyro, k_current) * x for x in k_current] # Calculates vector that is parallel to desired vector
 			delta_theta_gyro_perp = [(a-b) for a,b in zip(delta_theta_gyro, delta_theta_gyro_par)] # Calculates vector that is perpindicular to desired vector
+			gyro_prod = [S_gyro * x for x in delta_theta_gyro_perp]
+			accel_prod = [S_accel * y for y in delta_theta_accel]
+			delta_theta_new = ([(a+b) for a,b in zip(gyro_prod, accel_prod)])/(S_gyro+S_accel)
+			k_current += CrossProduct(delta_theta_new,k_current)
+			i_current += CrossProduct(delta_theta_new,i_current)
+			dot_prod_ik = DotProduct(k_current, i_current)/2
+			i_prime = [(a-b) for a,b in zip(i_current,k_current*dot_prod_ik)]
+			k_prime = [(a-b) for a,b in zip(k_current,i_current*dot_prod_ik)]
+			j_prime = CrossProduct(i_prime,k_prime)
+			dot_prod_i_prime = DotProduct(i_prime,i_prime)
+			dot_prod_k_prime = DotProduct(k_prime,k_prime)
+			dot_prod_j_prime = DotProduct(j_prime,j_prime)
+			length_ikj math.sqrt([(a+b+c) for a,b,c in zip(dot_prod_i_prime,dot_prod_k_prime,dot_prod_j_prime)])
+			i_norm = [x / length_ikj for x in i_prime]
+			k_norm = [x / length_ikj for x in k_prime]
+			j_norm = [x / length_ikj for x in j_prime]
+			
+			i_current = i_norm
+			k_current = k_norm
+			
 
-			# Print values
+			# Print I,J,K values
+			print('I,J,K: {0},{1},{2},{3},{4},{5},{6},{7},{8}'.format(i_norm[1],i_norm[2],i_norm[3],j_norm[1],j_norm[2],j_norm[3],k_norm[1],k_norm[2],k_norm[3]))	
+			# Print acceleration, gyroscope and magnetometer values
 			print('Time: {0:0.6f}'.format(data_time2))
 			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
 			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
