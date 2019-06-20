@@ -159,7 +159,7 @@ print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]]'.format(DCM_G[2,0], DCM_G[2,1], DCM_G[2,
 # Write IMU data, wheel encoder data, and estimated inertial force vector values to a file.
 imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11}\n"\
 	.format(data_time_init, accel_x, accel_y, accel_z, mag_x, mag_y, mag_z, gyro_x, gyro_y, gyro_z, left_start, right_start))
-dcm_file.write("{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f}"\
+dcm_file.write("{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f}\n"\
 	.format(DCM_G[0,0],DCM_G[0,1],DCM_G[0,2],DCM_G[1,0],DCM_G[1,1],DCM_G[1,2],DCM_G[2,0],DCM_G[2,1],DCM_G[2,2]))
 Roomba.StartQueryStream(43,44)
 
@@ -250,10 +250,12 @@ for i in range(len(dict.keys())):
 			error = 0.5*K_B.dot(I_B)
 			K_B_prime = K_B - (error*I_B)
 			I_B_prime = I_B - (error*K_B)
+			J_B_prime = np.cross(I_B_prime, K_B_prime) # Find third versor
 			# Normalize updated versors
 			K_B = K_B_prime/np.linalg.norm(K_B_prime)
 			I_B = I_B_prime/np.linalg.norm(I_B_prime)
-			J_B = np.cross(I_B, K_B) # Find third versor
+			J_B = J_B_prime/np.linalg.norm(J_B_prime)
+			R_est = K_B # Reset R_est for next iteration
 			# Form DCM from component values
 			DCM_G = np.stack((I_B, J_B, K_B))
 			
@@ -274,7 +276,7 @@ for i in range(len(dict.keys())):
 			# Write IMU data, wheel encoder data to a file.
 			imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11}\n"\
 				.format(data_time2, accel_x, accel_y, accel_z, mag_x, mag_y, mag_z, gyro_x, gyro_y, gyro_z, left_encoder, right_encoder))
-			dcm_file.write("{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f}"\
+			dcm_file.write("{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f}\n"\
 				.format(DCM_G[0,0],DCM_G[0,1],DCM_G[0,2],DCM_G[1,0],DCM_G[1,1],DCM_G[1,2],DCM_G[2,0],DCM_G[2,1],DCM_G[2,2]))
 			# Save values for next iteration
 			left_start = left_encoder
