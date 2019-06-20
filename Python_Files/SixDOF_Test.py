@@ -147,7 +147,7 @@ i_norm = [x / length_i for x in i_current] # Normalized values of I,K and J prim
 k_norm = [x / length_k for x in k_current]
 j_norm = [x / length_j for x in j_current]
 new_theta = math.atan2(j_norm[0],i_norm[0])
-if new_theta < 0
+if new_theta < 0:
 	new_theta += 2*math.pi
 
 
@@ -266,7 +266,7 @@ for i in range(len(dict.keys())):
 
 			# Finds heading in radians from gyroscope
 			new_theta = math.atan2(j_norm[0],i_norm[0])
-			if new_theta < 0
+			if new_theta < 0:
 				new_theta += 2*math.pi
 
 			# Print I,J,K, and new theta values
