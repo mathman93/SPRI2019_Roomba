@@ -95,11 +95,11 @@ dcm_file = open(dcm_file_name, "w") # Open a text file for storing data
 dict = {0:[0,0,2],
 	1:[100,0,5],
 	2:[0,0,2],
-	3:[0,50,5],
+	3:[0,75,10],
 	4:[0,0,2],
-	5:[50,-50,5],
-	6:[50,50,5],
-	7:[0,0,2]
+	5:[0,-75,10],
+	6:[0,75,20],
+	7:[0,0,1]
 	}
 
 # Variables and Constants
