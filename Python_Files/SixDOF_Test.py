@@ -133,11 +133,21 @@ r_estimate_y = r_accel_y
 r_estimate_z = r_accel_z
 init_gyro_x = gyro_x #Sets initial gyro readings for later usage
 init_gyro_y = gyro_y
-w_gyro = 15 #Constant used to determine reliability of function
+w_gyro = 15 #Constant used to weight measurements
+
 k_current = [r_estimate_x, r_estimate_y, r_estimate_z] #Initial K vector in regards to body is set to initial normalized estimate vector
 i_current = [1, 0, 0] #Initial I vector is set to standard vector unit length, but can be set to initial magnetometer readings if using magnetometer
 k_i_product = [(DotProduct(k_current,i_current)*x) for x in k_current]
 i_current = [(a-b) for a,b in zip(i_current, k_i_product)]
+j_current = CrossProduct(k_current, i_current)
+length_i = math.sqrt(DotProduct(i_current,i_current)) 
+length_k = math.sqrt(DotProduct(k_current,k_current))
+length_j = math.sqrt(DotProduct(j_current,j_current))
+i_norm = [x / length_i for x in i_current] # Normalized values of I,K and J prime
+k_norm = [x / length_k for x in k_current]
+j_norm = [x / length_j for x in j_current]
+new_theta = math.atan2(j_norm[0],i_norm[0])
+
 S_gyro = 10 # Weight of gyro
 S_accel = 1 # Weight of acceleromater
 
@@ -152,8 +162,8 @@ start_time = time.time()
 data_time = time.time()
 data_time_init = time.time() - data_time
 
-file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:.6f},{13:.6f},{14:.6f}\n"\
-	.format(data_time_init, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_start, right_start, r_estimate_x, r_estimate_y, r_estimate_z))
+file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f},{20:0.5f},{21:0.5f},{22:0.5f}\n"\
+	.format(data_time_init, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_start, right_start, i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2],theta,new_theta))
 
 Roomba.StartQueryStream(43,44)
 
@@ -239,7 +249,7 @@ for i in range(len(dict.keys())):
 			dot_prod_ik = DotProduct(k_current, i_current)/2
 			i_prime = [(a-(b*dot_prod_ik)) for a,b in zip(i_current,k_current)]
 			k_prime = [(a-(b*dot_prod_ik)) for a,b in zip(k_current,i_current)]
-			j_prime = CrossProduct(i_prime,k_prime)
+			j_prime = CrossProduct(k_prime,i_prime)
 			length_i = math.sqrt(DotProduct(i_prime,i_prime)) 
 			length_k = math.sqrt(DotProduct(k_prime,k_prime))
 			length_j = math.sqrt(DotProduct(j_prime,j_prime))
@@ -251,8 +261,11 @@ for i in range(len(dict.keys())):
 			i_current = i_norm
 			k_current = k_norm
 
-			# Print I,J,K values
-			print('I,J,K: {0:.5f},{1:.5f},{2:.5f},{3:.5f},{4:.5f},{5:.5f},{6:.5f},{7:.5f},{8:.5f}'.format(i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2]))	
+			# Finds heading in radians from gyroscope
+			new_theta = math.atan2(j_norm[0],i_norm[0])
+
+			# Print I,J,K, and new theta values
+			print('I,J,K: {0:.5f},{1:.5f},{2:.5f},{3:.5f},{4:.5f},{5:.5f},{6:.5f},{7:.5f},{8:.5f},{9:.5f}'.format(i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2],new_theta))	
 			# Print acceleration, gyroscope and magnetometer values
 			print('Time: {0:0.6f}'.format(data_time2))
 			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
@@ -267,8 +280,8 @@ for i in range(len(dict.keys())):
 			print('Y estimate: {0:.6f}'.format(r_estimate_y))
 			print('Z estimate: {0:.6f}'.format(r_estimate_z))
 			# Write IMU data and wheel encoder data to a file.
-			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:.6f},{13:.6f},{14:.6f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f},{20:0.5f},{21:0.5f},{22:0.5f},{23:0.5f},\n"\
-				.format(data_time2, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_encoder, right_encoder, r_estimate_x, r_estimate_y, r_estimate_z, i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2]))
+			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f},{20:0.5f},{21:0.5f},{22:0.5f}\n"\
+				.format(data_time2, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_encoder, right_encoder, i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2],theta,new_theta))
 			left_start = left_encoder
 			right_start = right_encoder
 			init_gyro_x = gyro_x
