@@ -232,8 +232,10 @@ for i in range(len(dict.keys())):
 			accel_prod = [S_accel * y for y in delta_theta_accel]
 			delta_theta_partial = [((a+b)/(S_gyro+S_accel)) for a,b in zip(gyro_prod, accel_prod)]
 			delta_theta_new = [(a+b) for a,b in zip(delta_theta_partial, delta_theta_gyro_par)]
-			k_current += CrossProduct(delta_theta_new,k_current)
-			i_current += CrossProduct(delta_theta_new,i_current)
+			k_current_partial = CrossProduct(delta_theta_new,k_current)
+			k_current = [(a+b) for a,b in zip(k_current_partial, k_current)]
+			i_current_partial = CrossProduct(delta_theta_new,i_current)
+			i_current = [(a+b) for a,b in zip(i_current_partial, i_current)]
 			dot_prod_ik = DotProduct(k_current, i_current)/2
 			i_prime = [(a-(b*dot_prod_ik)) for a,b in zip(i_current,k_current)]
 			k_prime = [(a-(b*dot_prod_ik)) for a,b in zip(k_current,i_current)]
@@ -248,7 +250,6 @@ for i in range(len(dict.keys())):
 			# Values to be used in next loop
 			i_current = i_norm
 			k_current = k_norm
-			
 
 			# Print I,J,K values
 			print('I,J,K: {0:.5f},{1:.5f},{2:.5f},{3:.5f},{4:.5f},{5:.5f},{6:.5f},{7:.5f},{8:.5f}'.format(i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2]))	
@@ -273,6 +274,9 @@ for i in range(len(dict.keys())):
 			init_gyro_x = gyro_x
 			init_gyro_y = gyro_y
 			data_time_init = data_time2
+			r_estimate_x = k_current[0]
+			r_estimate_y = k_current[1]
+			r_estimate_z = k_current[2]
 
 		# End if Roomba.Available()
 	# End while time.time() - start_time <=t:
