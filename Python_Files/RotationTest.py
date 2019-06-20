@@ -74,8 +74,8 @@ x = imu.acceleration
 x = imu.gyro
 # Calibrate the magnetometer and the gyroscope
 print(" Calibrating IMU...")
-Roomba.Move(0,100) # Start the Roomba spinning
-imu.CalibrateMag() # Determine magnetometer offset values
+#Roomba.Move(0,100) # Start the Roomba spinning
+#imu.CalibrateMag() # Determine magnetometer offset values
 Roomba.Move(0,0) # Stop the Roomba
 time.sleep(0.1) # Wait for the Roomba to settle
 imu.CalibrateGyro() # Determine gyroscope offset values
@@ -96,10 +96,14 @@ GPIO.output(yled, GPIO.LOW)
 #file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
 #file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
-
-speed = float(input("Speed of rotation:"))
-duration = float(input("Duration of rotation:"))
-
+while True:
+	try:
+		speed = float(input("Speed of rotation:"))
+		duration = float(input("Duration of rotation:"))
+		break
+	except ValueError:
+		print("Please input a number."
+		continue
 # Dictionary of move commands
 dict = {0:[0,0,2],
 	1:[0,speed,duration],
