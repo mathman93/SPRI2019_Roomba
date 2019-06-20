@@ -98,7 +98,7 @@ GPIO.output(yled, GPIO.LOW)
 	# Will overwrite anything that was in the text file previously
 while True:
 	try:
-		speed = input("Speed of rotation:")
+		speed = int(input("Speed of rotation:"))
 		duration = float(input("Duration of rotation:"))
 		break
 	except ValueError:
