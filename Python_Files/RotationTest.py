@@ -102,7 +102,7 @@ while True:
 		duration = float(input("Duration of rotation:"))
 		break
 	except ValueError:
-		print("Please input a number."
+		print("Please input a number.")
 		continue
 # Dictionary of move commands
 dict = {0:[0,0,2],
