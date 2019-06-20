@@ -228,7 +228,7 @@ for i in range(len(dict.keys())):
 			delta_theta_gyro_perp = [(a-b) for a,b in zip(delta_theta_gyro, delta_theta_gyro_par)] # Calculates vector that is perpindicular to desired vector
 			gyro_prod = [S_gyro * x for x in delta_theta_gyro_perp]
 			accel_prod = [S_accel * y for y in delta_theta_accel]
-			delta_theta_new = ([(a+b) for a,b in zip(gyro_prod, accel_prod)])/(S_gyro+S_accel)
+			delta_theta_new = [((a+b)/(S_gyro+S_accel)) for a,b in zip(gyro_prod, accel_prod)]
 			k_current += CrossProduct(delta_theta_new,k_current)
 			i_current += CrossProduct(delta_theta_new,i_current)
 			dot_prod_ik = DotProduct(k_current, i_current)/2
