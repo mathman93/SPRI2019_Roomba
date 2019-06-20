@@ -222,7 +222,8 @@ for i in range(len(dict.keys())):
 			delta_theta_gyro = [(delta_time * x) for x in vector_w] # Calculates difference in radians between vectors detected by gyroscope
 			delta_k = [(a-b) for a,b in zip(k_a, k_current)] #Finds difference between K vector from acceleration and current K vector
 			delta_theta_accel = CrossProduct(k_current, delta_k) #Calculates difference in radians between vectors detected by accelerometer
-			delta_theta_gyro_par = [DotProduct(delta_theta_gyro, k_current) * x for x in k_current]
+			delta_theta_gyro_par = [DotProduct(delta_theta_gyro, k_current) * x for x in k_current] # Calculates vector that is parallel to desired vector
+			delta_theta_gyro_perp = [(a-b) for a,b in zip(delta_theta_gyro, delta_theta_gyro_par)] # Calculates vector that is perpindicular to desired vector
 
 			# Print values
 			print('Time: {0:0.6f}'.format(data_time2))
