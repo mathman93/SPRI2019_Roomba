@@ -1,7 +1,6 @@
-''' SixDOF_Test.py
-Purpose: Read and save data from IMU while Roomba is moving and calculate values needed for direction cosine matrix (DCM)
-Also calculate inertial force vector (direction of "up") from IMU data
-Last Modified: 6/19/2019
+''' RotationTest.py
+Purpose: Compare rotation value in radians calculated by both the wheel encoders and the gyroscope with actual rotation of the roomba
+Last Modified: 6/20/2019
 '''
 
 ## Import libraries ##
@@ -92,21 +91,19 @@ GPIO.output(yled, GPIO.LOW)
 
 # Main Code #
 # Open a text file for data retrieval
-file_name_input = input("Name for data file: ")
-dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
-file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
-file = open(file_name, "w") # Open a text file for storing data
+#file_name_input = input("Name for data file: ")
+#dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+#file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
+#file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
+
+speed = float(input("Speed of rotation:"))
+duration = float(input("Duration of rotation:"))
 
 # Dictionary of move commands
 dict = {0:[0,0,2],
-	1:[100,0,5],
-	2:[0,0,2],
-	3:[0,50,10],
-	4:[0,0,2],
-	5:[50,-50,10],
-	6:[50,50,10],
-	7:[0,0,2]
+	1:[0,speed,duration],
+	2:[0,0,2]
 	}
 
 # Get initial wheel encoder values
@@ -165,7 +162,7 @@ start_time = time.time()
 data_time = time.time()
 data_time_init = time.time() - data_time
 
-file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f},{20:0.5f},{21:0.5f},{22:0.5f}\n"\
+#file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f},{20:0.5f},{21:0.5f},{22:0.5f}\n"\
 	.format(data_time_init, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_start, right_start, i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2],theta,new_theta))
 
 Roomba.StartQueryStream(43,44)
@@ -285,7 +282,7 @@ for i in range(len(dict.keys())):
 			print('Y estimate: {0:.6f}'.format(r_estimate_y))
 			print('Z estimate: {0:.6f}'.format(r_estimate_z))
 			# Write IMU data and wheel encoder data to a file.
-			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f},{20:0.5f},{21:0.5f},{22:0.5f}\n"\
+			#file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f},{20:0.5f},{21:0.5f},{22:0.5f}\n"\
 				.format(data_time2, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_encoder, right_encoder, i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2],theta,new_theta))
 			left_start = left_encoder
 			right_start = right_encoder
@@ -305,7 +302,7 @@ Roomba.PauseQueryStream() # Pause data stream
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	z = Roomba.DirectRead(Roomba.Available()) # Clear out excess Roomba data
 	#print(z) # Include for debugging
-file.close() # Close data file
+#file.close() # Close data file
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
