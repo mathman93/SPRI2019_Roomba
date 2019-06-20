@@ -235,14 +235,15 @@ for i in range(len(dict.keys())):
 			i_prime = [(a-b) for a,b in zip(i_current,k_current*dot_prod_ik)]
 			k_prime = [(a-b) for a,b in zip(k_current,i_current*dot_prod_ik)]
 			j_prime = CrossProduct(i_prime,k_prime)
-			dot_prod_i_prime = DotProduct(i_prime,i_prime)
+			dot_prod_i_prime = DotProduct(i_prime,i_prime) # Dot products of i,k,j prime to be used in length calculation
 			dot_prod_k_prime = DotProduct(k_prime,k_prime)
 			dot_prod_j_prime = DotProduct(j_prime,j_prime)
-			length_ikj math.sqrt([(a+b+c) for a,b,c in zip(dot_prod_i_prime,dot_prod_k_prime,dot_prod_j_prime)])
-			i_norm = [x / length_ikj for x in i_prime]
+			length_ikj = math.sqrt([(a+b+c) for a,b,c in zip(dot_prod_i_prime,dot_prod_k_prime,dot_prod_j_prime)]) # Length of i,k,j used to normalize them
+			i_norm = [x / length_ikj for x in i_prime] # Normalized values of I,K and J prime
 			k_norm = [x / length_ikj for x in k_prime]
 			j_norm = [x / length_ikj for x in j_prime]
 			
+			# Values to be used in next loop
 			i_current = i_norm
 			k_current = k_norm
 			
