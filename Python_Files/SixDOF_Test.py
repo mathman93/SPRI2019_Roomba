@@ -136,6 +136,8 @@ init_gyro_y = gyro_y
 w_gyro = 15 #Constant used to determine reliability of function
 k_current = [r_estimate_x, r_estimate_y, r_estimate_z] #Initial K vector in regards to body is set to initial normalized estimate vector
 i_current = [1, 0, 0] #Initial I vector is set to standard vector unit length, but can be set to initial magnetometer readings if using magnetometer
+k_i_product = [(DotProduct(k_current,i_current)*x) for x in k_current)]
+i_current = [(a-b) for a,b in zip(i_current, k_i_product)]
 S_gyro = 10 # Weight of gyro
 S_accel = 1 # Weight of acceleromater
 
