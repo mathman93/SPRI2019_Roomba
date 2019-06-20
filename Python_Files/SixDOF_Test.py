@@ -248,7 +248,7 @@ for i in range(len(dict.keys())):
 			
 
 			# Print I,J,K values
-			print('I,J,K: {0},{1},{2},{3},{4},{5},{6},{7},{8}'.format(i_norm[1],i_norm[2],i_norm[3],j_norm[1],j_norm[2],j_norm[3],k_norm[1],k_norm[2],k_norm[3]))	
+			print('I,J,K: {0},{1},{2},{3},{4},{5},{6},{7},{8}'.format(i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2]))	
 			# Print acceleration, gyroscope and magnetometer values
 			print('Time: {0:0.6f}'.format(data_time2))
 			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
