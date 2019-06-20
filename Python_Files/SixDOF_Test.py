@@ -232,8 +232,8 @@ for i in range(len(dict.keys())):
 			k_current += CrossProduct(delta_theta_new,k_current)
 			i_current += CrossProduct(delta_theta_new,i_current)
 			dot_prod_ik = DotProduct(k_current, i_current)/2
-			i_prime = [(a-b) for a,b in zip(i_current,k_current*dot_prod_ik)]
-			k_prime = [(a-b) for a,b in zip(k_current,i_current*dot_prod_ik)]
+			i_prime = [(a-(b*dot_prod_ik)) for a,b in zip(i_current,k_current)]
+			k_prime = [(a-(b*dot_prod_ik)) for a,b in zip(k_current,i_current)]
 			j_prime = CrossProduct(i_prime,k_prime)
 			dot_prod_i_prime = DotProduct(i_prime,i_prime) # Dot products of i,k,j prime to be used in length calculation
 			dot_prod_k_prime = DotProduct(k_prime,k_prime)
