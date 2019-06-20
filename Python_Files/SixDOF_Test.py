@@ -99,14 +99,14 @@ file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
 
 # Dictionary of move commands
-dict = {0:[0,0,5],
-	1:[100,0,10],
-	2:[0,0,5],
+dict = {0:[0,0,2],
+	1:[100,0,5],
+	2:[0,0,2],
 	3:[0,50,10],
-	4:[0,0,5],
+	4:[0,0,2],
 	5:[50,-50,10],
 	6:[50,50,10],
-	7:[0,0,5]
+	7:[0,0,2]
 	}
 
 # Get initial wheel encoder values
