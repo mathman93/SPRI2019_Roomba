@@ -1,7 +1,7 @@
 ''' SixDOF_Test.py
 Purpose: Read and save data from IMU while Roomba is moving and calculate values needed for direction cosine matrix (DCM)
 Also calculate inertial force vector (direction of "up") from IMU data
-Last Modified: 6/20/2019
+Last Modified: 6/19/2019
 '''
 
 ## Import libraries ##
