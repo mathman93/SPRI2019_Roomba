@@ -248,7 +248,7 @@ for i in range(len(dict.keys())):
 			
 
 			# Print I,J,K values
-			print('I,J,K: {0},{1},{2},{3},{4},{5},{6},{7},{8}'.format(i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2]))	
+			print('I,J,K: {0:.5f},{1:.5f},{2:.5f},{3:.5f},{4:.5f},{5:.5f},{6:.5f},{7:.5f},{8:.5f}'.format(i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2]))	
 			# Print acceleration, gyroscope and magnetometer values
 			print('Time: {0:0.6f}'.format(data_time2))
 			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
@@ -263,8 +263,8 @@ for i in range(len(dict.keys())):
 			print('Y estimate: {0:.6f}'.format(r_estimate_y))
 			print('Z estimate: {0:.6f}'.format(r_estimate_z))
 			# Write IMU data and wheel encoder data to a file.
-			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:.6f},{13:.6f},{14:.6f}\n"\
-				.format(data_time2, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_encoder, right_encoder, r_estimate_x, r_estimate_y, r_estimate_z))
+			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:.6f},{13:.6f},{14:.6f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f},{20:0.5f},{21:0.5f},{22:0.5f},{23:0.5f},\n"\
+				.format(data_time2, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_encoder, right_encoder, r_estimate_x, r_estimate_y, r_estimate_z, i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2]))
 			left_start = left_encoder
 			right_start = right_encoder
 			init_gyro_x = gyro_x
