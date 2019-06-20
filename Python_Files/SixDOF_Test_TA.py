@@ -82,12 +82,12 @@ GPIO.output(yled, GPIO.LOW)
 # Open a text file for data retrieval
 imu_file_name_input = input("Name for (IMU) data file: ")
 dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
-imu_file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
+imu_file_name = os.path.join(dir_path, imu_file_name_input+".txt") # text file extension
 imu_file = open(imu_file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
 dcm_file_name_input = input("Name for (DCM) data file: ")
 dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
-dcm_file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
+dcm_file_name = os.path.join(dir_path, dcm_file_name_input+".txt") # text file extension
 dcm_file = open(dcm_file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
 
