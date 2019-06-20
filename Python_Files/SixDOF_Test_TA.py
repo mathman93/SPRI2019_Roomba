@@ -1,7 +1,7 @@
 ''' SixDOF_Test.py
 Purpose: Read and save data from IMU while Roomba is moving
 Also calculate Directional Cosine Matrix (DCM) to determine orientation
-Last Modified: 6/19/2019
+Last Modified: 6/20/2019
 '''
 
 ## Import libraries ##
@@ -212,13 +212,13 @@ for i in range(len(dict.keys())):
 			R_acc_length = np.linalg.norm(R_acc)
 			R_acc = (1/R_acc_length) * R_acc # Normalize acceleration values
 			# Calculate updated angles of the force vector using the gyroscope
-			theta_xz = math.atan2(R_est[0],R_est[2]) + (math.radians(0.5*(omega[1]+gyro_init[1]))*delta_time)
-			theta_yz = math.atan2(R_est[1],R_est[2]) + (math.radians(0.5*(omega[0]+gyro_init[0]))*delta_time)
+			theta_xz = math.atan2(R_est[0],R_est[2]) + (np.radians(0.5*(omega[1]+gyro_init[1]))*delta_time)
+			theta_yz = math.atan2(R_est[1],R_est[2]) + (np.radians(0.5*(omega[0]+gyro_init[0]))*delta_time)
 			# Calculate estimate of inertial force vector from gyroscope data
 			R_gyro = np.zeros(R_acc.shape)
 			R_gyro[0] = math.sin(theta_xz)/math.sqrt(1 + (math.cos(theta_xz)*math.tan(theta_yz))**2)
 			R_gyro[1] = math.sin(theta_yz)/math.sqrt(1 + (math.cos(theta_yz)*math.tan(theta_xz))**2)
-			R_gyro[2] = math.sqrt(1 - R_gyro[0]**2 - R_gyro[1]**2) * np.sign(R_est[2])
+			R_gyro[2] = np.sqrt(1 - R_gyro[0]**2 - R_gyro[1]**2) * np.sign(R_est[2])
 			
 			w_acc = 1 # Accelerometer weight value
 			w_gyro = 10 # Gyroscope weight value
@@ -229,7 +229,7 @@ for i in range(len(dict.keys())):
 			K_A = R_est # New estimate of zenith vector from accelerometer (and gyro) data
 			
 			# Calculate rotation change, delta_theta
-			delta_theta_gyro = omega * delta_time # Gyro estimate of rotation
+			delta_theta_gyro = np.radians(omega) * delta_time # Gyro estimate of rotation
 			delta_theta_gyro_para = K_B.dot(delta_theta_gyro) * K_B # Component parallel to K_B
 			delta_theta_gyro_perp = delta_theta_gyro - delta_theta_gyro_para # Component perpendicular to K_B
 			delta_theta_acc = np.cross(K_B, (K_A - K_B)) # Accelerometer estimate of rotation
