@@ -99,14 +99,14 @@ file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
 
 # Dictionary of move commands
-dict = {0:[0,0,2],
-	1:[100,0,5],
-	2:[0,0,2],
-	3:[0,50,5],
-	4:[0,0,2],
-	5:[50,-50,5],
-	6:[50,50,5],
-	7:[0,0,2]
+dict = {0:[0,0,5],
+	1:[100,0,10],
+	2:[0,0,5],
+	3:[0,50,10],
+	4:[0,0,5],
+	5:[50,-50,10],
+	6:[50,50,10],
+	7:[0,0,5]
 	}
 
 # Get initial wheel encoder values
@@ -147,6 +147,9 @@ i_norm = [x / length_i for x in i_current] # Normalized values of I,K and J prim
 k_norm = [x / length_k for x in k_current]
 j_norm = [x / length_j for x in j_current]
 new_theta = math.atan2(j_norm[0],i_norm[0])
+if new_theta < 0
+	new_theta += 2*math.pi
+
 
 S_gyro = 10 # Weight of gyro
 S_accel = 1 # Weight of acceleromater
@@ -263,6 +266,8 @@ for i in range(len(dict.keys())):
 
 			# Finds heading in radians from gyroscope
 			new_theta = math.atan2(j_norm[0],i_norm[0])
+			if new_theta < 0
+				new_theta += 2*math.pi
 
 			# Print I,J,K, and new theta values
 			print('I,J,K: {0:.5f},{1:.5f},{2:.5f},{3:.5f},{4:.5f},{5:.5f},{6:.5f},{7:.5f},{8:.5f},{9:.5f}'.format(i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2],new_theta))	
