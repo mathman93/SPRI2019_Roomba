@@ -80,10 +80,15 @@ GPIO.output(yled, GPIO.LOW)
 
 # Main Code #
 # Open a text file for data retrieval
-file_name_input = input("Name for data file: ")
+imu_file_name_input = input("Name for (IMU) data file: ")
 dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
-file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
-file = open(file_name, "w") # Open a text file for storing data
+imu_file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
+imu_file = open(imu_file_name, "w") # Open a text file for storing data
+	# Will overwrite anything that was in the text file previously
+dcm_file_name_input = input("Name for (DCM) data file: ")
+dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+dcm_file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
+dcm_file = open(dcm_file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
 
 # Dictionary of move commands
@@ -152,9 +157,10 @@ print('DCM: [[{0:0.5f}, {1:0.5f}, {2:0.5f}]'.format(DCM_G[0,0], DCM_G[0,1], DCM_
 print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]'.format(DCM_G[1,0], DCM_G[1,1], DCM_G[1,2]))
 print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]]'.format(DCM_G[2,0], DCM_G[2,1], DCM_G[2,2]))
 # Write IMU data, wheel encoder data, and estimated inertial force vector values to a file.
-file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11}\n"\
+imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11}\n"\
 	.format(data_time_init, accel_x, accel_y, accel_z, mag_x, mag_y, mag_z, gyro_x, gyro_y, gyro_z, left_start, right_start))
-			
+dcm_file.write("{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f}"\
+	.format(DCM_G[0,0],DCM_G[0,1],DCM_G[0,2],DCM_G[1,0],DCM_G[1,1],DCM_G[1,2],DCM_G[2,0],DCM_G[2,1],DCM_G[2,2]))
 Roomba.StartQueryStream(43,44)
 
 for i in range(len(dict.keys())):
@@ -266,8 +272,10 @@ for i in range(len(dict.keys())):
 			print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]'.format(DCM_G[1,0], DCM_G[1,1], DCM_G[1,2]))
 			print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]]'.format(DCM_G[2,0], DCM_G[2,1], DCM_G[2,2]))
 			# Write IMU data, wheel encoder data to a file.
-			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11}\n"\
+			imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11}\n"\
 				.format(data_time2, accel_x, accel_y, accel_z, mag_x, mag_y, mag_z, gyro_x, gyro_y, gyro_z, left_encoder, right_encoder))
+			dcm_file.write("{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f},{0:0.5f}"\
+				.format(DCM_G[0,0],DCM_G[0,1],DCM_G[0,2],DCM_G[1,0],DCM_G[1,1],DCM_G[1,2],DCM_G[2,0],DCM_G[2,1],DCM_G[2,2]))
 			# Save values for next iteration
 			left_start = left_encoder
 			right_start = right_encoder
