@@ -340,7 +340,9 @@ for i in range(len(dict.keys())):
 			r_estimate_y = k_current[1]
 			r_estimate_z = k_current[2]
 		
-		accel_sum = 0 # Reset sum for new averages next time around
+		accel_sum = [0, 0, 0] # Reset sum for new averages next time around
+		gyro_sum = [0, 0, 0]
+		mag_sum = [0, 0, 0]
 		readings_counter = 0 # Reset counter for averages next time around
 		# End if Roomba.Available()
 	# End while time.time() - start_time <=t:
