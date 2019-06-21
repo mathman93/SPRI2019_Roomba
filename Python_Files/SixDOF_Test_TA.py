@@ -291,7 +291,8 @@ for i in range(len(dict.keys())):
 			print('Time: {0:0.6f}'.format(data_time2))
 			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel[0], accel[1], accel[2]))
 			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag[0], mag[1], mag_[2]))
-			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(omega[0], omega[1], omega[2]))print('Temperature: {0:0.3f}C'.format(temp))
+			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(omega[0], omega[1], omega[2]))
+			print('Temperature: {0:0.3f}C'.format(temp))
 			print('Data Counter: {0}'.format(imu_counter)) # Include for testing
 			# Print the left encoder, right encoder, x position, y position, and theta
 			print('L/R Wheel Encoders (counts): {0},{1}'.format(left_encoder,right_encoder))
