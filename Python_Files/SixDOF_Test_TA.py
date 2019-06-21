@@ -1,7 +1,7 @@
 ''' SixDOF_Test.py
 Purpose: Read and save data from IMU while Roomba is moving
 Also calculate Directional Cosine Matrix (DCM) to determine orientation
-Last Modified: 6/20/2019
+Last Modified: 6/21/2019
 '''
 
 ## Import libraries ##
@@ -92,14 +92,9 @@ dcm_file = open(dcm_file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
 
 # Dictionary of move commands
-dict = {0:[0,0,2],
-	1:[100,0,5],
-	2:[0,0,2],
-	3:[0,75,10],
-	4:[0,0,2],
-	5:[0,-75,10],
-	6:[0,75,20],
-	7:[0,0,1]
+dict = {0:[0,0,20],
+	1:[0,75,20],
+	2:[0,0,1]
 	}
 
 # Variables and Constants
@@ -113,15 +108,33 @@ distance_between_wheels = 235
 C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
 distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 
+accel_sum = np.zeros(3) # Vector of sum of accelerometer values
+mag_sum = np.zeros(3) # Vector of sum of magnetometer values
+omega_sum = np.zeros(3) # Vector of sum of gyroscope values
+temp_sum = 0 # Sum of temperature values
+imu_counter = 0 # Number of summed values
+
 # Read initial acceleration, magnetometer, gyroscope, and temperature data
-accel_x, accel_y, accel_z = imu.acceleration
-mag_x, mag_y, mag_z = imu.magnetic
-gyro_x, gyro_y, gyro_z = imu.gyro
-temp = imu.temperature
+for i in range(10): # Get 10 values for initial data
+	accel_x, accel_y, accel_z = imu.acceleration
+	mag_x, mag_y, mag_z = imu.magnetic
+	gyro_x, gyro_y, gyro_z = imu.gyro
+	temp_raw = imu.temperature
+	imu_counter += 1 # Incremenet counter
+	accel_sum += np.array([accel_x, accel_y, accel_z])
+	mag_sum += np.array([mag_x, mag_y, mag_z])
+	omega_sum += np.array([gyro_x, gyro_y, gyro_z])
+	temp_sum += temp_raw
+# End for loop
+# Average summed values to get each initial reading
+accel = accel_sum/imu_counter
+mag = mag_sum/imu_counter
+omega = omega_sum/imu_counter
+temp = temp_sum/imu_counter
 
-accel_length = math.sqrt(accel_x**2 + accel_y**2 + accel_z**2)
+accel_length = np.linalg.norm(accel) # Length of accelerometer vector
 
-R_est = (1/accel_length) * np.array([accel_x, accel_y, accel_z])
+R_est = (1/accel_length) * accel # Normalized accelerometer values
 K_B = R_est # Initial estimate of zenith versor
 # Use only one of the following...
 I_B_init = np.array([1, 0, 0]) # Initial estimate of forward versor (w/out mag)
@@ -137,7 +150,7 @@ theta_imu = np.arctan2(J_B[0], I_B[0]) # Initial estimate of heading from IMU
 if theta_imu < 0:
 	theta_imu += 2*np.pi
 
-gyro_init = np.array([gyro_x, gyro_y, gyro_z])
+gyro_init = omega # Store initial values for next iteration
 
 # Get initial wheel encoder values
 [left_start,right_start]=Roomba.Query(43,44)
@@ -147,9 +160,9 @@ data_time_init = time.time() - data_time
 
 # Print values
 print('Time: {0:0.6f}'.format(data_time_init))
-print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
-print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
-print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(gyro_x, gyro_y, gyro_z))
+print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel[0], accel[1], accel[2]))
+print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag[0], mag[1], mag_[2]))
+print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(omega[0], omega[1], omega[2]))
 print('Temperature: {0:0.3f}C'.format(temp))
 # Print the left encoder, right encoder, x position, y position, and theta
 print('L/R Wheel Encoders (counts): {0},{1}'.format(left_start,right_start))
@@ -160,10 +173,10 @@ print('DCM: [[{0:0.5f}, {1:0.5f}, {2:0.5f}]'.format(DCM_G[0,0], DCM_G[0,1], DCM_
 print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]'.format(DCM_G[1,0], DCM_G[1,1], DCM_G[1,2]))
 print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]]'.format(DCM_G[2,0], DCM_G[2,1], DCM_G[2,2]))
 # Write IMU data, wheel encoder data, and estimated inertial force vector values to a file.
-imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.6f}\n"\
-	.format(data_time_init, accel_x, accel_y, accel_z, mag_x, mag_y, mag_z, gyro_x, gyro_y, gyro_z, left_start, right_start, theta))
-dcm_file.write("{0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.6f}\n"\
-	.format(DCM_G[0,0],DCM_G[0,1],DCM_G[0,2],DCM_G[1,0],DCM_G[1,1],DCM_G[1,2],DCM_G[2,0],DCM_G[2,1],DCM_G[2,2],theta_imu))
+imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.6f},{13:0.6f}\n"\
+	.format(data_time_init,accel[0],accel[1],accel[2],mag[0],mag[1],mag_[2],omega[0],omega[1],omega[2],left_start,right_start,theta,theta_imu))
+dcm_file.write("{0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f}\n"\
+	.format(DCM_G[0,0],DCM_G[0,1],DCM_G[0,2],DCM_G[1,0],DCM_G[1,1],DCM_G[1,2],DCM_G[2,0],DCM_G[2,1],DCM_G[2,2]))
 Roomba.StartQueryStream(43,44)
 
 for i in range(len(dict.keys())):
@@ -181,10 +194,19 @@ for i in range(len(dict.keys())):
 			accel_x, accel_y, accel_z = imu.acceleration
 			mag_x, mag_y, mag_z = imu.magnetic
 			gyro_x, gyro_y, gyro_z = imu.gyro
-			temp = imu.temperature
-			accel = np.array([accel_x, accel_y, accel_z]) # Vector of accelerometer values
-			mag = np.array([mag_x, mag_y, mag_z]) # Vector of magnetometer values
-			omega = np.array([gyro_x, gyro_y, gyro_z]) # Vector of gyroscope values
+			temp_raw = imu.temperature
+			imu_counter += 1 # Increment counter
+			# Accumulate IMU readings
+			accel_sum += np.array([accel_x, accel_y, accel_z])
+			mag_sum += np.array([mag_x, mag_y, mag_z])
+			omega_sum += np.array([gyro_x, gyro_y, gyro_z])
+			temp_sum += temp_raw
+			# Average summed values to get each initial reading
+			accel = accel_sum/imu_counter
+			mag = mag_sum/imu_counter
+			omega = omega_sum/imu_counter
+			temp = temp_sum/imu_counter
+			#omega *= 1.00472 # experimentally determined scale factor for gyro values
 
 			# Finds the change in the left and right wheel encoder values
 			delta_l = left_encoder-left_start
@@ -267,10 +289,10 @@ for i in range(len(dict.keys())):
 			
 			# Print values
 			print('Time: {0:0.6f}'.format(data_time2))
-			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
-			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
-			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(gyro_x, gyro_y, gyro_z))
-			print('Temperature: {0:0.3f}C'.format(temp))
+			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel[0], accel[1], accel[2]))
+			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag[0], mag[1], mag_[2]))
+			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(omega[0], omega[1], omega[2]))print('Temperature: {0:0.3f}C'.format(temp))
+			print('Data Counter: {0}'.format(imu_counter)) # Include for testing
 			# Print the left encoder, right encoder, x position, y position, and theta
 			print('L/R Wheel Encoders (counts): {0},{1}'.format(left_encoder,right_encoder))
 			print('Roomba X/Y Position (mm): {0:.3f},{1:.3f}'.format(x_position,y_position))
@@ -280,15 +302,34 @@ for i in range(len(dict.keys())):
 			print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]'.format(DCM_G[1,0], DCM_G[1,1], DCM_G[1,2]))
 			print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]]'.format(DCM_G[2,0], DCM_G[2,1], DCM_G[2,2]))
 			# Write IMU data, wheel encoder data to a file.
-			imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f}\n"\
-				.format(data_time2, accel_x, accel_y, accel_z, mag_x, mag_y, mag_z, gyro_x, gyro_y, gyro_z, left_encoder, right_encoder, theta))
+			imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.6f},{13:0.6f}\n"\
+				.format(data_time_init,accel[0],accel[1],accel[2],mag[0],mag[1],mag_[2],omega[0],omega[1],omega[2],left_start,right_start,theta,theta_imu))
 			dcm_file.write("{0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f}\n"\
-				.format(DCM_G[0,0],DCM_G[0,1],DCM_G[0,2],DCM_G[1,0],DCM_G[1,1],DCM_G[1,2],DCM_G[2,0],DCM_G[2,1],DCM_G[2,2],theta_imu))
+				.format(DCM_G[0,0],DCM_G[0,1],DCM_G[0,2],DCM_G[1,0],DCM_G[1,1],DCM_G[1,2],DCM_G[2,0],DCM_G[2,1],DCM_G[2,2]))
 			# Save values for next iteration
 			left_start = left_encoder
 			right_start = right_encoder
 			data_time_init = data_time2
 			gyro_init = omega
+			# Reset sums for next iteration
+			accel_sum = np.zeros(3) # Vector of sum of accelerometer values
+			mag_sum = np.zeros(3) # Vector of sum of magnetometer values
+			omega_sum = np.zeros(3) # Vector of sum of gyroscope values
+			temp_sum = 0 # Sum of temperature values
+			imu_counter = 0 # Number of summed values
+		else: # If Roomba data hasn't come in
+			# Read acceleration, magnetometer, gyroscope, and temperature data
+			accel_x, accel_y, accel_z = imu.acceleration
+			mag_x, mag_y, mag_z = imu.magnetic
+			gyro_x, gyro_y, gyro_z = imu.gyro
+			temp_raw = imu.temperature
+			imu_counter += 1 # Increment counter
+			# Accumulate IMU readings
+			accel_sum += np.array([accel_x, accel_y, accel_z])
+			mag_sum += np.array([mag_x, mag_y, mag_z])
+			omega_sum += np.array([gyro_x, gyro_y, gyro_z])
+			temp_sum += temp_raw
+
 		# End if Roomba.Available()
 	# End while time.time() - start_time <=t:
 	start_time = time.time()
