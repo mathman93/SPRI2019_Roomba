@@ -343,7 +343,7 @@ for i in range(len(dict.keys())):
 			accel_sum = [(a+b) for a,b in zip(accel_sum, accel_list)]
 			gyro_list = [gyro_x, gyro_y, gyro_z]
 			gyro_sum = [(a+b) for a,b in zip(gyro_sum, gyro_list)]
-			mag_list = [mag_x, mag_y, mag_z].
+			mag_list = [mag_x, mag_y, mag_z]
 			mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
 		
 		accel_sum = [0, 0, 0] # Reset sum for new averages next time around
