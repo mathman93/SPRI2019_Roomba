@@ -107,7 +107,7 @@ file = open(file_name, "w") # Open a text file for storing data
 		#continue
 
 speed = 100
-duration 10
+duration = 10
 
 # Dictionary of move commands
 dict = {0:[0,0,10],
