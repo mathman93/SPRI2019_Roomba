@@ -61,7 +61,7 @@ time.sleep(0.1)
 x = imu.magnetic
 x = imu.acceleration
 x = imu.gyro
-x = imu.temperature
+#x = imu.temperature
 # Calibrate the magnetometer and the gyroscope
 print(" Calibrating IMU...")
 Roomba.Move(0,100) # Start the Roomba spinning
@@ -112,7 +112,7 @@ distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 accel_sum = np.zeros(3) # Vector of sum of accelerometer values
 mag_sum = np.zeros(3) # Vector of sum of magnetometer values
 omega_sum = np.zeros(3) # Vector of sum of gyroscope values
-temp_sum = 0 # Sum of temperature values
+#temp_sum = 0 # Sum of temperature values
 imu_counter = 0 # Number of summed values
 
 # Read initial acceleration, magnetometer, gyroscope, and temperature data
@@ -120,18 +120,18 @@ for i in range(10): # Get 10 values for initial data
 	accel_x, accel_y, accel_z = imu.acceleration
 	mag_x, mag_y, mag_z = imu.magnetic
 	gyro_x, gyro_y, gyro_z = imu.gyro
-	temp_raw = imu.temperature
+	#temp_raw = imu.temperature
 	imu_counter += 1 # Incremenet counter
 	accel_sum += np.array([accel_x, accel_y, accel_z])
 	mag_sum += np.array([mag_x, mag_y, mag_z])
 	omega_sum += np.array([gyro_x, gyro_y, gyro_z])
-	temp_sum += temp_raw
+	#temp_sum += temp_raw
 # End for loop
 # Average summed values to get each initial reading
 accel = accel_sum/imu_counter
 mag = mag_sum/imu_counter
 omega = omega_sum/imu_counter
-temp = temp_sum/imu_counter
+#temp = temp_sum/imu_counter
 
 accel_length = np.linalg.norm(accel) # Length of accelerometer vector
 
@@ -164,7 +164,7 @@ print('Time: {0:0.6f}'.format(data_time_init))
 print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel[0], accel[1], accel[2]))
 print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag[0], mag[1], mag[2]))
 print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(omega[0], omega[1], omega[2]))
-print('Temperature: {0:0.3f}C'.format(temp))
+#print('Temperature: {0:0.3f}C'.format(temp))
 # Print the left encoder, right encoder, x position, y position, and theta
 print('L/R Wheel Encoders (counts): {0},{1}'.format(left_start,right_start))
 print('Roomba X/Y Position (mm): {0:.3f},{1:.3f}'.format(x_position,y_position))
@@ -195,18 +195,18 @@ for i in range(len(dict.keys())):
 			accel_x, accel_y, accel_z = imu.acceleration
 			mag_x, mag_y, mag_z = imu.magnetic
 			gyro_x, gyro_y, gyro_z = imu.gyro
-			temp_raw = imu.temperature
+			#temp_raw = imu.temperature
 			imu_counter += 1 # Increment counter
 			# Accumulate IMU readings
 			accel_sum += np.array([accel_x, accel_y, accel_z])
 			mag_sum += np.array([mag_x, mag_y, mag_z])
 			omega_sum += np.array([gyro_x, gyro_y, gyro_z])
-			temp_sum += temp_raw
+			#temp_sum += temp_raw
 			# Average summed values to get each initial reading
 			accel = accel_sum/imu_counter
 			mag = mag_sum/imu_counter
 			omega = omega_sum/imu_counter
-			temp = temp_sum/imu_counter
+			#temp = temp_sum/imu_counter
 			#omega *= 1.00472 # experimentally determined scale factor for gyro values
 
 			# Finds the change in the left and right wheel encoder values
@@ -293,7 +293,7 @@ for i in range(len(dict.keys())):
 			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel[0], accel[1], accel[2]))
 			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag[0], mag[1], mag[2]))
 			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(omega[0], omega[1], omega[2]))
-			print('Temperature: {0:0.3f}C'.format(temp))
+			#print('Temperature: {0:0.3f}C'.format(temp))
 			print('Data Counter: {0}'.format(imu_counter)) # Include for testing
 			# Print the left encoder, right encoder, x position, y position, and theta
 			print('L/R Wheel Encoders (counts): {0},{1}'.format(left_encoder,right_encoder))
@@ -317,20 +317,20 @@ for i in range(len(dict.keys())):
 			accel_sum = np.zeros(3) # Vector of sum of accelerometer values
 			mag_sum = np.zeros(3) # Vector of sum of magnetometer values
 			omega_sum = np.zeros(3) # Vector of sum of gyroscope values
-			temp_sum = 0 # Sum of temperature values
+			#temp_sum = 0 # Sum of temperature values
 			imu_counter = 0 # Number of summed values
 		else: # If Roomba data hasn't come in
 			# Read acceleration, magnetometer, gyroscope, and temperature data
 			accel_x, accel_y, accel_z = imu.acceleration
 			mag_x, mag_y, mag_z = imu.magnetic
 			gyro_x, gyro_y, gyro_z = imu.gyro
-			temp_raw = imu.temperature
+			#temp_raw = imu.temperature
 			imu_counter += 1 # Increment counter
 			# Accumulate IMU readings
 			accel_sum += np.array([accel_x, accel_y, accel_z])
 			mag_sum += np.array([mag_x, mag_y, mag_z])
 			omega_sum += np.array([gyro_x, gyro_y, gyro_z])
-			temp_sum += temp_raw
+			#temp_sum += temp_raw
 
 		# End if Roomba.Available()
 	# End while time.time() - start_time <=t:
