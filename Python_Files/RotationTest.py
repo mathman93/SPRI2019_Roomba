@@ -353,7 +353,7 @@ Roomba.Move(0,0) # Stop Roomba
 Roomba.PauseQueryStream() # Pause data stream
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	z = Roomba.DirectRead(Roomba.Available()) # Clear out excess Roomba data
-	#print(z) # Include for debugging
+	print(z) # Include for debugging
 file.close() # Close data file
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
