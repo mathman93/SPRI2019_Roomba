@@ -327,6 +327,7 @@ for i in range(len(dict.keys())):
 			print('Delta Theta Acceleration: {0:.5f},{0:.5f},{0:.5f}'.format(delta_theta_accel[0],delta_theta_accel[1],delta_theta_accel[2]))
 			print('Delta Theta Gyro Parallel: {0:.5f},{0:.5f},{0:.5f}'.format(delta_theta_gyro_par[0],delta_theta_gyro_par[1],delta_theta_gyro_par[2]))
 			print('Delta Theta Gyro Perpindicular: {0:.5f},{0:.5f},{0:.5f}'.format(delta_theta_gyro_perp[0],delta_theta_gyro_perp[1],delta_theta_gyro_perp[2]))
+			print('Counter: {0}'.format(readings_counter))
 
 			# Write IMU data and wheel encoder data to a file.
 			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f},{20:0.5f},{21:0.5f},{22:0.5f}\n"\
