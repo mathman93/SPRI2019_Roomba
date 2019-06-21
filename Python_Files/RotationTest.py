@@ -97,19 +97,22 @@ file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
 file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
 
-while True:
-	try:
-		speed = int(input("Speed of rotation:"))
-		duration = float(input("Duration of rotation:"))
-		break
-	except ValueError:
-		print("Please input a number.")
-		continue
+#while True:
+	#try:
+		#speed = int(input("Speed of rotation:"))
+		#duration = float(input("Duration of rotation:"))
+		#break
+	#except ValueError:
+		#print("Please input a number.")
+		#continue
+
+speed = 100
+duration 10
 
 # Dictionary of move commands
-dict = {0:[0,0,2],
-	1:[0,speed,duration],
-	2:[0,0,2]
+dict = {0:[0,0,10],
+	1:[0,speed, duration],
+	2:[0,0,10]
 	}
 
 # Get initial wheel encoder values
@@ -183,18 +186,6 @@ for i in range(len(dict.keys())):
 	[f,s,t] = dict[i]
 	Roomba.Move(f,s)
 	while time.time() - start_time <=t:
-		accel_x, accel_y, accel_z = imu.acceleration
-		mag_x, mag_y, mag_z = imu.magnetic
-		gyro_x, gyro_y, gyro_z = imu.gyro
-		temp = imu.temperature
-		readings_counter += 1 #Counts how many times readings have been gathered
-		# Adds first readings to lists of IMU outputs for this iteration
-		accel_list = [accel_x, accel_y, accel_z]
-		accel_sum = [(a+b) for a,b in zip(accel_sum, accel_list)]
-		gyro_list = [gyro_x, gyro_y, gyro_z]
-		gyro_sum = [(a+b) for a,b in zip(gyro_sum, gyro_list)]
-		mag_list = [mag_x, mag_y, mag_z]
-		mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
 
 		# If data is available
 		if Roomba.Available()>0:
@@ -340,6 +331,20 @@ for i in range(len(dict.keys())):
 			r_estimate_x = k_current[0]
 			r_estimate_y = k_current[1]
 			r_estimate_z = k_current[2]
+
+		else:
+			accel_x, accel_y, accel_z = imu.acceleration
+			mag_x, mag_y, mag_z = imu.magnetic
+			gyro_x, gyro_y, gyro_z = imu.gyro
+			temp = imu.temperature
+			readings_counter += 1 #Counts how many times readings have been gathered
+			# Adds first readings to lists of IMU outputs for this iteration
+			accel_list = [accel_x, accel_y, accel_z]
+			accel_sum = [(a+b) for a,b in zip(accel_sum, accel_list)]
+			gyro_list = [gyro_x, gyro_y, gyro_z]
+			gyro_sum = [(a+b) for a,b in zip(gyro_sum, gyro_list)]
+			mag_list = [mag_x, mag_y, mag_z].
+			mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
 		
 		accel_sum = [0, 0, 0] # Reset sum for new averages next time around
 		gyro_sum = [0, 0, 0]
