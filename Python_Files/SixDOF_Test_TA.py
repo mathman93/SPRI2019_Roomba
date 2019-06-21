@@ -61,6 +61,7 @@ time.sleep(0.1)
 x = imu.magnetic
 x = imu.acceleration
 x = imu.gyro
+x = imu.temperature
 # Calibrate the magnetometer and the gyroscope
 print(" Calibrating IMU...")
 Roomba.Move(0,100) # Start the Roomba spinning
@@ -85,10 +86,10 @@ dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
 imu_file_name = os.path.join(dir_path, imu_file_name_input+".txt") # text file extension
 imu_file = open(imu_file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
-#dcm_file_name_input = input("Name for (DCM) data file: ")
-#dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
-#dcm_file_name = os.path.join(dir_path, dcm_file_name_input+".txt") # text file extension
-#dcm_file = open(dcm_file_name, "w") # Open a text file for storing data
+dcm_file_name_input = input("Name for (DCM) data file: ")
+dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+dcm_file_name = os.path.join(dir_path, dcm_file_name_input+".txt") # text file extension
+dcm_file = open(dcm_file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
 
 # Dictionary of move commands
@@ -175,8 +176,8 @@ print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]]'.format(DCM_G[2,0], DCM_G[2,1], DCM_G[2,
 # Write IMU data, wheel encoder data, and estimated inertial force vector values to a file.
 imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.6f},{13:0.6f}\n"\
 	.format(data_time_init,accel[0],accel[1],accel[2],mag[0],mag[1],mag[2],omega[0],omega[1],omega[2],left_start,right_start,theta,theta_imu))
-#dcm_file.write("{0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f}\n"\
-#	.format(DCM_G[0,0],DCM_G[0,1],DCM_G[0,2],DCM_G[1,0],DCM_G[1,1],DCM_G[1,2],DCM_G[2,0],DCM_G[2,1],DCM_G[2,2]))
+dcm_file.write("{0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f}\n"\
+	.format(DCM_G[0,0],DCM_G[0,1],DCM_G[0,2],DCM_G[1,0],DCM_G[1,1],DCM_G[1,2],DCM_G[2,0],DCM_G[2,1],DCM_G[2,2]))
 Roomba.StartQueryStream(43,44)
 
 for i in range(len(dict.keys())):
@@ -305,8 +306,8 @@ for i in range(len(dict.keys())):
 			# Write IMU data, wheel encoder data to a file.
 			imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.6f},{13:0.6f}\n"\
 				.format(data_time_init,accel[0],accel[1],accel[2],mag[0],mag[1],mag[2],omega[0],omega[1],omega[2],left_start,right_start,theta,theta_imu))
-			#dcm_file.write("{0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f}\n"\
-			#	.format(DCM_G[0,0],DCM_G[0,1],DCM_G[0,2],DCM_G[1,0],DCM_G[1,1],DCM_G[1,2],DCM_G[2,0],DCM_G[2,1],DCM_G[2,2]))
+			dcm_file.write("{0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f}\n"\
+				.format(DCM_G[0,0],DCM_G[0,1],DCM_G[0,2],DCM_G[1,0],DCM_G[1,1],DCM_G[1,2],DCM_G[2,0],DCM_G[2,1],DCM_G[2,2]))
 			# Save values for next iteration
 			left_start = left_encoder
 			right_start = right_encoder
@@ -339,7 +340,7 @@ Roomba.Move(0,0) # Stop Roomba
 Roomba.PauseQueryStream() # Pause data stream
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	z = Roomba.DirectRead(Roomba.Available()) # Clear out excess Roomba data
-	#print(z) # Include for debugging
+	print(z) # Include for debugging
 imu_file.close() # Close data file
 #dcm_file.close() # Close data file
 Roomba.PlaySMB() # For fun :)
