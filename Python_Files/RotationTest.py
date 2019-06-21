@@ -211,15 +211,15 @@ for i in range(len(dict.keys())):
 			# Find sum of the two readings so far and average them
 			accel_list = [accel_x, accel_y, accel_z]
 			accel_sum = [(a+b) for a,b in zip(accel_sum, accel_list)]
-			accel_avg = [(x/counter) for x in accel_sum]
+			accel_avg = [(x/readings_counter) for x in accel_sum]
 			accel_x, accel_y, accel_z = accel_avg # Set accelerometer values that will be used later to be the average of two readings
 			gyro_list = [gyro_x, gyro_y, gyro_z]
 			gyro_sum = [(a+b) for a,b in zip(gyro_sum, gyro_list)]
-			gyro_avg = [(x/counter) for x in gyro_sum]
+			gyro_avg = [(x/readings_counter) for x in gyro_sum]
 			gyro_x, gyro_y, gyro_z = gyro_avg # Set accelerometer values that will be used later to be the average of two readings
 			mag_list = [mag_x, mag_y, mag_z]
 			mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
-			mag_avg = [(x/counter) for x in mag_sum]
+			mag_avg = [(x/readings_counter) for x in mag_sum]
 			mag_x, mag_y, mag_z = mag_avg # Set accelerometer values that will be used later to be the average of two readings
 			
 			
