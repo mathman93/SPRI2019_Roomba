@@ -1,6 +1,6 @@
 ''' RotationTest.py
-Purpose: Compare rotation value in radians calculated by both the wheel encoders and the gyroscope with actual rotation of the roomba
-	 Currently also has all calculations and queries regarding the magnetometer removed for testing purposes
+Purpose: Test to see what the initial orientation of the Roomba is from the IMU
+	 magnetometer readings
 Last Modified: 6/24/2019
 '''
 
