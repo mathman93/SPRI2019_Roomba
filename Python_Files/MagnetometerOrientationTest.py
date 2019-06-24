@@ -117,11 +117,17 @@ dict = {0:[0,0,10],
 	2:[0,0,10]
 	}
 
+# Get initial wheel encoder values
+[left_start,right_start]=Roomba.Query(43,44)
+
 #Get initial IMU readings and then print them out
 mag_x, mag_y, mag_z = imu.magnetic
 print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
 
 # Variables and Constants
+y_position = 0 # Position of Roomba along y-axis (in mm)
+x_position = 0 # Position of Roomba along x-axis (in mm)
+theta = math.atan2(mag_y,mag_x) # Heading of Roomba (in radians) as calculated by the wheel encoders
 mag_sum = [0, 0, 0]
 readings_counter = 0
 
@@ -136,7 +142,9 @@ start_time = time.time()
 data_time = time.time()
 data_time2 = time.time() - data_time
 
-file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f}\n".format(data_time2,mag_x,mag_y,mag_z))
+file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f}\n".format(data_time2,mag_x,mag_y,mag_z,theta))
+
+Roomba.StartQueryStream(43,44)
 
 for i in range(len(dict.keys())):
 	# Get peices of dictionary and tell the roomba to move
@@ -144,34 +152,34 @@ for i in range(len(dict.keys())):
 	Roomba.Move(f,s)
 	while time.time() - start_time <=t:
 		# If data is available
-		#if Roomba.Available()>0:
-		data_time2 = time.time() - data_time
+		if Roomba.Available()>0:
+			data_time2 = time.time() - data_time
 
-		mag_x, mag_y, mag_z = imu.magnetic
-			#readings_counter += 1 #Counts how many times readings have been gathered
+			mag_x, mag_y, mag_z = imu.magnetic
+			readings_counter += 1 #Counts how many times readings have been gathered
+			mag_list = [mag_x, mag_y, mag_z]
+			mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
+			mag_avg = [(x/readings_counter) for x in mag_sum]
+			mag_x, mag_y, mag_z = mag_avg # Set magnetometer values that will be used later to be the average of two readings
 
-			#mag_list = [mag_x, mag_y, mag_z]
-			#mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
-			#mag_avg = [(x/readings_counter) for x in mag_sum]
-			#mag_x, mag_y, mag_z = mag_avg # Set magnetometer values that will be used later to be the average of two readings
-
-		print('Time: {0:0.6f}'.format(data_time2))
-		print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
-		file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f}\n".format(data_time2,mag_x,mag_y,mag_z))
+			print('Time: {0:0.6f}'.format(data_time2))
+			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
+			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f}\n".format(data_time2,mag_x,mag_y,mag_z))
 			
-			#readings_counter = 0 # Reset counter for averages next time around
-			#mag_sum = [0, 0, 0]
-		#else:
-			#mag_x, mag_y, mag_z = imu.magnetic
-			#readings_counter += 1
-			#mag_list = [mag_x,mag_y,mag_z]
-			#mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
+			readings_counter = 0 # Reset counter for averages next time around
+			mag_sum = [0, 0, 0]
+		else:
+			mag_x, mag_y, mag_z = imu.magnetic
+			readings_counter += 1
+			mag_list = [mag_x,mag_y,mag_z]
+			mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
 
 		# End if Roomba.Available()
 	# End while time.time() - start_time <=t:
 	start_time = time.time()
 # End for i in range(len(dict.keys())):
 Roomba.Move(0,0) # Stop Roomba
+Roomba.PauseQueryStream() # Pause data stream
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	z = Roomba.DirectRead(Roomba.Available()) # Clear out excess Roomba data
 	print(z) # Include for debugging
