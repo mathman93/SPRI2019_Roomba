@@ -1,6 +1,6 @@
 ''' RotationTest.py
-Purpose: Test to see what the initial orientation of the Roomba is from the IMU
-	 magnetometer readings
+Purpose: Test to see what the orientation of the Roomba is based on the wheel encoders vs the orientation
+	 based on the magnetometer
 Last Modified: 6/24/2019
 '''
 
@@ -93,29 +93,11 @@ GPIO.output(yled, GPIO.LOW)
 # Main Code #
 
 # Open a text file for data retrieval
-file_name_input = input("Name for data file: ")
-dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
-file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
-file = open(file_name, "w") # Open a text file for storing data
+#file_name_input = input("Name for data file: ")
+#dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+#file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
+#file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
-
-#while True:
-	#try:
-		#speed = int(input("Speed of rotation:"))
-		#duration = float(input("Duration of rotation:"))
-		#break
-	#except ValueError:
-		#print("Please input a number.")
-		#continue
-
-speed = 100
-duration = 10
-
-# Dictionary of move commands
-dict = {0:[0,0,10],
-	1:[0,speed, duration],
-	2:[0,0,10]
-	}
 
 # Get initial wheel encoder values
 [left_start,right_start]=Roomba.Query(43,44)
@@ -149,15 +131,17 @@ start_time = time.time()
 data_time = time.time()
 data_time_init = time.time() - data_time
 
-file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f}\n".format(data_time_init,mag_x,mag_y,mag_z,theta))
+#file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f}\n".format(data_time_init,mag_x,mag_y,mag_z,theta))
+
+theta_initial = 0
+theta_d = theta_initial-mag_theta
+if theta_d < 0 
+	theta_d += 2*math.pi
 
 Roomba.StartQueryStream(43,44)
 
-for i in range(len(dict.keys())):
-	# Get peices of dictionary and tell the roomba to move
-	[f,s,t] = dict[i]
-	Roomba.Move(f,s)
-	while time.time() - start_time <=t:
+while True:
+	try:
 		# If data is available
 		if Roomba.Available()>0:
 			data_time2 = time.time() - data_time
@@ -191,11 +175,32 @@ for i in range(len(dict.keys())):
 				theta -= 2*math.pi
 			elif theta < 0:
 				theta += 2*math.pi
-			# Determine what method to use to find the change in distance
+				# Determine what method to use to find the change in distance
 			if delta_l-delta_r == 0:
 				delta_d = 0.5*(delta_l+delta_r)*distance_per_count
 			else:
 				delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
+			# Calculate theta_d and normalize it to 0-2pi
+			# This value is the difference between the direction were supposed to be going and the direction we are going
+			theta_d = ((theta_initial-mag_theta)%(2*math.pi))
+			# get theta_d between -pi and pi
+			if theta_d > math.pi:
+				theta_d -= 2*math.p
+
+			if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 radians...
+				s_set = 100 # Spin faster
+			elif abs(theta_d) > (math.pi / 36): #If theta_d is getting closer...
+				s_set = 60 # Spin normal speed
+			else: # otherwise, if theta_d is fairly small
+				s_set = 20 # Spin slow
+
+			if theta_d > 0: #Rotates clockwise if theta_d is positive
+				s = s_set
+			elif theta_d < 0: #Rotates counterclockwise if theta_d is negative
+				s = s_set * -1
+			else:
+				s = 0
+
 			# Find new x and y position
 			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
@@ -208,7 +213,7 @@ for i in range(len(dict.keys())):
 			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
 			print('Wheel Encoder Heading (radians): {0:0.5f}'.format(theta))
 			print('Magnetometer Heading (radians): {0:0.5f}'.format(mag_theta))
-			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f}\n".format(data_time2,mag_x,mag_y,mag_z,theta,mag_theta))
+			#file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f}\n".format(data_time2,mag_x,mag_y,mag_z,theta,mag_theta))
 			
 			readings_counter = 0 # Reset counter for averages next time around
 			mag_sum = [0, 0, 0]
@@ -220,10 +225,11 @@ for i in range(len(dict.keys())):
 			readings_counter += 1
 			mag_list = [mag_x,mag_y,mag_z]
 			mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
-
 		# End if Roomba.Available()
-	# End while time.time() - start_time <=t:
-	start_time = time.time()
+		# End while time.time() - start_time <=t:
+		start_time = time.time()
+	except KeyboardInterrupt:
+		break
 # End for i in range(len(dict.keys())):
 Roomba.Move(0,0) # Stop Roomba
 Roomba.PauseQueryStream() # Pause data stream
