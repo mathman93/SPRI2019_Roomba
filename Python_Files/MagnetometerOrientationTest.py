@@ -134,6 +134,7 @@ distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 
 start_time = time.time()
 data_time = time.time()
+data_time2 = time.time() - data_time
 
 file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f}\n".format(data_time2,mag_x,mag_y,mag_z))
 
