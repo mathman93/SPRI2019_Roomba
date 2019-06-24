@@ -159,10 +159,6 @@ while True:
 			if mag_theta < 0:
 				mag_theta += 2*math.pi
 
-			# Find new x and y position
-			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
-			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
-
 			# Finds the change in the left and right wheel encoder values
 			delta_l = left_encoder-left_start
 			delta_r = right_encoder-right_start
@@ -188,6 +184,11 @@ while True:
 				delta_d = 0.5*(delta_l+delta_r)*distance_per_count
 			else:
 				delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
+			
+			# Find new x and y position
+			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
+			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
+
 			# Calculate theta_d and normalize it to 0-2pi
 			# This value is the difference between the direction were supposed to be going and the direction we are going
 			theta_d = ((theta_initial-mag_theta)%(2*math.pi))
