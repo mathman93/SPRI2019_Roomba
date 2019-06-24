@@ -187,7 +187,6 @@ for i in range(len(dict.keys())):
 	[f,s,t] = dict[i]
 	Roomba.Move(f,s)
 	while time.time() - start_time <=t:
-
 		# If data is available
 		if Roomba.Available()>0:
 			data_time2 = time.time() - data_time
@@ -209,6 +208,7 @@ for i in range(len(dict.keys())):
 			gyro_sum = [(a+b) for a,b in zip(gyro_sum, gyro_list)]
 			gyro_avg = [(x/readings_counter) for x in gyro_sum]
 			gyro_x, gyro_y, gyro_z = gyro_avg # Set gyroscope values that will be used later to be the average of two readings
+			
 			#mag_list = [mag_x, mag_y, mag_z]
 			#mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
 			#mag_avg = [(x/readings_counter) for x in mag_sum]
@@ -324,6 +324,7 @@ for i in range(len(dict.keys())):
 			# Write IMU data and wheel encoder data to a file.
 			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},,{4:0.5f},{5:0.5f},{6:0.5f},{7},{8},{9:0.5f},{10:0.5f},{11:0.5f},{12:0.5f},{13:0.5f},{14:0.5f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f}\n"\
 				.format(data_time2, accel_x, accel_y, accel_z,gyro_x, gyro_y, gyro_z, left_encoder, right_encoder, i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2],theta,new_theta))
+			#Set values to new ones for next iteration
 			left_start = left_encoder
 			right_start = right_encoder
 			init_gyro_x = gyro_x
@@ -332,6 +333,7 @@ for i in range(len(dict.keys())):
 			r_estimate_x = k_current[0]
 			r_estimate_y = k_current[1]
 			r_estimate_z = k_current[2]
+			readings_counter = 0 # Reset counter for averages next time around
 
 		else:
 			accel_x, accel_y, accel_z = imu.acceleration
@@ -350,7 +352,6 @@ for i in range(len(dict.keys())):
 		accel_sum = [0, 0, 0] # Reset sum for new averages next time around
 		gyro_sum = [0, 0, 0]
 		#mag_sum = [0, 0, 0]
-		readings_counter = 0 # Reset counter for averages next time around
 		# End if Roomba.Available()
 	# End while time.time() - start_time <=t:
 	start_time = time.time()
