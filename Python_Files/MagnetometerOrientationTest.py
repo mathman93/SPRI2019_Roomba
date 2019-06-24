@@ -131,6 +131,7 @@ theta = math.atan2(mag_y,mag_x) # Heading of Roomba (in radians) as calculated b
 if theta < 0:
 	theta += 2*math.pi
 print('Wheel Encoder Heading (radians): {0:0.5f}'.format(theta))
+mag_theta = math.atan2(mag_y,mag_x) #Heading of Roomba(in radians) as calculated by the magnetometer
 
 mag_sum = [0, 0, 0]
 readings_counter = 0
@@ -197,9 +198,12 @@ for i in range(len(dict.keys())):
 			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
 
+			mag_theta = math.atan2(mag_y,mag_x)
+
 			print('Time: {0:0.6f}'.format(data_time2))
 			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
 			print('Wheel Encoder Heading (radians): {0:0.5f}'.format(theta))
+			print('Magnetometer Heading (radians): {0:0.5f}'.format(mag_theta))
 			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f}\n".format(data_time2,mag_x,mag_y,mag_z,theta))
 			
 			readings_counter = 0 # Reset counter for averages next time around
