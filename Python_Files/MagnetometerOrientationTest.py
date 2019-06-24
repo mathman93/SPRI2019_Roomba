@@ -135,7 +135,7 @@ data_time_init = time.time() - data_time
 
 theta_initial = 0
 theta_d = theta_initial-mag_theta
-if theta_d < 0 
+if theta_d < 0:
 	theta_d += 2*math.pi
 
 Roomba.StartQueryStream(43,44)
@@ -154,6 +154,14 @@ while True:
 			mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
 			mag_avg = [(x/readings_counter) for x in mag_sum]
 			mag_x, mag_y, mag_z = mag_avg # Set magnetometer values that will be used later to be the average of two readings
+
+			mag_theta = math.atan2(mag_y,mag_x)
+			if mag_theta < 0:
+				mag_theta += 2*math.pi
+
+			# Find new x and y position
+			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
+			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
 
 			# Finds the change in the left and right wheel encoder values
 			delta_l = left_encoder-left_start
@@ -200,14 +208,8 @@ while True:
 				s = s_set * -1
 			else:
 				s = 0
-
-			# Find new x and y position
-			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
-			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
-
-			mag_theta = math.atan2(mag_y,mag_x)
-			if mag_theta < 0:
-				mag_theta += 2*math.pi
+			
+			Roomba.Move(0,s)
 
 			print('Time: {0:0.6f}'.format(data_time2))
 			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
@@ -227,7 +229,6 @@ while True:
 			mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
 		# End if Roomba.Available()
 		# End while time.time() - start_time <=t:
-		start_time = time.time()
 	except KeyboardInterrupt:
 		break
 # End for i in range(len(dict.keys())):
@@ -236,7 +237,7 @@ Roomba.PauseQueryStream() # Pause data stream
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	z = Roomba.DirectRead(Roomba.Available()) # Clear out excess Roomba data
 	print(z) # Include for debugging
-file.close() # Close data file
+#file.close() # Close data file
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
