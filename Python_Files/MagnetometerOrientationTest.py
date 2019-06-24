@@ -122,41 +122,6 @@ mag_x, mag_y, mag_z = imu.magnetic
 print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
 
 # Variables and Constants
-y_position = 0 # Position of Roomba along y-axis (in mm)
-x_position = 0 # Position of Roomba along x-axis (in mm)
-accel_length = math.sqrt((accel_x**2)+(accel_y**2)+(accel_z**2)) # Distance of vector made by acceleration
-r_accel_x = accel_x / accel_length #Normalized acceleration values
-r_accel_y = accel_y / accel_length
-r_accel_z = accel_z / accel_length
-r_estimate_x = r_accel_x #Estimates of normalized values, in first iteration, estimate is just initial reading
-r_estimate_y = r_accel_y
-r_estimate_z = r_accel_z
-init_gyro_x = gyro_x #Sets initial gyro readings for later usage
-init_gyro_y = gyro_y
-w_gyro = 15 #Constant used to weight measurements
-
-k_current = [r_estimate_x, r_estimate_y, r_estimate_z] #Initial K vector in regards to body is set to initial normalized estimate vector
-i_current = [1, 0, 0] #Initial I vector is set to standard vector unit length, but can be set to initial magnetometer readings if using magnetometer
-k_i_product = [(DotProduct(k_current,i_current)*x) for x in k_current]
-i_current = [(a-b) for a,b in zip(i_current, k_i_product)]
-j_current = CrossProduct(k_current, i_current)
-length_i = math.sqrt(DotProduct(i_current,i_current)) 
-length_k = math.sqrt(DotProduct(k_current,k_current))
-length_j = math.sqrt(DotProduct(j_current,j_current))
-i_norm = [x / length_i for x in i_current] # Normalized values of I,K and J prime
-k_norm = [x / length_k for x in k_current]
-j_norm = [x / length_j for x in j_current]
-theta = math.atan2(j_norm[0],i_norm[0]) # Heading of Roomba (in radians) as calculated by the wheel encoders
-new_theta = math.atan2(j_norm[0],i_norm[0]) # Heading of Roomba (in radians) as calculated by the IMU
-if new_theta < 0:
-	new_theta += 2*math.pi
-
-S_gyro = 10 # Weight of gyro
-S_accel = 2 # Weight of acceleromater
-S_mag = 2 #Weight of magnetometer
-
-accel_sum = [0, 0, 0]
-gyro_sum = [0, 0, 0]
 mag_sum = [0, 0, 0]
 readings_counter = 0
 
