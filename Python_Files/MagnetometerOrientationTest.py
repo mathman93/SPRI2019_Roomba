@@ -133,7 +133,14 @@ data_time_init = time.time() - data_time
 
 #file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f}\n".format(data_time_init,mag_x,mag_y,mag_z,theta))
 
-theta_initial = 0
+while True:
+	try:
+		theta_initial = float(input("theta initial:"))
+		theta_initial = math.radians(theta_initial%360)
+		break
+	except ValueError:
+		print("Please input a number.")
+		continue
 theta_d = theta_initial-mag_theta
 if theta_d < 0:
 	theta_d += 2*math.pi
