@@ -98,10 +98,6 @@ dict = {0:[0,0,20],
 	2:[0,0,1]
 	}
 
-# Variables and Constants
-y_position = 0 # Position of Roomba along y-axis (in mm)
-x_position = 0 # Position of Roomba along x-axis (in mm)
-theta = 0 # Heading of Roomba (in radians)
 # Roomba Constants
 wheel_diameter = 72
 counts_per_rev = 508.8
@@ -138,8 +134,8 @@ accel_length = np.linalg.norm(accel) # Length of accelerometer vector
 R_est = (1/accel_length) * accel # Normalized accelerometer values
 K_B = R_est # Initial estimate of zenith versor
 # Use only one of the following...
-I_B_init = np.array([1, 0, 0]) # Initial estimate of forward versor (w/out mag)
-#I_B_init = np.array([max_x, mag_y, mag_z]) # Estimate of forward versor (with mag)
+#I_B_init = np.array([1, 0, 0]) # Initial estimate of forward versor (w/out mag)
+I_B_init = -mag/np.linalg.norm(mag) # Estimate of forward versor (with mag)
 # Orthogonalize I_B_init, then normalize
 I_B = I_B_init - (K_B.dot(I_B_init)*K_B)
 I_B_length = np.linalg.norm(I_B)
@@ -151,11 +147,17 @@ theta_imu = np.arctan2(J_B[0], I_B[0]) # Initial estimate of heading from IMU
 if theta_imu < 0:
 	theta_imu += 2*np.pi
 
+# Variables and Constants
+y_position = 0 # Position of Roomba along y-axis (in mm)
+x_position = 0 # Position of Roomba along x-axis (in mm)
+#theta = 0 # Heading of Roomba (in radians)
+theta = theta_imu # Heading of Roomba (using imu)
+#theta = math.atan2(-mag[1],-mag[0]) # Heading of Roomba (using magnetometer)
+
 gyro_init = omega # Store initial values for next iteration
 
 # Get initial wheel encoder values
 [left_start,right_start]=Roomba.Query(43,44)
-start_time = time.time()
 data_time = time.time()
 data_time_init = time.time() - data_time
 
@@ -181,10 +183,11 @@ dcm_file.write("{0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{
 Roomba.StartQueryStream(43,44)
 
 for i in range(len(dict.keys())):
-	# Get peices of dictionary and tell the roomba to move
+	# Get pieces of dictionary and tell the roomba to move
+	start_time = time.time()
 	[f,s,t] = dict[i]
 	Roomba.Move(f,s)
-	while time.time() - start_time <=t:
+	while time.time() - start_time <= t:
 		# If data is available
 		if Roomba.Available()>0:
 			data_time2 = time.time() - data_time
@@ -260,15 +263,22 @@ for i in range(len(dict.keys())):
 			R_est = (1/R_est_length) * R_est # Normalize estimated values
 			K_A = R_est # New estimate of zenith vector from accelerometer (and gyro) data
 			
+			I_M = -mag/np.linagl.norm(mag) # Estimate of "north" from magnetometer data
 			# Calculate rotation change, delta_theta
 			delta_theta_gyro = np.radians(omega) * delta_time # Gyro estimate of rotation
 			delta_theta_gyro_para = K_B.dot(delta_theta_gyro) * K_B # Component parallel to K_B
 			delta_theta_gyro_perp = delta_theta_gyro - delta_theta_gyro_para # Component perpendicular to K_B
 			delta_theta_acc = np.cross(K_B, (K_A - K_B)) # Accelerometer estimate of rotation
+			delta_theta_mag = np.cross(I_B, (I_M - I_B)) # Magnetometer estimate of rotation
+			delta_theta_mag_para = K_B.dot(delta_theta_mag) * K_B # Component parallel to K_B
+			delta_theta_mag_perp = delta_theta_mag - delta_theta_mag_para # Component perpendictular to K_B
 			s_acc = 1 # Accelerometer weight value
 			s_gyro = 10 # Gyroscope weight value
-			delta_theta = delta_theta_gyro_para + ((s_gyro*delta_theta_gyro_perp) + (s_acc*delta_theta_acc))/(s_gyro + s_acc)
-
+			s_mag = 1 # Magnetometer weight value
+			# Component values of delta_theta
+			delta_theta_perp = ((s_gyro*delta_theta_gyro_perp) + (s_acc*delta_theta_acc) + (s_mag*delta_theta_mag))/(s_gyro + s_acc + s_mag)
+			delta_theta_para = delta_theta_gyro_para
+			delta_theta = delta_theta_perp + delta_theta_para # Combined values
 			# Update versors
 			K_B += np.cross(delta_theta, K_B)
 			I_B += np.cross(delta_theta, I_B)
@@ -334,7 +344,6 @@ for i in range(len(dict.keys())):
 
 		# End if Roomba.Available()
 	# End while time.time() - start_time <=t:
-	start_time = time.time()
 # End for i in range(len(dict.keys())):
 Roomba.Move(0,0) # Stop Roomba
 Roomba.PauseQueryStream() # Pause data stream
