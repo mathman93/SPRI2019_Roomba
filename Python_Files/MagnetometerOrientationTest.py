@@ -128,8 +128,8 @@ print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, ma
 y_position = 0 # Position of Roomba along y-axis (in mm)
 x_position = 0 # Position of Roomba along x-axis (in mm)
 theta = math.atan2(mag_y,mag_x) # Heading of Roomba (in radians) as calculated by the wheel encoders
-	if theta < 0:
-		theta += 2*math.pi
+if theta < 0:
+	theta += 2*math.pi
 
 mag_sum = [0, 0, 0]
 readings_counter = 0
