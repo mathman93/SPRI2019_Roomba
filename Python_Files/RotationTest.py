@@ -208,13 +208,13 @@ for i in range(len(dict.keys())):
 			gyro_sum = [(a+b) for a,b in zip(gyro_sum, gyro_list)]
 			gyro_avg = [(x/readings_counter) for x in gyro_sum]
 			gyro_x, gyro_y, gyro_z = gyro_avg # Set gyroscope values that will be used later to be the average of two readings
-			
+
 			#mag_list = [mag_x, mag_y, mag_z]
 			#mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
 			#mag_avg = [(x/readings_counter) for x in mag_sum]
 			#mag_x, mag_y, mag_z = mag_avg # Set magnetometer values that will be used later to be the average of two readings
-			
-			
+
+
 			# Finds the change in the left and right wheel encoder values
 			delta_l = left_encoder-left_start
 			delta_r = right_encoder-right_start
@@ -290,7 +290,7 @@ for i in range(len(dict.keys())):
 			i_norm = [x / length_i for x in i_prime] # Normalized values of I,K and J prime
 			k_norm = [x / length_k for x in k_prime]
 			j_norm = [x / length_j for x in j_prime]
-			
+
 			# Values to be used in next loop
 			i_current = i_norm
 			k_current = k_norm
@@ -334,6 +334,9 @@ for i in range(len(dict.keys())):
 			r_estimate_y = k_current[1]
 			r_estimate_z = k_current[2]
 			readings_counter = 0 # Reset counter for averages next time around
+			accel_sum = [0, 0, 0] # Reset sum for new averages next time around
+			gyro_sum = [0, 0, 0]
+			#mag_sum = [0, 0, 0]
 
 		else:
 			accel_x, accel_y, accel_z = imu.acceleration
@@ -348,10 +351,7 @@ for i in range(len(dict.keys())):
 			gyro_sum = [(a+b) for a,b in zip(gyro_sum, gyro_list)]
 			#mag_list = [mag_x, mag_y, mag_z]
 			#mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
-		
-		accel_sum = [0, 0, 0] # Reset sum for new averages next time around
-		gyro_sum = [0, 0, 0]
-		#mag_sum = [0, 0, 0]
+
 		# End if Roomba.Available()
 	# End while time.time() - start_time <=t:
 	start_time = time.time()
