@@ -128,6 +128,9 @@ print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, ma
 y_position = 0 # Position of Roomba along y-axis (in mm)
 x_position = 0 # Position of Roomba along x-axis (in mm)
 theta = math.atan2(mag_y,mag_x) # Heading of Roomba (in radians) as calculated by the wheel encoders
+	if theta < 0:
+		theta += 2*math.pi
+
 mag_sum = [0, 0, 0]
 readings_counter = 0
 
@@ -140,9 +143,9 @@ distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 
 start_time = time.time()
 data_time = time.time()
-data_time2 = time.time() - data_time
+data_time_init = time.time() - data_time
 
-file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f}\n".format(data_time2,mag_x,mag_y,mag_z,theta))
+file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f}\n".format(data_time_init,mag_x,mag_y,mag_z,theta))
 
 Roomba.StartQueryStream(43,44)
 
@@ -154,13 +157,44 @@ for i in range(len(dict.keys())):
 		# If data is available
 		if Roomba.Available()>0:
 			data_time2 = time.time() - data_time
-
+			# Get left and right encoder values and find the change in each
+			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
 			mag_x, mag_y, mag_z = imu.magnetic
 			readings_counter += 1 #Counts how many times readings have been gathered
+
 			mag_list = [mag_x, mag_y, mag_z]
 			mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
 			mag_avg = [(x/readings_counter) for x in mag_sum]
 			mag_x, mag_y, mag_z = mag_avg # Set magnetometer values that will be used later to be the average of two readings
+
+			# Finds the change in the left and right wheel encoder values
+			delta_l = left_encoder-left_start
+			delta_r = right_encoder-right_start
+			#Checks if the encoder values have rolled over, and if so, subtracts/adds accordingly to assure normal delta values
+			if delta_l < -1*(2**15):
+				delta_l += (2**16)
+			elif delta_l > (2**15):
+				delta_l -+ (2**16)
+			if delta_r < -1*(2**15):
+				delta_r += (2**16)
+			elif delta_r > (2**15):
+				delta_r -+ (2**16)
+			# Determine the change in theta and what that is currently
+			delta_theta = (delta_l-delta_r)*C_theta
+			theta += delta_theta
+			# If theta great than 2pi subtract 2pi and vice versus. Normalize theta to 0-2pi to show what my heading is.
+			if theta >= 2*math.pi:
+				theta -= 2*math.pi
+			elif theta < 0:
+				theta += 2*math.pi
+			# Determine what method to use to find the change in distance
+			if delta_l-delta_r == 0:
+				delta_d = 0.5*(delta_l+delta_r)*distance_per_count
+			else:
+				delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
+			# Find new x and y position
+			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
+			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
 
 			print('Time: {0:0.6f}'.format(data_time2))
 			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
@@ -168,6 +202,9 @@ for i in range(len(dict.keys())):
 			
 			readings_counter = 0 # Reset counter for averages next time around
 			mag_sum = [0, 0, 0]
+			left_start = left_encoder
+			right_start = right_encoder
+			readings_counter = 0
 		else:
 			mag_x, mag_y, mag_z = imu.magnetic
 			readings_counter += 1
