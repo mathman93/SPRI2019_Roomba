@@ -148,24 +148,24 @@ for i in range(len(dict.keys())):
 			data_time2 = time.time() - data_time
 
 			mag_x, mag_y, mag_z = imu.magnetic
-			readings_counter += 1 #Counts how many times readings have been gathered
+			#readings_counter += 1 #Counts how many times readings have been gathered
 
-			mag_list = [mag_x, mag_y, mag_z]
-			mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
-			mag_avg = [(x/readings_counter) for x in mag_sum]
-			mag_x, mag_y, mag_z = mag_avg # Set magnetometer values that will be used later to be the average of two readings
+			#mag_list = [mag_x, mag_y, mag_z]
+			#mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
+			#mag_avg = [(x/readings_counter) for x in mag_sum]
+			#mag_x, mag_y, mag_z = mag_avg # Set magnetometer values that will be used later to be the average of two readings
 
 			print('Time: {0:0.6f}'.format(data_time2))
 			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
 			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f}\n".format(data_time2,mag_x,mag_y,mag_z))
 			
-			readings_counter = 0 # Reset counter for averages next time around
-			mag_sum = [0, 0, 0]
-		else:
-			mag_x, mag_y, mag_z = imu.magnetic
-			readings_counter += 1
-			mag_list = [mag_x,mag_y,mag_z]
-			mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
+			#readings_counter = 0 # Reset counter for averages next time around
+			#mag_sum = [0, 0, 0]
+		#else:
+			#mag_x, mag_y, mag_z = imu.magnetic
+			#readings_counter += 1
+			#mag_list = [mag_x,mag_y,mag_z]
+			#mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
 
 		# End if Roomba.Available()
 	# End while time.time() - start_time <=t:
