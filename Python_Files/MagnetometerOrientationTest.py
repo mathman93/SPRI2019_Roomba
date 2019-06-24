@@ -203,9 +203,9 @@ while True:
 			else: # otherwise, if theta_d is fairly small
 				s_set = 20 # Spin slow
 
-			if theta_d > 0.5: #Rotates clockwise if theta_d is positive
+			if theta_d > (math.pi/360): #Rotates clockwise if theta_d is positive
 				s = s_set
-			elif theta_d < -0.5: #Rotates counterclockwise if theta_d is negative
+			elif theta_d < -1*(math.pi/360): #Rotates counterclockwise if theta_d is negative
 				s = s_set * -1
 			else:
 				s = 0
