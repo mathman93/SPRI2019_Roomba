@@ -1,6 +1,7 @@
 ''' RotationTest.py
 Purpose: Compare rotation value in radians calculated by both the wheel encoders and the gyroscope with actual rotation of the roomba
-Last Modified: 6/20/2019
+	 Currently also has all calculations and queries regarding the magnetometer removed for testing purposes
+Last Modified: 6/24/2019
 '''
 
 ## Import libraries ##
@@ -120,10 +121,10 @@ dict = {0:[0,0,10],
 
 #Get initial IMU readings and then print them out
 accel_x, accel_y, accel_z = imu.acceleration
-mag_x, mag_y, mag_z = imu.magnetic
+#mag_x, mag_y, mag_z = imu.magnetic
 gyro_x, gyro_y, gyro_z = imu.gyro
 print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
-print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
+#print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
 print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(gyro_x, gyro_y, gyro_z))
 
 # Variables and Constants
@@ -161,7 +162,7 @@ S_accel = 1 # Weight of acceleromater
 
 accel_sum = [0, 0, 0]
 gyro_sum = [0, 0, 0]
-mag_sum = [0, 0, 0]
+#mag_sum = [0, 0, 0]
 readings_counter = 0
 
 # Roomba Constants
@@ -175,8 +176,8 @@ start_time = time.time()
 data_time = time.time()
 data_time_init = time.time() - data_time
 
-file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f},{20:0.5f},{21:0.5f},{22:0.5f}\n"\
-	.format(data_time_init, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_start, right_start, i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2],theta,new_theta))
+file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},,{4:0.5f},{5:0.5f},{6:0.5f},{7},{7},{9:0.5f},{10:0.5f},{11:0.5f},{12:0.5f},{13:0.5f},{14:0.5f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f}\n"\
+	.format(data_time_init, accel_x, accel_y, accel_z,gyro_x, gyro_y, gyro_z, left_start, right_start, i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2],theta,new_theta))
 
 
 Roomba.StartQueryStream(43,44)
@@ -195,9 +196,9 @@ for i in range(len(dict.keys())):
 			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
 			# Read acceleration, magnetometer, gyroscope, and temperature data
 			accel_x, accel_y, accel_z = imu.acceleration
-			mag_x, mag_y, mag_z = imu.magnetic
+			#mag_x, mag_y, mag_z = imu.magnetic
 			gyro_x, gyro_y, gyro_z = imu.gyro
-			temp = imu.temperature
+			#temp = imu.temperature
 			readings_counter += 1 #Counts how many times readings have been gathered
 			# Find sum of the two readings so far and average them
 			accel_list = [accel_x, accel_y, accel_z]
@@ -207,11 +208,11 @@ for i in range(len(dict.keys())):
 			gyro_list = [gyro_x, gyro_y, gyro_z]
 			gyro_sum = [(a+b) for a,b in zip(gyro_sum, gyro_list)]
 			gyro_avg = [(x/readings_counter) for x in gyro_sum]
-			gyro_x, gyro_y, gyro_z = gyro_avg # Set accelerometer values that will be used later to be the average of two readings
-			mag_list = [mag_x, mag_y, mag_z]
-			mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
-			mag_avg = [(x/readings_counter) for x in mag_sum]
-			mag_x, mag_y, mag_z = mag_avg # Set accelerometer values that will be used later to be the average of two readings
+			gyro_x, gyro_y, gyro_z = gyro_avg # Set gyroscope values that will be used later to be the average of two readings
+			#mag_list = [mag_x, mag_y, mag_z]
+			#mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
+			#mag_avg = [(x/readings_counter) for x in mag_sum]
+			#mag_x, mag_y, mag_z = mag_avg # Set magnetometer values that will be used later to be the average of two readings
 			
 			
 			# Finds the change in the left and right wheel encoder values
@@ -304,9 +305,9 @@ for i in range(len(dict.keys())):
 			# Print acceleration, gyroscope and magnetometer values
 			print('Time: {0:0.6f}'.format(data_time2))
 			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
-			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
+			#print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
 			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(gyro_x, gyro_y, gyro_z))
-			print('Temperature: {0:0.3f}C'.format(temp))
+			#print('Temperature: {0:0.3f}C'.format(temp))
 			# Print the left encoder, right encoder, x position, y position, and theta
 			print('L/R Wheel Encoders (counts): {0},{1}'.format(left_encoder,right_encoder))
 			print('Roomba X/Y Position (mm): {0:.3f},{1:.3f}'.format(x_position,y_position))
@@ -321,7 +322,7 @@ for i in range(len(dict.keys())):
 			print('Counter: {0}'.format(readings_counter))
 
 			# Write IMU data and wheel encoder data to a file.
-			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f},{20:0.5f},{21:0.5f},{22:0.5f}\n"\
+			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},,{4:0.5f},{5:0.5f},{6:0.5f},{7},{8},{9:0.5f},{10:0.5f},{11:0.5f},{12:0.5f},{13:0.5f},{14:0.5f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f}\n"\
 				.format(data_time2, accel_x, accel_y, accel_z,mag_x, mag_y, mag_z,gyro_x, gyro_y, gyro_z, left_encoder, right_encoder, i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2],theta,new_theta))
 			left_start = left_encoder
 			right_start = right_encoder
@@ -334,21 +335,21 @@ for i in range(len(dict.keys())):
 
 		else:
 			accel_x, accel_y, accel_z = imu.acceleration
-			mag_x, mag_y, mag_z = imu.magnetic
+			#mag_x, mag_y, mag_z = imu.magnetic
 			gyro_x, gyro_y, gyro_z = imu.gyro
-			temp = imu.temperature
+			#temp = imu.temperature
 			readings_counter += 1 #Counts how many times readings have been gathered
 			# Adds first readings to lists of IMU outputs for this iteration
 			accel_list = [accel_x, accel_y, accel_z]
 			accel_sum = [(a+b) for a,b in zip(accel_sum, accel_list)]
 			gyro_list = [gyro_x, gyro_y, gyro_z]
 			gyro_sum = [(a+b) for a,b in zip(gyro_sum, gyro_list)]
-			mag_list = [mag_x, mag_y, mag_z]
-			mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
+			#mag_list = [mag_x, mag_y, mag_z]
+			#mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
 		
 		accel_sum = [0, 0, 0] # Reset sum for new averages next time around
 		gyro_sum = [0, 0, 0]
-		mag_sum = [0, 0, 0]
+		#mag_sum = [0, 0, 0]
 		readings_counter = 0 # Reset counter for averages next time around
 		# End if Roomba.Available()
 	# End while time.time() - start_time <=t:
