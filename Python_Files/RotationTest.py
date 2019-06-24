@@ -131,7 +131,6 @@ print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(gyro_x, gyro_
 # Variables and Constants
 y_position = 0 # Position of Roomba along y-axis (in mm)
 x_position = 0 # Position of Roomba along x-axis (in mm)
-theta = atan2(mag_y,mag_x) # Heading of Roomba (in radians)
 accel_length = math.sqrt((accel_x**2)+(accel_y**2)+(accel_z**2)) # Distance of vector made by acceleration
 r_accel_x = accel_x / accel_length #Normalized acceleration values
 r_accel_y = accel_y / accel_length
@@ -154,7 +153,8 @@ length_j = math.sqrt(DotProduct(j_current,j_current))
 i_norm = [x / length_i for x in i_current] # Normalized values of I,K and J prime
 k_norm = [x / length_k for x in k_current]
 j_norm = [x / length_j for x in j_current]
-new_theta = math.atan2(j_norm[0],i_norm[0])
+theta = math.atan2(j_norm[0],i_norm[0]) # Heading of Roomba (in radians) as calculated by the wheel encoders
+new_theta = math.atan2(j_norm[0],i_norm[0]) # Heading of Roomba (in radians) as calculated by the IMU
 if new_theta < 0:
 	new_theta += 2*math.pi
 
