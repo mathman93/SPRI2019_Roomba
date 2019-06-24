@@ -194,7 +194,7 @@ while True:
 			theta_d = ((theta_initial-mag_theta)%(2*math.pi))
 			# get theta_d between -pi and pi
 			if theta_d > math.pi:
-				theta_d -= 2*math.p
+				theta_d -= 2*math.pi
 
 			if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 radians...
 				s_set = 100 # Spin faster
@@ -203,9 +203,9 @@ while True:
 			else: # otherwise, if theta_d is fairly small
 				s_set = 20 # Spin slow
 
-			if theta_d > 0: #Rotates clockwise if theta_d is positive
+			if theta_d > 0.5: #Rotates clockwise if theta_d is positive
 				s = s_set
-			elif theta_d < 0: #Rotates counterclockwise if theta_d is negative
+			elif theta_d < 0.5: #Rotates counterclockwise if theta_d is negative
 				s = s_set * -1
 			else:
 				s = 0
