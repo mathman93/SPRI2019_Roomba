@@ -204,7 +204,7 @@ for i in range(len(dict.keys())):
 			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
 			print('Wheel Encoder Heading (radians): {0:0.5f}'.format(theta))
 			print('Magnetometer Heading (radians): {0:0.5f}'.format(mag_theta))
-			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f}\n".format(data_time2,mag_x,mag_y,mag_z,theta))
+			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f}\n".format(data_time2,mag_x,mag_y,mag_z,theta,mag_theta))
 			
 			readings_counter = 0 # Reset counter for averages next time around
 			mag_sum = [0, 0, 0]
