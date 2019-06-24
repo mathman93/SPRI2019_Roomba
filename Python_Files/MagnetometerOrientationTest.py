@@ -205,7 +205,7 @@ while True:
 
 			if theta_d > 0.5: #Rotates clockwise if theta_d is positive
 				s = s_set
-			elif theta_d < 0.5: #Rotates counterclockwise if theta_d is negative
+			elif theta_d < -0.5: #Rotates counterclockwise if theta_d is negative
 				s = s_set * -1
 			else:
 				s = 0
