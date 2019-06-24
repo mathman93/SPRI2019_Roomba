@@ -93,10 +93,10 @@ GPIO.output(yled, GPIO.LOW)
 # Main Code #
 
 # Open a text file for data retrieval
-#file_name_input = input("Name for data file: ")
-#dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
-#file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
-#file = open(file_name, "w") # Open a text file for storing data
+file_name_input = input("Name for data file: ")
+dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
+file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
 
 # Get initial wheel encoder values
@@ -109,11 +109,11 @@ print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, ma
 # Variables and Constants
 y_position = 0 # Position of Roomba along y-axis (in mm)
 x_position = 0 # Position of Roomba along x-axis (in mm)
-theta = math.atan2(mag_y,mag_x) # Heading of Roomba (in radians) as calculated by the wheel encoders
+theta = math.atan2(-mag_y,-mag_x) # Heading of Roomba (in radians) as calculated by the wheel encoders
 if theta < 0:
 	theta += 2*math.pi
 print('Wheel Encoder Heading (radians): {0:0.5f}'.format(theta))
-mag_theta = math.atan2(mag_y,mag_x) #Heading of Roomba(in radians) as calculated by the magnetometer
+mag_theta = math.atan2(-mag_y,-mag_x) #Heading of Roomba(in radians) as calculated by the magnetometer
 if mag_theta < 0:
 	mag_theta += 2*math.pi
 
@@ -131,7 +131,7 @@ start_time = time.time()
 data_time = time.time()
 data_time_init = time.time() - data_time
 
-#file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f}\n".format(data_time_init,mag_x,mag_y,mag_z,theta))
+file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f}\n".format(data_time_init,mag_x,mag_y,mag_z,theta,mag_theta))
 
 while True:
 	try:
@@ -162,7 +162,7 @@ while True:
 			mag_avg = [(x/readings_counter) for x in mag_sum]
 			mag_x, mag_y, mag_z = mag_avg # Set magnetometer values that will be used later to be the average of two readings
 
-			mag_theta = math.atan2(mag_y,mag_x)
+			mag_theta = math.atan2(-mag_y,-mag_x)
 			if mag_theta < 0:
 				mag_theta += 2*math.pi
 
@@ -223,7 +223,7 @@ while True:
 			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag_x, mag_y, mag_z))
 			print('Wheel Encoder Heading (radians): {0:0.5f}'.format(theta))
 			print('Magnetometer Heading (radians): {0:0.5f}'.format(mag_theta))
-			#file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f}\n".format(data_time2,mag_x,mag_y,mag_z,theta,mag_theta))
+			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f}\n".format(data_time2,mag_x,mag_y,mag_z,theta,mag_theta))
 			
 			readings_counter = 0 # Reset counter for averages next time around
 			mag_sum = [0, 0, 0]
@@ -246,7 +246,7 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	z = Roomba.DirectRead(Roomba.Available()) # Clear out excess Roomba data
 	print(z) # Include for debugging
 time.sleep(0.1)
-#file.close() # Close data file
+file.close() # Close data file
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
