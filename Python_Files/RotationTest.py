@@ -154,6 +154,8 @@ i_norm = [x / length_i for x in i_current] # Normalized values of initial I,K an
 k_norm = [x / length_k for x in k_current]
 j_norm = [x / length_j for x in j_current]
 theta = math.atan2(j_norm[0],i_norm[0]) # Heading of Roomba (in radians) as calculated by the wheel encoders
+if theta < 0:
+	theta += 2*math.pi 
 new_theta = math.atan2(j_norm[0],i_norm[0]) # Heading of Roomba (in radians) as calculated by the IMU
 if new_theta < 0:
 	new_theta += 2*math.pi
