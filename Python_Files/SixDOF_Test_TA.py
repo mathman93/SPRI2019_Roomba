@@ -307,12 +307,16 @@ for i in range(len(dict.keys())):
 			print('Data Counter: {0}'.format(imu_counter)) # Include for testing
 			# Print the left encoder, right encoder, x position, y position, and theta
 			print('L/R Wheel Encoders (counts): {0},{1}'.format(left_encoder,right_encoder))
-			print('Roomba X/Y Position (mm): {0:.3f},{1:.3f}'.format(x_position,y_position))
+			#print('Roomba X/Y Position (mm): {0:.3f},{1:.3f}'.format(x_position,y_position))
 			print('Roomba Orientation (radians): {0:0.6f}, {1:0.6f}'.format(theta, theta_imu))
 			# Print DCM values [I_B; J_B; K_B]
 			print('DCM: [[{0:0.5f}, {1:0.5f}, {2:0.5f}]'.format(DCM_G[0,0], DCM_G[0,1], DCM_G[0,2]))
 			print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]'.format(DCM_G[1,0], DCM_G[1,1], DCM_G[1,2]))
 			print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]]'.format(DCM_G[2,0], DCM_G[2,1], DCM_G[2,2]))
+			# Delta_theta Debug Data
+			print('Delta_Accel: {0}'.format(delta_theta_acc))
+			print('Delta_Gyro: {0}'.format(delta_theta_gyro))
+			print('Delta_Mag: {0}'.format(delta_theta_mag))
 			# Write IMU data, wheel encoder data to a file.
 			imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.6f},{13:0.6f}\n"\
 				.format(data_time_init,accel[0],accel[1],accel[2],mag[0],mag[1],mag[2],omega[0],omega[1],omega[2],left_start,right_start,theta,theta_imu))
