@@ -95,7 +95,7 @@ dcm_file = open(dcm_file_name, "w") # Open a text file for storing data
 # Dictionary of move commands
 dict = {0:[0,0,20],
 	1:[0,75,20],
-	2:[0,0,1]
+	2:[0,0,5]
 	}
 
 # Roomba Constants
