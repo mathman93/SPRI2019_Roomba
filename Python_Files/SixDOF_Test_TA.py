@@ -263,7 +263,8 @@ for i in range(len(dict.keys())):
 			R_est = (1/R_est_length) * R_est # Normalize estimated values
 			K_A = R_est # New estimate of zenith vector from accelerometer (and gyro) data
 			
-			I_M = -mag/np.linalg.norm(mag) # Estimate of "north" from magnetometer data
+			I_M = (mag*np.array([-1,1,1]))/np.linalg.norm(mag) # Estimate of "north" from magnetometer data
+			# Must flip x-component due to magnetometer orientation on IMU
 			# Calculate rotation change, delta_theta
 			delta_theta_gyro = np.radians(omega) * delta_time # Gyro estimate of rotation
 			delta_theta_gyro_para = K_B.dot(delta_theta_gyro) * K_B # Component parallel to K_B
@@ -304,9 +305,9 @@ for i in range(len(dict.keys())):
 			print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag[0], mag[1], mag[2]))
 			print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(omega[0], omega[1], omega[2]))
 			#print('Temperature: {0:0.3f}C'.format(temp))
-			print('Data Counter: {0}'.format(imu_counter)) # Include for testing
+			#print('Data Counter: {0}'.format(imu_counter)) # Include for testing
 			# Print the left encoder, right encoder, x position, y position, and theta
-			print('L/R Wheel Encoders (counts): {0},{1}'.format(left_encoder,right_encoder))
+			#print('L/R Wheel Encoders (counts): {0},{1}'.format(left_encoder,right_encoder))
 			#print('Roomba X/Y Position (mm): {0:.3f},{1:.3f}'.format(x_position,y_position))
 			print('Roomba Orientation (radians): {0:0.6f}, {1:0.6f}'.format(theta, theta_imu))
 			# Print DCM values [I_B; J_B; K_B]
@@ -314,9 +315,9 @@ for i in range(len(dict.keys())):
 			print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]'.format(DCM_G[1,0], DCM_G[1,1], DCM_G[1,2]))
 			print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]]'.format(DCM_G[2,0], DCM_G[2,1], DCM_G[2,2]))
 			# Delta_theta Debug Data
-			print('Delta_Accel: {0}'.format(delta_theta_acc))
-			print('Delta_Gyro: {0}'.format(delta_theta_gyro_para))
-			print('Delta_Mag: {0}'.format(delta_theta_mag_para))
+			#print('Delta_Accel: {0}'.format(delta_theta_acc))
+			#print('Delta_Gyro: {0}'.format(delta_theta_gyro_para))
+			#print('Delta_Mag: {0}'.format(delta_theta_mag_para))
 			# Write IMU data, wheel encoder data to a file.
 			imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.6f},{13:0.6f}\n"\
 				.format(data_time_init,accel[0],accel[1],accel[2],mag[0],mag[1],mag[2],omega[0],omega[1],omega[2],left_start,right_start,theta,theta_imu))
