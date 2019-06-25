@@ -263,7 +263,7 @@ for i in range(len(dict.keys())):
 			R_est = (1/R_est_length) * R_est # Normalize estimated values
 			K_A = R_est # New estimate of zenith vector from accelerometer (and gyro) data
 			
-			I_M = -mag/np.linagl.norm(mag) # Estimate of "north" from magnetometer data
+			I_M = -mag/np.linalg.norm(mag) # Estimate of "north" from magnetometer data
 			# Calculate rotation change, delta_theta
 			delta_theta_gyro = np.radians(omega) * delta_time # Gyro estimate of rotation
 			delta_theta_gyro_para = K_B.dot(delta_theta_gyro) * K_B # Component parallel to K_B
