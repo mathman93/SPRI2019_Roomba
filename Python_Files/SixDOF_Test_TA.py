@@ -128,6 +128,12 @@ accel = accel_sum/imu_counter
 mag = mag_sum/imu_counter
 omega = omega_sum/imu_counter
 #temp = temp_sum/imu_counter
+# Reset sums for next iteration
+accel_sum = np.zeros(3) # Vector of sum of accelerometer values
+mag_sum = np.zeros(3) # Vector of sum of magnetometer values
+omega_sum = np.zeros(3) # Vector of sum of gyroscope values
+#temp_sum = 0 # Sum of temperature values
+imu_counter = 0 # Number of summed values
 
 accel_length = np.linalg.norm(accel) # Length of accelerometer vector
 
@@ -168,9 +174,10 @@ print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel[0], accel[
 print('Magnetometer (gauss): {0:0.5f},{1:0.5f},{2:0.5f}'.format(mag[0], mag[1], mag[2]))
 print('Gyroscope (degrees/sec): {0:0.5f},{1:0.5f},{2:0.5f}'.format(omega[0], omega[1], omega[2]))
 #print('Temperature: {0:0.3f}C'.format(temp))
+#print('Data Counter: {0}'.format(imu_counter)) # Include for testing
 # Print the left encoder, right encoder, x position, y position, and theta
-print('L/R Wheel Encoders (counts): {0},{1}'.format(left_start,right_start))
-print('Roomba X/Y Position (mm): {0:.3f},{1:.3f}'.format(x_position,y_position))
+#print('L/R Wheel Encoders (counts): {0},{1}'.format(left_encoder,right_encoder))
+#print('Roomba X/Y Position (mm): {0:.3f},{1:.3f}'.format(x_position,y_position))
 print('Roomba Orientation (radians): {0:0.6f}, {1:0.6f}'.format(theta, theta_imu))
 # Print DCM values [I_B; J_B; K_B]
 print('DCM: [[{0:0.5f}, {1:0.5f}, {2:0.5f}]'.format(DCM_G[0,0], DCM_G[0,1], DCM_G[0,2]))
