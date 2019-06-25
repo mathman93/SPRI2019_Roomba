@@ -160,8 +160,8 @@ if new_theta < 0:
 	new_theta += 2*math.pi
 
 S_gyro = 10 # Weight of gyro
-S_accel = 1 # Weight of acceleromater
-S_mag = 1 #Weight of magnetometer
+S_accel = 5 # Weight of acceleromater
+S_mag = 5 #Weight of magnetometer
 
 accel_sum = [0, 0, 0] # Initializes lists to be used later in calculating averages of IMU readings
 gyro_sum = [0, 0, 0]
