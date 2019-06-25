@@ -135,7 +135,7 @@ R_est = (1/accel_length) * accel # Normalized accelerometer values
 K_B = R_est # Initial estimate of zenith versor
 # Use only one of the following...
 #I_B_init = np.array([1, 0, 0]) # Initial estimate of forward versor (w/out mag)
-I_B_init = mag/np.linalg.norm(mag) # Estimate of forward versor (with mag)
+I_B_init = -mag/np.linalg.norm(mag) # Estimate of forward versor (with mag)
 # Orthogonalize I_B_init, then normalize
 I_B = I_B_init - (K_B.dot(I_B_init)*K_B)
 I_B_length = np.linalg.norm(I_B)
@@ -263,13 +263,13 @@ for i in range(len(dict.keys())):
 			R_est = (1/R_est_length) * R_est # Normalize estimated values
 			K_A = R_est # New estimate of zenith vector from accelerometer (and gyro) data
 			
-			I_M = mag/np.linalg.norm(mag) # Estimate of "north" from magnetometer data
+			I_M = -mag/np.linalg.norm(mag) # Estimate of "north" from magnetometer data
 			# Calculate rotation change, delta_theta
 			delta_theta_gyro = np.radians(omega) * delta_time # Gyro estimate of rotation
 			delta_theta_gyro_para = K_B.dot(delta_theta_gyro) * K_B # Component parallel to K_B
 			delta_theta_gyro_perp = delta_theta_gyro - delta_theta_gyro_para # Component perpendicular to K_B
 			delta_theta_acc = np.cross(K_B, (K_A - K_B)) # Accelerometer estimate of rotation
-			delta_theta_mag = np.cross(I_B, (I_M - I_B)) # Magnetometer estimate of rotation
+			delta_theta_mag = np.cross(I_B, (I_B - I_M)) # Magnetometer estimate of rotation
 			delta_theta_mag_para = K_B.dot(delta_theta_mag) * K_B # Component parallel to K_B
 			delta_theta_mag_perp = delta_theta_mag - delta_theta_mag_para # Component perpendictular to K_B
 			s_acc = 1 # Accelerometer weight value
