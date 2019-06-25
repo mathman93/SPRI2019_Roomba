@@ -329,9 +329,7 @@ while True:
 				s = 0
 			
 			Roomba.Move(0,s)
-
-			# Print I,J,K, and new theta values
-			print('I,J,K: {0:.5f},{1:.5f},{2:.5f},{3:.5f},{4:.5f},{5:.5f},{6:.5f},{7:.5f},{8:.5f},{9:.5f}'.format(i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2],new_theta))	
+	
 			# Print acceleration, gyroscope and magnetometer values
 			print('Time: {0:0.6f}'.format(data_time2))
 			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
@@ -340,14 +338,8 @@ while True:
 			# Print the left encoder, right encoder, x position, y position, and theta
 			print('L/R Wheel Encoders (counts): {0},{1}'.format(left_encoder,right_encoder))
 			print('Roomba X/Y Position (mm): {0:.3f},{1:.3f}'.format(x_position,y_position))
-			print('X estimate: {0:.6f}'.format(r_estimate_x))
-			print('Y estimate: {0:.6f}'.format(r_estimate_y))
-			print('Z estimate: {0:.6f}'.format(r_estimate_z))
 			print('Encoder Rotation (radians): {0:.6f}'.format(theta))
 			print('IMU Rotation (radians): {0:.6f}'.format(new_theta))
-			print('Delta Theta Acceleration: {0:.5f},{0:.5f},{0:.5f}'.format(delta_theta_accel[0],delta_theta_accel[1],delta_theta_accel[2]))
-			print('Delta Theta Gyro Parallel: {0:.5f},{0:.5f},{0:.5f}'.format(delta_theta_gyro_par[0],delta_theta_gyro_par[1],delta_theta_gyro_par[2]))
-			print('Delta Theta Gyro Perpindicular: {0:.5f},{0:.5f},{0:.5f}'.format(delta_theta_gyro_perp[0],delta_theta_gyro_perp[1],delta_theta_gyro_perp[2]))
 			print('Counter: {0}'.format(readings_counter))
 
 			# Write IMU data and wheel encoder data to a file.

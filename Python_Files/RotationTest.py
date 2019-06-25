@@ -277,13 +277,20 @@ for i in range(len(dict.keys())):
 			i_m_norm = [(a/i_m_length) for a in i_m]
 			delta_theta_mag_dif = [(a-b) for a,b in zip(i_m_norm, i_current)] 
 			delta_theta_mag = CrossProduct(i_current,delta_theta_mag_dif) # Angle formed by magnetometer vector
-			delta_theta_gyro_par = [DotProduct(delta_theta_gyro, k_current) * x for x in k_current] # Calculates vector that is parallel to desired vector
-			delta_theta_gyro_perp = [(a-b) for a,b in zip(delta_theta_gyro, delta_theta_gyro_par)] # Calculates vector that is perpindicular to desired vector
-			gyro_prod = [(S_gyro * x) for x in delta_theta_gyro_perp]
+			delta_theta_mag_par = [(DotProduct(k_current,delta_theta_mag) * x) for x in k_current] # Calculates vector that is parallel to desired magnetometer vector
+			delta_theta_mag_perp = [(a-b) for a,b in zip(delta_theta_mag, delta_theta_mag_par)] # Calculates vector that is perpindicular to desired magnetometer vector
+			delta_theta_gyro_par = [DotProduct(delta_theta_gyro, k_current) * x for x in k_current] # Calculates vector that is parallel to desired gyroscope vector
+			delta_theta_gyro_perp = [(a-b) for a,b in zip(delta_theta_gyro, delta_theta_gyro_par)] # Calculates vector that is perpindicular to desired gyroscope vector
+			gyro_par_prod = [(S_gyro * x) for x in delta_theta_gyro_par]
+			mag_par_prod = [(S_mag * x) for x in delta_theta_mag_par]
+			delta_theta_par_numerator = [(a+b) for a,b in zip(gyro_par_prod,mag_par_prod)]
+			delta_theta_par = [(x/(S_gyro+S_mag)) for x in delta_theta_par_numerator] # Calculates line parallel to dtheta vector
 			accel_prod = [(S_accel * y) for y in delta_theta_accel]
-			mag_prod = [(S_gyro * z) for z in delta_theta_mag]
-			delta_theta_partial = [((a+b+c)/(S_gyro+S_accel+S_mag)) for a,b,c in zip(gyro_prod,accel_prod,mag_prod)]
-			delta_theta_new = [(a+b) for a,b in zip(delta_theta_partial, delta_theta_gyro_par)] # Main angle from vectors of IMU unit
+			gyro_perp_prod = [(S_gyro * x) for x in delta_theta_gyro_perp]
+			mag_perp_prod = [(S_mag * x) for x in delta_theta_mag_perp]
+			delta_theta_perp_numerator = [(a+b+c) for a,b,c in zip(accel_prod,gyro_perp_prod,mag_perp_prod)]
+			delta_theta_perp = [(x/(S_accel+S_gyro+S_mag)) for x in delta_theta_perp_numerator] # Calculates line perpindicular to dtheta vector
+			delta_theta_new = [(a+b) for a,b in zip(delta_theta_par,delta_theta_perp)] # Calculates vector formed by all IMU data
 			k_current_partial = CrossProduct(delta_theta_new,k_current)
 			k_current = [(a+b) for a,b in zip(k_current_partial, k_current)] #Updates K vector for this iteration
 			i_current_partial = CrossProduct(delta_theta_new,i_current)
@@ -308,8 +315,6 @@ for i in range(len(dict.keys())):
 			if new_theta < 0:
 				new_theta += 2*math.pi
 
-			# Print I,J,K, and new theta values
-			print('I,J,K: {0:.5f},{1:.5f},{2:.5f},{3:.5f},{4:.5f},{5:.5f},{6:.5f},{7:.5f},{8:.5f},{9:.5f}'.format(i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2],new_theta))	
 			# Print acceleration, gyroscope and magnetometer values
 			print('Time: {0:0.6f}'.format(data_time2))
 			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
@@ -319,14 +324,8 @@ for i in range(len(dict.keys())):
 			# Print the left encoder, right encoder, x position, y position, and theta
 			print('L/R Wheel Encoders (counts): {0},{1}'.format(left_encoder,right_encoder))
 			print('Roomba X/Y Position (mm): {0:.3f},{1:.3f}'.format(x_position,y_position))
-			print('X estimate: {0:.6f}'.format(r_estimate_x))
-			print('Y estimate: {0:.6f}'.format(r_estimate_y))
-			print('Z estimate: {0:.6f}'.format(r_estimate_z))
 			print('Encoder Rotation (radians): {0:.6f}'.format(theta))
 			print('IMU Rotation (radians): {0:.6f}'.format(new_theta))
-			print('Delta Theta Acceleration: {0:.5f},{0:.5f},{0:.5f}'.format(delta_theta_accel[0],delta_theta_accel[1],delta_theta_accel[2]))
-			print('Delta Theta Gyro Parallel: {0:.5f},{0:.5f},{0:.5f}'.format(delta_theta_gyro_par[0],delta_theta_gyro_par[1],delta_theta_gyro_par[2]))
-			print('Delta Theta Gyro Perpindicular: {0:.5f},{0:.5f},{0:.5f}'.format(delta_theta_gyro_perp[0],delta_theta_gyro_perp[1],delta_theta_gyro_perp[2]))
 			print('Counter: {0}'.format(readings_counter))
 
 			# Write IMU data and wheel encoder data to a file.
