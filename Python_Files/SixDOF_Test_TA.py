@@ -269,15 +269,15 @@ for i in range(len(dict.keys())):
 			delta_theta_gyro_para = K_B.dot(delta_theta_gyro) * K_B # Component parallel to K_B
 			delta_theta_gyro_perp = delta_theta_gyro - delta_theta_gyro_para # Component perpendicular to K_B
 			delta_theta_acc = np.cross(K_B, (K_A - K_B)) # Accelerometer estimate of rotation
-			delta_theta_mag = np.cross(I_B, (I_B - I_M)) # Magnetometer estimate of rotation
+			delta_theta_mag = np.cross(I_B, (I_M - I_B)) # Magnetometer estimate of rotation
 			delta_theta_mag_para = K_B.dot(delta_theta_mag) * K_B # Component parallel to K_B
 			delta_theta_mag_perp = delta_theta_mag - delta_theta_mag_para # Component perpendictular to K_B
 			s_acc = 1 # Accelerometer weight value
 			s_gyro = 10 # Gyroscope weight value
 			s_mag = 1 # Magnetometer weight value
 			# Component values of delta_theta
-			delta_theta_perp = ((s_gyro*delta_theta_gyro_perp) + (s_acc*delta_theta_acc) + (s_mag*delta_theta_mag))/(s_gyro + s_acc + s_mag)
-			delta_theta_para = delta_theta_gyro_para
+			delta_theta_perp = ((s_gyro*delta_theta_gyro_perp) + (s_acc*delta_theta_acc) + (s_mag*delta_theta_mag_perp))/(s_gyro + s_acc + s_mag)
+			delta_theta_para = ((s_gyro*delta_theta_gyro_para) + (s_mag*delta_theta_mag_para))/(s_gyro + s_mag)
 			delta_theta = delta_theta_perp + delta_theta_para # Combined values
 			# Update versors
 			K_B += np.cross(delta_theta, K_B)
