@@ -239,7 +239,7 @@ while True:
 			i_m_norm = [(a/i_m_length) for a in i_m]
 			delta_theta_mag_dif = [(a-b) for a,b in zip(i_m_norm, i_current)] 
 			delta_theta_mag = CrossProduct(i_current,delta_theta_mag_dif) # Angle formed by magnetometer vector
-			delta_theta_mag_par = [(DotProduct(k_current,dekta_theta_mag) * x) for x in k_current] # Calculates vector that is parallel to desired magnetometer vector
+			delta_theta_mag_par = [(DotProduct(k_current,delta_theta_mag) * x) for x in k_current] # Calculates vector that is parallel to desired magnetometer vector
 			delta_theta_mag_perp = [(a-b) for a,b in zip(delta_theta_mag, delta_theta_mag_par)] # Calculates vector that is perpindicular to desired magnetometer vector
 			delta_theta_gyro_par = [DotProduct(delta_theta_gyro, k_current) * x for x in k_current] # Calculates vector that is parallel to desired gyroscope vector
 			delta_theta_gyro_perp = [(a-b) for a,b in zip(delta_theta_gyro, delta_theta_gyro_par)] # Calculates vector that is perpindicular to desired gyroscope vector
@@ -252,7 +252,7 @@ while True:
 			mag_perp_prod = [(S_mag * x) for x in delta_theta_mag_perp]
 			delta_theta_perp_numerator = [(a+b+c) for a,b,c in zip(accel_prod,gyro_perp_prod,mag_perp_prod)]
 			delta_theta_perp = [(x/(S_accel+S_gyro+S_mag)) for x in delta_theta_perp_numerator] # Calculates line perpindicular to dtheta vector
-			delta_theta_new = [(a+b) for a,b in zip(delta_theta_par,delta_theta_perp)]
+			delta_theta_new = [(a+b) for a,b in zip(delta_theta_par,delta_theta_perp)] # Calculates vector formed by all IMU data
 			k_current_partial = CrossProduct(delta_theta_new,k_current)
 			k_current = [(a+b) for a,b in zip(k_current_partial, k_current)] #Updates K vector for this iteration
 			i_current_partial = CrossProduct(delta_theta_new,i_current)
