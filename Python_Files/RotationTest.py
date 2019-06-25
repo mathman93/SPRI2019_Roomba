@@ -110,6 +110,16 @@ file = open(file_name, "w") # Open a text file for storing data
 speed = 100
 duration = 10
 
+while True:
+	try:
+		S_gyro = input("Gyro Weight:")
+		S_accel = input("Accel Weight:")
+		S_mag = input("Mag Weight:")
+		break
+	except ValueError:
+		print("That's not a number")
+		continue
+
 # Dictionary of move commands
 dict = {0:[0,0,10],
 	1:[0,speed, duration],
@@ -159,9 +169,9 @@ new_theta = math.atan2(j_norm[0],i_norm[0]) # Heading of Roomba (in radians) as 
 if new_theta < 0:
 	new_theta += 2*math.pi
 
-S_gyro = 10 # Weight of gyro
-S_accel = 5 # Weight of acceleromater
-S_mag = 5 #Weight of magnetometer
+#S_gyro = 10 # Weight of gyro
+#S_accel = 1 # Weight of acceleromater
+#S_mag = 5 #Weight of magnetometer
 
 accel_sum = [0, 0, 0] # Initializes lists to be used later in calculating averages of IMU readings
 gyro_sum = [0, 0, 0]
