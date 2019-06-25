@@ -246,7 +246,7 @@ while True:
 			gyro_par_prod = [(S_gyro * x) for x in delta_theta_gyro_par]
 			mag_par_prod = [(S_mag * x) for x in delta_theta_mag_par]
 			delta_theta_par_numerator = [(a+b) for a,b in zip(gyro_par_prod,mag_par_prod)]
-			delta_theta_par = [(x/(S_gyro+S_mag)) for x in delta_theta_par_numerator)[ # Calculates line parallel to dtheta vector
+			delta_theta_par = [(x/(S_gyro+S_mag)) for x in delta_theta_par_numerator)] # Calculates line parallel to dtheta vector
 			accel_prod = [(S_accel * y) for y in delta_theta_accel]
 			gyro_perp_prod = [(S_gyro * x) for x in delta_theta_gyro_perp]
 			mag_perp_prod = [(S_mag * x) for x in delta_theta_mag_perp]
