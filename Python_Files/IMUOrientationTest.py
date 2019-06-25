@@ -243,8 +243,8 @@ while True:
 			delta_theta_mag_perp = [(a-b) for a,b in zip(delta_theta_mag, delta_theta_mag_par)] # Calculates vector that is perpindicular to desired magnetometer vector
 			delta_theta_gyro_par = [DotProduct(delta_theta_gyro, k_current) * x for x in k_current] # Calculates vector that is parallel to desired gyroscope vector
 			delta_theta_gyro_perp = [(a-b) for a,b in zip(delta_theta_gyro, delta_theta_gyro_par)] # Calculates vector that is perpindicular to desired gyroscope vector
-			gyro_par_prod = [(S_gyro * x) for x in delta_theta_gyro_par)]
-			mag_par_prod = [(S_mag * x) for x in delta_theta_mag_par)]
+			gyro_par_prod = [(S_gyro * x) for x in delta_theta_gyro_par]
+			mag_par_prod = [(S_mag * x) for x in delta_theta_mag_par]
 			delta_theta_par_numerator = [(a+b) for a,b in zip(gyro_par_prod,mag_par_prod)]
 			delta_theta_par = [(x/(S_gyro+S_mag)) for x in delta_theta_par_numerator)[ # Calculates line parallel to dtheta vector
 			accel_prod = [(S_accel * y) for y in delta_theta_accel]
