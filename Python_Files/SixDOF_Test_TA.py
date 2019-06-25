@@ -135,7 +135,8 @@ R_est = (1/accel_length) * accel # Normalized accelerometer values
 K_B = R_est # Initial estimate of zenith versor
 # Use only one of the following...
 #I_B_init = np.array([1, 0, 0]) # Initial estimate of forward versor (w/out mag)
-I_B_init = -mag/np.linalg.norm(mag) # Estimate of forward versor (with mag)
+I_B_init = (mag*np.array([-1,1,1]))/np.linalg.norm(mag) # Estimate of forward versor (with mag)
+# Must flip x-component due to magnetometer orientation on IMU
 # Orthogonalize I_B_init, then normalize
 I_B = I_B_init - (K_B.dot(I_B_init)*K_B)
 I_B_length = np.linalg.norm(I_B)
