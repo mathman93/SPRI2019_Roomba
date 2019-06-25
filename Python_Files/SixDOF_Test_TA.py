@@ -274,7 +274,7 @@ for i in range(len(dict.keys())):
 			delta_theta_mag_perp = delta_theta_mag - delta_theta_mag_para # Component perpendictular to K_B
 			s_acc = 1 # Accelerometer weight value
 			s_gyro = 10 # Gyroscope weight value
-			s_mag = 1 # Magnetometer weight value
+			s_mag = 0 # Magnetometer weight value
 			# Component values of delta_theta
 			delta_theta_perp = ((s_gyro*delta_theta_gyro_perp) + (s_acc*delta_theta_acc) + (s_mag*delta_theta_mag))/(s_gyro + s_acc + s_mag)
 			delta_theta_para = delta_theta_gyro_para
