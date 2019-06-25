@@ -112,9 +112,9 @@ duration = 10
 
 while True:
 	try:
-		S_gyro = input("Gyro Weight:")
-		S_accel = input("Accel Weight:")
-		S_mag = input("Mag Weight:")
+		S_gyro = int(input("Gyro Weight:"))
+		S_accel = int(input("Accel Weight:"))
+		S_mag = int(input("Mag Weight:"))
 		break
 	except ValueError:
 		print("That's not a number")
