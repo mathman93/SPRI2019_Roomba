@@ -98,26 +98,13 @@ file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
 file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
 
-#while True:
-	#try:
-		#speed = int(input("Speed of rotation:"))
-		#duration = float(input("Duration of rotation:"))
-		#break
-	#except ValueError:
-		#print("Please input a number.")
-		#continue
-
-speed = 100
-duration = 10
-
 while True:
 	try:
-		S_gyro = float(input("Gyro Weight:"))
-		S_accel = float(input("Accel Weight:"))
-		S_mag = float(input("Mag Weight:"))
+		speed = int(input("Speed of rotation:"))
+		duration = float(input("Duration of rotation:"))
 		break
 	except ValueError:
-		print("That's not a number")
+		print("Please input a number.")
 		continue
 
 # Dictionary of move commands
@@ -169,9 +156,14 @@ new_theta = math.atan2(j_norm[0],i_norm[0]) # Heading of Roomba (in radians) as 
 if new_theta < 0:
 	new_theta += 2*math.pi
 
-#S_gyro = 10 # Weight of gyro
-#S_accel = 1 # Weight of acceleromater
-#S_mag = 5 #Weight of magnetometer
+current_theta = new_theta # Variable used later to check change in rotation to tell if the roomba has rotated past the the x axis
+imu_counter = 0 # Counts how many times the roomba has rotated past the x axis according to the IMU's calculations
+encoder_counter = 0 # Counts how many times the roomba has rotated past the x axis according to the wheel encoder's calculations
+start_theta = new_theta # Stores the initial rotation for the roomba at the program's start
+
+S_gyro = 10 # Weight of gyro
+S_accel = 1 # Weight of acceleromater
+S_mag = 0.5 #Weight of magnetometer
 
 accel_sum = [0, 0, 0] # Initializes lists to be used later in calculating averages of IMU readings
 gyro_sum = [0, 0, 0]
@@ -189,13 +181,13 @@ start_time = time.time()
 data_time = time.time()
 data_time_init = time.time() - data_time
 
-file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},,{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f},{20:0.5f},{21:0.5f},{22:0.5f}\n"\
-	.format(data_time_init,accel_x,accel_y,accel_z,mag_x,mag_y,mag_z,gyro_x,gyro_y,gyro_z,left_start, right_start, i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2],theta,new_theta))
+file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f}\n"\
+	.format(data_time_init,accel_x,accel_y,accel_z,mag_x,mag_y,mag_z,gyro_x,gyro_y,gyro_z,left_start, right_start,theta,new_theta))
 
 Roomba.StartQueryStream(43,44)
 
 for i in range(len(dict.keys())):
-	# Get peices of dictionary and tell the roomba to move
+	# Get pieces of dictionary and tell the roomba to move
 	[f,s,t] = dict[i]
 	Roomba.Move(f,s)
 	while time.time() - start_time <=t:
@@ -242,11 +234,13 @@ for i in range(len(dict.keys())):
 			# Determine the change in theta and what that is currently
 			delta_theta = (delta_l-delta_r)*C_theta
 			theta += delta_theta
-			# If theta great than 2pi subtract 2pi and vice versus. Normalize theta to 0-2pi to show what my heading is.
+			# If theta great than 2pi subtract 2pi and vice versus. Normalize theta to 0-2pi to show what my heading is. Add one to counter if subtracting 2pi, and subtract if adding 2pi
 			if theta >= 2*math.pi:
 				theta -= 2*math.pi
+				encoder_counter += 1
 			elif theta < 0:
 				theta += 2*math.pi
+				encoder_counter -= 1
 			# Determine what method to use to find the change in distance
 			if delta_l-delta_r == 0:
 				delta_d = 0.5*(delta_l+delta_r)*distance_per_count
@@ -324,6 +318,12 @@ for i in range(len(dict.keys())):
 			new_theta = math.atan2(j_norm[0],i_norm[0])
 			if new_theta < 0:
 				new_theta += 2*math.pi
+			
+			if(new_theta-current_theta) < (-1 * math.pi): # If the roomba rotated clockwise over the x axis...
+				imu_counter += 1 # Add one to counter
+			elif(new_theta-current_theta) > math.pi: # If the roomba rotated counterclockwise over the x axis...
+				c -= 1 # Subtract one from counter
+			current_theta = new_theta # Set current theta to new theta for next iteration
 
 			# Print acceleration, gyroscope and magnetometer values
 			print('Time: {0:0.6f}'.format(data_time2))
@@ -339,8 +339,8 @@ for i in range(len(dict.keys())):
 			print('Counter: {0}'.format(readings_counter))
 
 			# Write IMU data and wheel encoder data to a file.
-			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},,{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f},{15:0.5f},{16:0.5f},{17:0.5f},{18:0.5f},{19:0.5f},{20:0.5f},{21:0.5f},{22:0.5f}\n"\
-				.format(data_time_init,accel_x,accel_y,accel_z,mag_x,mag_y,mag_z,gyro_x,gyro_y,gyro_z,left_start, right_start, i_norm[0],i_norm[1],i_norm[2],j_norm[0],j_norm[1],j_norm[2],k_norm[0],k_norm[1],k_norm[2],theta,new_theta))
+			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},,{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f}\n"\
+				.format(data_time2,accel_x,accel_y,accel_z,mag_x,mag_y,mag_z,gyro_x,gyro_y,gyro_z,left_start, right_start,theta,new_theta))
 			#Set values to new ones for next iteration
 			left_start = left_encoder
 			right_start = right_encoder
@@ -372,6 +372,12 @@ for i in range(len(dict.keys())):
 		# End if Roomba.Available()
 	# End while time.time() - start_time <=t:
 	start_time = time.time()
+
+total_theta = (encoder_counter * (2*math.pi)) + (theta - start_theta) # Calculates total rotation from the encoder
+total_new_theta = (imu_counter * (2*math.pi)) + (new_theta - start_theta) # Calculates total rotation from the IMU
+print('Encoder Total Rotation: {0:0.5f}'.format(total_theta))
+print('IMU Total Rotation: {0:0.5f}'.format(total_new_theta))
+file.write("{0:0.5f},{1:0.5f}".format(total_theta,total_new_theta))
 # End for i in range(len(dict.keys())):
 Roomba.Move(0,0) # Stop Roomba
 Roomba.PauseQueryStream() # Pause data stream
