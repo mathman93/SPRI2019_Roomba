@@ -322,7 +322,7 @@ for i in range(len(dict.keys())):
 			if(new_theta-current_theta) < (-1 * math.pi): # If the roomba rotated clockwise over the x axis...
 				imu_counter += 1 # Add one to counter
 			elif(new_theta-current_theta) > math.pi: # If the roomba rotated counterclockwise over the x axis...
-				c -= 1 # Subtract one from counter
+				imu_counter -= 1 # Subtract one from counter
 			current_theta = new_theta # Set current theta to new theta for next iteration
 
 			# Print acceleration, gyroscope and magnetometer values
