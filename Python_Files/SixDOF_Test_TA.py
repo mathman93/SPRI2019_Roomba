@@ -315,8 +315,8 @@ for i in range(len(dict.keys())):
 			print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]]'.format(DCM_G[2,0], DCM_G[2,1], DCM_G[2,2]))
 			# Delta_theta Debug Data
 			print('Delta_Accel: {0}'.format(delta_theta_acc))
-			print('Delta_Gyro: {0}'.format(delta_theta_gyro))
-			print('Delta_Mag: {0}'.format(delta_theta_mag))
+			print('Delta_Gyro: {0}'.format(delta_theta_gyro_para))
+			print('Delta_Mag: {0}'.format(delta_theta_mag_para))
 			# Write IMU data, wheel encoder data to a file.
 			imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.6f},{13:0.6f}\n"\
 				.format(data_time_init,accel[0],accel[1],accel[2],mag[0],mag[1],mag[2],omega[0],omega[1],omega[2],left_start,right_start,theta,theta_imu))
