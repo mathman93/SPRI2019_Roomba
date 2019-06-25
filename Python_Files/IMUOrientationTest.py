@@ -1,6 +1,6 @@
-''' RotationTest.py
+''' IMUOrientationTest.py
 Purpose: Test to see what the orientation of the Roomba is based on the wheel encoders vs the orientation
-	 based on the magnetometer
+	 based on the IMU
 Last Modified: 6/24/2019
 '''
 
@@ -239,13 +239,20 @@ while True:
 			i_m_norm = [(a/i_m_length) for a in i_m]
 			delta_theta_mag_dif = [(a-b) for a,b in zip(i_m_norm, i_current)] 
 			delta_theta_mag = CrossProduct(i_current,delta_theta_mag_dif) # Angle formed by magnetometer vector
-			delta_theta_gyro_par = [DotProduct(delta_theta_gyro, k_current) * x for x in k_current] # Calculates vector that is parallel to desired vector
-			delta_theta_gyro_perp = [(a-b) for a,b in zip(delta_theta_gyro, delta_theta_gyro_par)] # Calculates vector that is perpindicular to desired vector
-			gyro_prod = [(S_gyro * x) for x in delta_theta_gyro_perp]
+			delta_theta_mag_par = [(DotProduct(k_current,dekta_theta_mag) * x) for x in k_current] # Calculates vector that is parallel to desired magnetometer vector
+			delta_theta_mag_perp = [(a-b) for a,b in zip(delta_theta_mag, delta_theta_mag_par)] # Calculates vector that is perpindicular to desired magnetometer vector
+			delta_theta_gyro_par = [DotProduct(delta_theta_gyro, k_current) * x for x in k_current] # Calculates vector that is parallel to desired gyroscope vector
+			delta_theta_gyro_perp = [(a-b) for a,b in zip(delta_theta_gyro, delta_theta_gyro_par)] # Calculates vector that is perpindicular to desired gyroscope vector
+			gyro_par_prod = [(S_gyro * x) for x in delta_theta_gyro_par)]
+			mag_par_prod = [(S_mag * x) for x in delta_theta_mag_par)]
+			delta_theta_par_numerator = [(a+b) for a,b in zip(gyro_par_prod,mag_par_prod)]
+			delta_theta_par = [(x/(S_gyro+S_mag)) for x in delta_theta_par_numerator)[ # Calculates line parallel to dtheta vector
 			accel_prod = [(S_accel * y) for y in delta_theta_accel]
-			mag_prod = [(S_gyro * z) for z in delta_theta_mag]
-			delta_theta_partial = [((a+b+c)/(S_gyro+S_accel+S_mag)) for a,b,c in zip(gyro_prod,accel_prod,mag_prod)]
-			delta_theta_new = [(a+b) for a,b in zip(delta_theta_partial, delta_theta_gyro_par)] # Main angle from vectors of IMU unit
+			gyro_perp_prod = [(S_gyro * x) for x in delta_theta_gyro_perp]
+			mag_perp_prod = [(S_mag * x) for x in delta_theta_mag_perp]
+			delta_theta_perp_numerator = [(a+b+c) for a,b,c in zip(accel_prod,gyro_perp_prod,mag_perp_prod)]
+			delta_theta_perp = [(x/(S_accel+S_gyro+S_mag)) for x in delta_theta_perp_numerator] # Calculates line perpindicular to dtheta vector
+			delta_theta_new = [(a+b) for a,b in zip(delta_theta_par,delta_theta_perp)]
 			k_current_partial = CrossProduct(delta_theta_new,k_current)
 			k_current = [(a+b) for a,b in zip(k_current_partial, k_current)] #Updates K vector for this iteration
 			i_current_partial = CrossProduct(delta_theta_new,i_current)
