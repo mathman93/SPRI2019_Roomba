@@ -190,6 +190,8 @@ theta_d = theta_initial-new_theta
 print("{0:.6f},{1},{2}, ENC XY:{3:.3f},{4:.3f}, IMU XY:{5:.6f},{6:.6f},{7:.6f},{8:.6f}".format(0,left_start,right_start,x_position_enc,y_position_enc,x_position_imu,y_position_imu,new_theta,distance_to_end,theta_d))
 print("")
 
+Roomba.StartQueryStream(43,44)
+
 while True:
 	try:
 		# Tell the roomba to move
