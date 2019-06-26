@@ -65,7 +65,7 @@ def IMUCalibration(imu, Roomba):
 	# Calibrate the magnetometer and the gyroscope
 	ans1 = input(" Do you want to calibrate the magnetometer (y/n)? ").lower()
 	#ans1 = "y" # Include for automatic calibration
-	if ans1 == "y":
+	if ans1[0] == "y":
 		Roomba.Move(0,100) # Start the Roomba spinning
 		imu.CalibrateMag() # Determine magnetometer offset values
 		Roomba.Move(0,0) # Stop the Roomba
@@ -78,7 +78,7 @@ def IMUCalibration(imu, Roomba):
 	
 	ans2 = input(" Do you want to calibrate the gyroscope (y/n)? ").lower()
 	#ans2 = "y" # Include for automatic calibration
-	if ans2 == "y":
+	if ans2[0] == "y":
 		imu.CalibrateGyro() # Determine gyroscope offset values
 		# Display offset values
 		print("gx_offset = {:f}; gy_offset = {:f}; gz_offset = {:f}"\
@@ -86,6 +86,18 @@ def IMUCalibration(imu, Roomba):
 	else:
 		print(" Skipping gyroscope calibration")
 	time.sleep(1.0) # Give some time to read the offset values
+
+def ReadIMU(imu, xl_sum, m_sum, g_sum, c):
+	# Read acceleration, magnetometer, gyroscope data
+	accel_x, accel_y, accel_z = imu.acceleration
+	mag_x, mag_y, mag_z = imu.magnetic
+	gyro_x, gyro_y, gyro_z = imu.gyro
+	imu_counter += 1 # Increment counter
+	# Accumulate IMU readings
+	xl_sum += np.array([accel_x, accel_y, accel_z])
+	m_sum += np.array([mag_x, mag_y, mag_z])
+	g_sum += np.array([gyro_x, gyro_y, gyro_z])
+	return [xl_sum, m_sum, g_sum]
 
 ## -- Code Starts Here -- ##
 # Setup Code #
@@ -121,16 +133,11 @@ dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
 imu_file_name = os.path.join(dir_path, imu_file_name_input+".txt") # text file extension
 imu_file = open(imu_file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
-#dcm_file_name_input = input("Name for (DCM) data file: ")
-#dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
-#dcm_file_name = os.path.join(dir_path, dcm_file_name_input+".txt") # text file extension
-#dcm_file = open(dcm_file_name, "w") # Open a text file for storing data
-	# Will overwrite anything that was in the text file previously
 
 # Dictionary of move commands
-dict = {0:[0,0,20],
-	1:[0,75,20],
-	2:[0,0,5]
+dict = {0:[0,0,2],
+	1:[0,75,2],
+	2:[0,0,1]
 	}
 
 accel_sum = np.zeros(3) # Vector of sum of accelerometer values
@@ -141,15 +148,8 @@ imu_counter = 0 # Number of summed values
 
 # Read initial acceleration, magnetometer, gyroscope, and temperature data
 for i in range(10): # Get 10 values for initial data
-	accel_x, accel_y, accel_z = imu.acceleration
-	mag_x, mag_y, mag_z = imu.magnetic
-	gyro_x, gyro_y, gyro_z = imu.gyro
-	#temp_raw = imu.temperature
-	imu_counter += 1 # Incremenet counter
-	accel_sum += np.array([accel_x, accel_y, accel_z])
-	mag_sum += np.array([mag_x, mag_y, mag_z])
-	omega_sum += np.array([gyro_x, gyro_y, gyro_z])
-	#temp_sum += temp_raw
+	[accel_sum, mag_sum, omega_sum, imu_counter] = ReadIMU(imu, accel_sum, mag_sum, omega_sum, imu_counter)
+	
 # End for loop
 # Average summed values to get each initial reading
 accel = accel_sum/imu_counter
@@ -214,8 +214,6 @@ print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]]'.format(DCM_G[2,0], DCM_G[2,1], DCM_G[2,
 # Write IMU data, wheel encoder data, and estimated inertial force vector values to a file.
 imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.6f},{13:0.6f}\n"\
 	.format(data_time_init,accel[0],accel[1],accel[2],mag[0],mag[1],mag[2],omega[0],omega[1],omega[2],left_start,right_start,theta,theta_imu))
-#dcm_file.write("{0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f}\n"\
-#	.format(DCM_G[0,0],DCM_G[0,1],DCM_G[0,2],DCM_G[1,0],DCM_G[1,1],DCM_G[1,2],DCM_G[2,0],DCM_G[2,1],DCM_G[2,2]))
 Roomba.StartQueryStream(43,44)
 
 for i in range(len(dict.keys())):
@@ -230,17 +228,10 @@ for i in range(len(dict.keys())):
 			delta_time = data_time2 - data_time_init
 			# Get left and right encoder values and find the change in each
 			[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
-			# Read acceleration, magnetometer, gyroscope, and temperature data
-			accel_x, accel_y, accel_z = imu.acceleration
-			mag_x, mag_y, mag_z = imu.magnetic
-			gyro_x, gyro_y, gyro_z = imu.gyro
-			#temp_raw = imu.temperature
-			imu_counter += 1 # Increment counter
-			# Accumulate IMU readings
-			accel_sum += np.array([accel_x, accel_y, accel_z])
-			mag_sum += np.array([mag_x, mag_y, mag_z])
-			omega_sum += np.array([gyro_x, gyro_y, gyro_z])
-			#temp_sum += temp_raw
+
+			# Read acceleration, magnetometer, gyroscope data
+			[accel_sum, mag_sum, omega_sum, imu_counter] = ReadIMU(imu, accel_sum, mag_sum, omega_sum, imu_counter)
+
 			# Average summed values to get each initial reading
 			accel = accel_sum/imu_counter
 			mag = mag_sum/imu_counter
@@ -357,8 +348,6 @@ for i in range(len(dict.keys())):
 			# Write IMU data, wheel encoder data to a file.
 			imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.6f},{13:0.6f}\n"\
 				.format(data_time_init,accel[0],accel[1],accel[2],mag[0],mag[1],mag[2],omega[0],omega[1],omega[2],left_start,right_start,theta,theta_imu))
-			#dcm_file.write("{0:0.5f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f}\n"\
-			#	.format(DCM_G[0,0],DCM_G[0,1],DCM_G[0,2],DCM_G[1,0],DCM_G[1,1],DCM_G[1,2],DCM_G[2,0],DCM_G[2,1],DCM_G[2,2]))
 			# Save values for next iteration
 			left_start = left_encoder
 			right_start = right_encoder
@@ -372,16 +361,7 @@ for i in range(len(dict.keys())):
 			imu_counter = 0 # Number of summed values
 		else: # If Roomba data hasn't come in
 			# Read acceleration, magnetometer, gyroscope, and temperature data
-			accel_x, accel_y, accel_z = imu.acceleration
-			mag_x, mag_y, mag_z = imu.magnetic
-			gyro_x, gyro_y, gyro_z = imu.gyro
-			#temp_raw = imu.temperature
-			imu_counter += 1 # Increment counter
-			# Accumulate IMU readings
-			accel_sum += np.array([accel_x, accel_y, accel_z])
-			mag_sum += np.array([mag_x, mag_y, mag_z])
-			omega_sum += np.array([gyro_x, gyro_y, gyro_z])
-			#temp_sum += temp_raw
+			[accel_sum, mag_sum, omega_sum, imu_counter] = ReadIMU(imu, accel_sum, mag_sum, omega_sum, imu_counter)
 
 		# End if Roomba.Available()
 	# End while time.time() - start_time <=t:
@@ -392,7 +372,6 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	z = Roomba.DirectRead(Roomba.Available()) # Clear out excess Roomba data
 	#print(z) # Include for debugging
 imu_file.close() # Close data file
-#dcm_file.close() # Close data file
 Roomba.PlaySMB() # For fun :)
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
