@@ -320,7 +320,7 @@ for i in range(len(dict.keys())):
 			i_current = i_norm
 			k_current = k_norm
 
-			# Finds heading in radians from gyroscope
+			# Finds heading in radians from IMU
 			new_theta = math.atan2(j_norm[0],i_norm[0])
 			if new_theta < 0:
 				new_theta += 2*math.pi
@@ -335,8 +335,8 @@ for i in range(len(dict.keys())):
 			current_theta = new_theta # Set current theta to new theta for next iteration			
 
 			delta_average_theta = ((S_theta*delta_theta_enc) + (S_new_theta*delta_theta_imu))/(S_theta+S_new_theta) # Average change in rotation
-			average_theta += delta_average_theta
-			if average_theta >= 2*math.pi:
+			average_theta += delta_average_theta # Updates average heading
+			if average_theta >= 2*math.pi: # Normalizes heading value 
 				average_theta -= 2*math.pi
 				average_counter += 1
 			elif average_theta < 0:
