@@ -254,15 +254,14 @@ while True:
 					theta += 2*math.pi
 					encoder_counter -= 1
 
-				if option == 1:
-					# Determine what method to use to find the change in distance
-					if delta_l-delta_r == 0:
-						delta_d = 0.5*(delta_l+delta_r)*distance_per_count
-					else:
-						delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
-					# Find new x and y position
-					x_position = x_position_enc + delta_d*math.cos(theta-.5*delta_theta)
-					y_position = y_position_enc + delta_d*math.sin(theta-.5*delta_theta)
+				# Determine what method to use to find the change in distance
+				if delta_l-delta_r == 0:
+					delta_d = 0.5*(delta_l+delta_r)*distance_per_count
+				else:
+					delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
+				# Find new x and y position
+				x_position_enc = x_position_enc + delta_d*math.cos(theta-.5*delta_theta)
+				y_position_enc = y_position_enc + delta_d*math.sin(theta-.5*delta_theta)
 
 				delta_theta_enc = delta_theta # Updates encoder rotation change into variable for calculation of average rotation
 
@@ -351,31 +350,35 @@ while True:
 					average_theta += 2*math.pi
 					average_counter -= 1
 
-				if option == 2:
-					# Determine what method to use to find the change in distance
-					if delta_theta_imu == 0:
-						delta_d = 0.5*(delta_l+delta_r)*distance_per_count
-					else:
-						delta_d = (((delta_l+delta_r)*distance_per_count)/delta_theta_imu)*math.sin(delta_theta_imu/2)
-					# Find new x and y position according to IMU
-					x_position = x_position_imu + delta_d*math.cos(new_theta-(.5*delta_theta_imu))
-					y_position = y_position_imu + delta_d*math.sin(new_theta-(.5*delta_theta_imu))
+				# Determine what method to use to find the change in distance
+				if delta_theta_imu == 0:
+					delta_d = 0.5*(delta_l+delta_r)*distance_per_count
+				else:
+					delta_d = (((delta_l+delta_r)*distance_per_count)/delta_theta_imu)*math.sin(delta_theta_imu/2)
+				# Find new x and y position according to IMU
+				x_position_imu = x_position_imu + delta_d*math.cos(new_theta-(.5*delta_theta_imu))
+				y_position_imu = y_position_imu + delta_d*math.sin(new_theta-(.5*delta_theta_imu))
 
-
-				if option == 3:
-					# Determine what method to use to find the change in distance
-					if delta_average_theta == 0:
-						delta_d = 0.5*(delta_l+delta_r)*distance_per_count
-					else:
-						delta_d = (((delta_l+delta_r)*distance_per_count)/delta_average_theta)*math.sin(delta_average_theta/2)
-						# Find new x and y position according to average
-					x_position = x_position_avg + delta_d*math.cos(new_theta-(.5*delta_average_theta))
-					y_position = y_position_avg + delta_d*math.sin(new_theta-(.5*delta_average_theta))
+				# Determine what method to use to find the change in distance
+				if delta_average_theta == 0:
+					delta_d = 0.5*(delta_l+delta_r)*distance_per_count
+				else:
+					delta_d = (((delta_l+delta_r)*distance_per_count)/delta_average_theta)*math.sin(delta_average_theta/2)
+				# Find new x and y position according to average
+				x_position_avg = x_position_avg + delta_d*math.cos(new_theta-(.5*delta_average_theta))
+				y_position_avg = y_position_avg + delta_d*math.sin(new_theta-(.5*delta_average_theta))
 				distance += delta_d
 
 				# Find distance to end and theta_initial
-				distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
-				theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
+				if option == 1:
+					distance_to_end = math.sqrt((x_final-x_position_enc)**2 +(y_final-y_position_enc)**2)
+					theta_initial = math.atan2((y_final-y_position_enc),(x_final-x_position_enc))
+				if option == 2:
+					distance_to_end = math.sqrt((x_final-x_position_imu)**2 +(y_final-y_position_imu)**2)
+					theta_initial = math.atan2((y_final-y_position_imu),(x_final-x_position_imu))
+				if option == 3:
+					distance_to_end = math.sqrt((x_final-x_position_avg)**2 +(y_final-y_position_avg)**2)
+					theta_initial = math.atan2((y_final-y_position_avg),(x_final-x_position_avg))
 				# Normalize what theta initial is to between 0-2pi
 				if theta_initial <0:
 					theta_initial += 2*math.pi
