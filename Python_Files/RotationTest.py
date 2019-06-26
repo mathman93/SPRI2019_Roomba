@@ -158,7 +158,7 @@ if new_theta < 0:
 
 delta_theta_enc = theta # Change in rotation as detected by wheel encoders
 delta_theta_imu = new_theta # Change in rotation as detected by IMU
-delta_average_theta = atan2(j_norm[0],i_norm[0]) # Average change in rotation
+delta_average_theta = math.atan2(j_norm[0],i_norm[0]) # Average change in rotation
 average_theta = delta_average_theta # Total average change in rotation
 
 current_theta = new_theta # Variable used later to check change in rotation to tell if the roomba has rotated past the the x axis
