@@ -55,17 +55,17 @@ def StartUp(Roomba, ddPin, mode):
 	Parameters:
 		imu = instance of LSM9DS1_I2C class;
 		Roomba = instance of Create_2 class;
+		mag_cal = boolean; If magnetometer calibration is desired, set to True
+		gyro_cal = boolean; If gyroscope calibration is desired, set to True
 	'''
-def IMUCalibration(imu, Roomba):
+def IMUCalibration(imu, Roomba, mag_cal = True, gyro_cal = True):
 	# Clear out first reading from all sensors (They can sometimes be bad)
 	x = imu.magnetic
 	x = imu.acceleration
 	x = imu.gyro
 	x = imu.temperature
 	# Calibrate the magnetometer and the gyroscope
-	ans1 = input(" Do you want to calibrate the magnetometer (y/n)? ").lower()
-	#ans1 = "y" # Include for automatic calibration
-	if ans1[0] == "y":
+	if mag_cal:
 		Roomba.Move(0,100) # Start the Roomba spinning
 		imu.CalibrateMag() # Determine magnetometer offset values
 		Roomba.Move(0,0) # Stop the Roomba
@@ -76,9 +76,7 @@ def IMUCalibration(imu, Roomba):
 	else:
 		print(" Skipping magnetometer calibration.")
 	
-	ans2 = input(" Do you want to calibrate the gyroscope (y/n)? ").lower()
-	#ans2 = "y" # Include for automatic calibration
-	if ans2[0] == "y":
+	if gyro_cal:
 		imu.CalibrateGyro() # Determine gyroscope offset values
 		# Display offset values
 		print("gx_offset = {:f}; gy_offset = {:f}; gz_offset = {:f}"\
@@ -111,7 +109,7 @@ GPIO.setup(gled, GPIO.OUT, initial=GPIO.LOW)
 
 # Wake Up Roomba Sequence
 GPIO.output(gled, GPIO.HIGH) # Turn on green LED to say we are alive and setting up
-print(" Starting ROOMBA... ")
+print(" Starting ROOMBA...")
 Roomba = RoombaCI_lib.Create_2("/dev/ttyS0", 115200)
 StartUp(Roomba, 23, 131) # Start up Roomba in Safe mode
 print(" ROOMBA Setup Complete")
@@ -341,10 +339,6 @@ for i in range(len(dict.keys())):
 			print('DCM: [[{0:0.5f}, {1:0.5f}, {2:0.5f}]'.format(DCM_G[0,0], DCM_G[0,1], DCM_G[0,2]))
 			print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]'.format(DCM_G[1,0], DCM_G[1,1], DCM_G[1,2]))
 			print('	[{0:0.5f}, {1:0.5f}, {2:0.5f}]]'.format(DCM_G[2,0], DCM_G[2,1], DCM_G[2,2]))
-			# Delta_theta Debug Data
-			#print('Delta_Accel: {0}'.format(delta_theta_acc))
-			#print('Delta_Gyro: {0}'.format(delta_theta_gyro_para))
-			#print('Delta_Mag: {0}'.format(delta_theta_mag_para))
 			# Write IMU data, wheel encoder data to a file.
 			imu_file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.6f},{13:0.6f}\n"\
 				.format(data_time_init,accel[0],accel[1],accel[2],mag[0],mag[1],mag[2],omega[0],omega[1],omega[2],left_start,right_start,theta,theta_imu))
@@ -360,7 +354,7 @@ for i in range(len(dict.keys())):
 			#temp_sum = 0 # Sum of temperature values
 			imu_counter = 0 # Number of summed values
 		else: # If Roomba data hasn't come in
-			# Read acceleration, magnetometer, gyroscope, and temperature data
+			# Read acceleration, magnetometer, gyroscope data
 			[accel_sum, mag_sum, omega_sum, imu_counter] = ReadIMU(imu, accel_sum, mag_sum, omega_sum, imu_counter)
 
 		# End if Roomba.Available()
