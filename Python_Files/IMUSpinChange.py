@@ -10,6 +10,7 @@ import RPi.GPIO as GPIO
 import RoombaCI_lib
 import os.path
 import math
+import numpy as np
 
 ## Variables and Constants ##
 # LED pin numbers
@@ -25,6 +26,18 @@ def DisplayDateTime():
 	date_time = time.strftime("%B %d, %Y, %H:%M:%S", time.gmtime())
 	print("Program run: ", date_time)
 
+''' Returns 3 value list of the cross product of 3 value lists "a" and "b"
+	'''
+def CrossProduct(a,b):
+	s0 = (a[1]*b[2]) - (a[2]*b[1])
+	s1 = (a[2]*b[0]) - (a[0]*b[2])
+	s2 = (a[0]*b[1]) - (a[1]*b[0])
+	return [s0, s1, s2]
+
+''' Returns single integer dot product of 3 value lists "a" and "b"
+	'''
+def DotProduct(a,b):
+	return ((a[0]*b[0]) + (a[1] * b[1]) + (a[2]*b[2]))
 
 ## -- Code Starts Here -- ##
 # Setup Code #
@@ -51,7 +64,31 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	#print(x) # Include for debugging
 
 print(" ROOMBA Setup Complete")
+GPIO.output(yled, GPIO.HIGH)
+print(" Starting IMU...")
+imu = RoombaCI_lib.LSM9DS1_I2C()
+time.sleep(0.1)
+# Clear out first reading from all sensors (They can sometimes be bad)
+x = imu.magnetic
+x = imu.acceleration
+x = imu.gyro
+# Calibrate the magnetometer and the gyroscope
+print(" Calibrating IMU...")
+Roomba.Move(0,100) # Start the Roomba spinning
+imu.CalibrateMag() # Determine magnetometer offset values
+Roomba.Move(0,0) # Stop the Roomba
+time.sleep(0.1) # Wait for the Roomba to settle
+imu.CalibrateGyro() # Determine gyroscope offset values
+# Display offset values
+print("mx_offset = {:f}; my_offset = {:f}; mz_offset = {:f}"\
+	.format(imu.m_offset[0], imu.m_offset[1], imu.m_offset[2]))
+print("gx_offset = {:f}; gy_offset = {:f}; gz_offset = {:f}"\
+	.format(imu.g_offset[0], imu.g_offset[1], imu.g_offset[2]))
+print(" Calibration Complete")
+time.sleep(1.0) # Give some time to read the offset values
 GPIO.output(gled, GPIO.LOW)
+GPIO.output(yled, GPIO.LOW)
+
 # Main Code #
 # Open a text file for data retrieval
 #file_name_input = input("Name for data file: ")
