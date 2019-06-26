@@ -113,6 +113,7 @@ y_position_enc = 0 # Position of Roomba along y-axis (in mm) according to encode
 x_position_enc = 0 # Position of Roomba along x-axis (in mm) according to encoders
 y_position_imu = 0 # Position of Roomba along y-axis (in mm) according to IMU
 x_position_imu = 0 # Position of Roomba along x-axis (in mm) according to IMU
+distance = 0
 accel_length = math.sqrt((accel_x**2)+(accel_y**2)+(accel_z**2)) # Distance of vector made by acceleration
 r_accel_x = accel_x / accel_length #Normalized acceleration values
 r_accel_y = accel_y / accel_length
