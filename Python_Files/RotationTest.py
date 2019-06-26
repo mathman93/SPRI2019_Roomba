@@ -325,6 +325,8 @@ for i in range(len(dict.keys())):
 				imu_counter -= 1 # Subtract one from counter
 			current_theta = new_theta # Set current theta to new theta for next iteration
 
+			average_theta = (theta + new_theta) / 2
+
 			# Print acceleration, gyroscope and magnetometer values
 			print('Time: {0:0.6f}'.format(data_time2))
 			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel_x, accel_y, accel_z))
@@ -377,6 +379,7 @@ total_theta = (encoder_counter * (2*math.pi)) + (theta - start_theta) # Calculat
 total_new_theta = (imu_counter * (2*math.pi)) + (new_theta - start_theta) # Calculates total rotation from the IMU
 print('Encoder Total Rotation: {0:0.5f}'.format(total_theta))
 print('IMU Total Rotation: {0:0.5f}'.format(total_new_theta))
+print('Average Total Rotation: {0:0.5f}'.format(average_theta))
 #file.write("{0:0.5f},{1:0.5f}".format(total_theta,total_new_theta))
 # End for i in range(len(dict.keys())):
 Roomba.Move(0,0) # Stop Roomba
