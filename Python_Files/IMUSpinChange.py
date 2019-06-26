@@ -351,7 +351,7 @@ while True:
 				# Find new x and y position according to IMU
 				x_position_imu = x_position_imu + delta_d*math.cos(new_theta-(.5*delta_theta_imu))
 				y_position_imu = y_position_imu + delta_d*math.sin(new_theta-(.5*delta_theta_imu))
-				distance += delta_distance
+				distance += delta_d
 				# Find distance to end and theta_initial
 				distance_to_end = math.sqrt((x_final-x_position_imu)**2 +(y_final-y_position_imu)**2)
 		
