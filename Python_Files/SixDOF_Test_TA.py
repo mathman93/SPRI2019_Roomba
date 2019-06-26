@@ -19,6 +19,13 @@ yled = 5
 rled = 6
 gled = 13
 
+# Roomba Constants
+wheel_diameter = 72
+counts_per_rev = 508.8
+distance_between_wheels = 235
+C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
+distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
+
 ## Functions and Definitions ##
 ''' Displays current date and time to the screen
 	'''
@@ -27,6 +34,58 @@ def DisplayDateTime():
 	date_time = time.strftime("%B %d, %Y, %H:%M:%S", time.gmtime())
 	print("Program run: ", date_time)
 
+''' Standard start-up sequence for Roomba
+	Parameters:
+		Roomba = class instance of Create_2;
+		ddPin = int; Pin number on Raspberry Pi that connects to Roomba dd pin
+		mode = int; Roomba OI operation mode (131 = Safe Mode; 132 = Full Mode)
+	'''
+def StartUp(Roomba, ddPin, mode):
+	Roomba.ddPin = ddPin # Set Roomba dd pin number
+	GPIO.setup(Roomba.ddPin, GPIO.OUT, initial=GPIO.LOW)
+	Roomba.WakeUp(mode) # Start up Roomba in Safe Mode
+	# 131 = Safe Mode; 132 = Full Mode (Be ready to catch it!)
+	Roomba.BlinkCleanLight() # Blink the Clean light on Roomba
+	
+	if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
+		x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
+		#print(x) # Include for debugging
+
+''' Set up IMU and (optionally) calibrate magnetometer and gyroscope
+	Parameters:
+		imu = instance of LSM9DS1_I2C class;
+		Roomba = instance of Create_2 class;
+	'''
+def IMUCalibration(imu, Roomba):
+	# Clear out first reading from all sensors (They can sometimes be bad)
+	x = imu.magnetic
+	x = imu.acceleration
+	x = imu.gyro
+	x = imu.temperature
+	# Calibrate the magnetometer and the gyroscope
+	ans1 = input(" Do you want to calibrate the magnetometer (y/n)? ").lower()
+	#ans1 = "y" # Include for automatic calibration
+	if ans1 == "y":
+		Roomba.Move(0,100) # Start the Roomba spinning
+		imu.CalibrateMag() # Determine magnetometer offset values
+		Roomba.Move(0,0) # Stop the Roomba
+		time.sleep(0.1) # Wait for the Roomba to settle
+		# Display offset values
+		print("mx_offset = {:f}; my_offset = {:f}; mz_offset = {:f}"\
+			.format(imu.m_offset[0], imu.m_offset[1], imu.m_offset[2]))
+	else:
+		print(" Skipping magnetometer calibration.")
+	
+	ans2 = input(" Do you want to calibrate the gyroscope (y/n)? ").lower()
+	#ans2 = "y" # Include for automatic calibration
+	if ans2 == "y":
+		imu.CalibrateGyro() # Determine gyroscope offset values
+		# Display offset values
+		print("gx_offset = {:f}; gy_offset = {:f}; gz_offset = {:f}"\
+			.format(imu.g_offset[0], imu.g_offset[1], imu.g_offset[2]))
+	else:
+		print(" Skipping gyroscope calibration")
+	time.sleep(1.0) # Give some time to read the offset values
 
 ## -- Code Starts Here -- ##
 # Setup Code #
@@ -39,45 +98,21 @@ GPIO.setup(rled, GPIO.OUT, initial=GPIO.LOW)
 GPIO.setup(gled, GPIO.OUT, initial=GPIO.LOW)
 
 # Wake Up Roomba Sequence
-GPIO.output(gled, GPIO.HIGH) # Turn on green LED to say we are alive
+GPIO.output(gled, GPIO.HIGH) # Turn on green LED to say we are alive and setting up
 print(" Starting ROOMBA... ")
 Roomba = RoombaCI_lib.Create_2("/dev/ttyS0", 115200)
-Roomba.ddPin = 23 # Set Roomba dd pin number
-GPIO.setup(Roomba.ddPin, GPIO.OUT, initial=GPIO.LOW)
-Roomba.WakeUp(131) # Start up Roomba in Safe Mode
-# 131 = Safe Mode; 132 = Full Mode (Be ready to catch it!)
-Roomba.BlinkCleanLight() # Blink the Clean light on Roomba
-
-if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
-	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
-	#print(x) # Include for debugging
-
+StartUp(Roomba, 23, 131) # Start up Roomba in Safe mode
 print(" ROOMBA Setup Complete")
-GPIO.output(yled, GPIO.HIGH)
+
+GPIO.output(yled, GPIO.HIGH) # Turn on yellow LED to say we are calibrating
 print(" Starting IMU...")
 imu = RoombaCI_lib.LSM9DS1_I2C()
-time.sleep(0.1)
-# Clear out first reading from all sensors (They can sometimes be bad)
-x = imu.magnetic
-x = imu.acceleration
-x = imu.gyro
-#x = imu.temperature
-# Calibrate the magnetometer and the gyroscope
+
 print(" Calibrating IMU...")
-Roomba.Move(0,100) # Start the Roomba spinning
-imu.CalibrateMag() # Determine magnetometer offset values
-Roomba.Move(0,0) # Stop the Roomba
-time.sleep(0.1) # Wait for the Roomba to settle
-imu.CalibrateGyro() # Determine gyroscope offset values
-# Display offset values
-print("mx_offset = {:f}; my_offset = {:f}; mz_offset = {:f}"\
-	.format(imu.m_offset[0], imu.m_offset[1], imu.m_offset[2]))
-print("gx_offset = {:f}; gy_offset = {:f}; gz_offset = {:f}"\
-	.format(imu.g_offset[0], imu.g_offset[1], imu.g_offset[2]))
+IMUCalibration(imu, Roomba)
 print(" Calibration Complete")
-time.sleep(1.0) # Give some time to read the offset values
-GPIO.output(gled, GPIO.LOW)
-GPIO.output(yled, GPIO.LOW)
+GPIO.output(yled, GPIO.LOW) # Turn off yellow LED to say we have finished calibrating
+GPIO.output(gled, GPIO.LOW) # Turn off green LED to say we have finished setup sequence
 
 # Main Code #
 # Open a text file for data retrieval
@@ -97,13 +132,6 @@ dict = {0:[0,0,20],
 	1:[0,75,20],
 	2:[0,0,5]
 	}
-
-# Roomba Constants
-wheel_diameter = 72
-counts_per_rev = 508.8
-distance_between_wheels = 235
-C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
-distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 
 accel_sum = np.zeros(3) # Vector of sum of accelerometer values
 mag_sum = np.zeros(3) # Vector of sum of magnetometer values
@@ -362,7 +390,7 @@ Roomba.Move(0,0) # Stop Roomba
 Roomba.PauseQueryStream() # Pause data stream
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	z = Roomba.DirectRead(Roomba.Available()) # Clear out excess Roomba data
-	print(z) # Include for debugging
+	#print(z) # Include for debugging
 imu_file.close() # Close data file
 #dcm_file.close() # Close data file
 Roomba.PlaySMB() # For fun :)
