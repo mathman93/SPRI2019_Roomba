@@ -397,6 +397,7 @@ total_new_theta = (imu_counter * (2*math.pi)) + (new_theta - start_theta) # Calc
 total_average_theta = (average_counter * (2*math.pi)) + (average_theta - start_theta) #Calculates average total rotation
 print('Encoder Total Rotation: {0:0.5f}'.format(total_theta))
 print('IMU Total Rotation: {0:0.5f}'.format(total_new_theta))
+print('Average Total Rotation: {0:0.5f}'.format(total_average_theta))
 #file.write("{0:0.5f},{1:0.5f}".format(total_theta,total_new_theta))
 # End for i in range(len(dict.keys())):
 Roomba.Move(0,0) # Stop Roomba
