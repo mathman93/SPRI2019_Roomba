@@ -470,7 +470,12 @@ while True:
 			except ValueError: #Prints the message if anything but a number is input, then re-asks for the coordinates
 				print("Please enter a number")
 				continue
-		distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2) #Recalculates distance_to_end before the main loop starts
+		if option == 1:
+			distance_to_end = math.sqrt((x_final-x_position_enc)**2 +(y_final-y_position_enc)**2) #Recalculates distance_to_end before the main loop starts
+		if option == 2:
+			distance_to_end = math.sqrt((x_final-x_position_imu)**2 +(y_final-y_position_imu)**2) #Recalculates distance_to_end before the main loop starts
+		if option == 3:
+			distance_to_end = math.sqrt((x_final-x_position_avg)**2 +(y_final-y_position_avg)**2) #Recalculates distance_to_end before the main loop starts
 		Roomba.ResumeQueryStream() #Resumes the query stream to continue as the roomba moves again
 	except KeyboardInterrupt:
 		break
