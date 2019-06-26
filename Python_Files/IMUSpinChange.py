@@ -113,6 +113,8 @@ y_position_enc = 0 # Position of Roomba along y-axis (in mm) according to encode
 x_position_enc = 0 # Position of Roomba along x-axis (in mm) according to encoders
 y_position_imu = 0 # Position of Roomba along y-axis (in mm) according to IMU
 x_position_imu = 0 # Position of Roomba along x-axis (in mm) according to IMU
+y_position_avg = 0 # Position of Roomba along y-axis (in mm) according to average
+x_position_avg = 0 # Position of Roomba along x-axis (in mm) according to average
 distance = 0
 accel_length = math.sqrt((accel_x**2)+(accel_y**2)+(accel_z**2)) # Distance of vector made by acceleration
 r_accel_x = accel_x / accel_length #Normalized acceleration values
@@ -185,10 +187,10 @@ while True: #Loop that asks for initial goal x and y coordinates
 	except ValueError:
 		print("Please input a number")
 		continue
-distance_to_end = math.sqrt((x_final-x_position_imu)**2 +(y_final-y_position_imu)**2)
-theta_initial = math.atan2((y_final-y_position_imu),(x_final-x_position_imu))
-theta_d = theta_initial-new_theta
-print("{0:.6f},{1},{2}, ENC XY:{3:.3f},{4:.3f}, IMU XY:{5:.6f},{6:.6f},{7:.6f},{8:.6f}".format(0,left_start,right_start,x_position_enc,y_position_enc,x_position_imu,y_position_imu,new_theta,distance_to_end,theta_d))
+distance_to_end = math.sqrt((x_final-x_position_avg)**2 +(y_final-y_position_avg)**2)
+theta_initial = math.atan2((y_final-y_position_avg),(x_final-x_position_avg))
+theta_d = theta_initial-average_theta
+print("{0:.6f},{1},{2}, ENC XY:{3:.3f},{4:.3f}, IMU XY:{5:.6f},{6:.6f}, AVG XY:{7:.6f},{8:.6f},{9:.6f},{10:.6f}".format(0,left_start,right_start,x_position_enc,y_position_enc,x_position_imu,y_position_imu,x_position_avg,y_position_avg,average_theta,distance_to_end,theta_d))
 print("")
 
 Roomba.StartQueryStream(43,44)
@@ -352,16 +354,27 @@ while True:
 				x_position_imu = x_position_imu + delta_d*math.cos(new_theta-(.5*delta_theta_imu))
 				y_position_imu = y_position_imu + delta_d*math.sin(new_theta-(.5*delta_theta_imu))
 				distance += delta_d
+
+				# Determine what method to use to find the change in distance
+				if delta_average_theta == 0:
+					delta_d = 0.5*(delta_l+delta_r)*distance_per_count
+				else:
+					delta_d = (((delta_l+delta_r)*distance_per_count)/delta_average_theta)*math.sin(delta_average_theta/2)
+				# Find new x and y position according to IMU
+				x_position_avg = x_position_avg + delta_d*math.cos(new_theta-(.5*delta_average_theta))
+				y_position_avg = y_position_avg + delta_d*math.sin(new_theta-(.5*delta_average_theta))
+				distance += delta_d
+
 				# Find distance to end and theta_initial
-				distance_to_end = math.sqrt((x_final-x_position_imu)**2 +(y_final-y_position_imu)**2)
+				distance_to_end = math.sqrt((x_final-x_position_avg)**2 +(y_final-y_position_avg)**2)
 		
-				theta_initial = math.atan2((y_final-y_position_imu),(x_final-x_position_imu))
+				theta_initial = math.atan2((y_final-y_position_avg),(x_final-x_position_avg))
 				# Normalize what theta initial is to between 0-2pi
 				if theta_initial <0:
 					theta_initial += 2*math.pi
 				# Calculate theta_d and normalize it to 0-2pi
 				# This value is the difference between the direction were supposed to be going and the direction we are going
-				theta_d = ((theta_initial-new_theta)%(2*math.pi))
+				theta_d = ((theta_initial-average_theta)%(2*math.pi))
 				# get theta_d between -pi and pi
 				if theta_d > math.pi:
 					theta_d -= 2*math.pi
@@ -395,7 +408,7 @@ while True:
 					f = f_set
 				Roomba.Move(f,s) #Makes the roomba move with the parameters given to
 				# Print and write the time, left encoder, right encoder, x position, y position, and theta
-				print("{0:.6f},{1},{2}, ENC XY:{3:.3f},{4:.3f}, IMU XY:{5:.6f},{6:.6f},{7:.6f},{8:.6f}".format(0,left_start,right_start,x_position_enc,y_position_enc,x_position_imu,y_position_imu,new_theta,distance_to_end,theta_d))
+				print("{0:.6f},{1},{2}, ENC XY:{3:.3f},{4:.3f}, IMU XY:{5:.6f},{6:.6f}, AVG XY:{7:.6f},{8:.6f},{9:.6f},{10:.6f}".format(0,left_start,right_start,x_position_enc,y_position_enc,x_position_imu,y_position_imu,x_position_avg,y_position_avg,average_theta,distance_to_end,theta_d))
 				print("")
 
 				# Write IMU data and wheel encoder data to a file.
@@ -442,7 +455,7 @@ while True:
 			except ValueError: #Prints the message if anything but a number is input, then re asks for th coordinates
 				print("Please enter a number")
 				continue
-		distance_to_end = math.sqrt((x_final-x_position_imu)**2 +(y_final-y_position_imu)**2) #Recalculates distance_to_end before the main loop starts
+		distance_to_end = math.sqrt((x_final-x_position_avg)**2 +(y_final-y_position_avg)**2) #Recalculates distance_to_end before the main loop starts
 		Roomba.ResumeQueryStream() #Resumes the query stream to continue as the roomba moves again
 	except KeyboardInterrupt:
 		break
