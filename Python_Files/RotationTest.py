@@ -328,8 +328,10 @@ for i in range(len(dict.keys())):
 			delta_theta_imu = new_theta-current_theta
 			if(delta_theta_imu) < (-1 * math.pi): # If the roomba rotated clockwise over the x axis...
 				imu_counter += 1 # Add one to counter
+				delta_theta_imu += 2*math.pi
 			elif(delta_theta_imu) > math.pi: # If the roomba rotated counterclockwise over the x axis...
 				imu_counter -= 1 # Subtract one from counter
+				delta_theta -= 2*math.pi
 			current_theta = new_theta # Set current theta to new theta for next iteration			
 
 			delta_average_theta = ((S_theta*delta_theta_enc) + (S_new_theta*delta_theta_imu))/(S_theta+S_new_theta) # Average change in rotation
