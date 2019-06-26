@@ -92,10 +92,10 @@ GPIO.output(yled, GPIO.LOW)
 # Main Code #
 
 # Open a text file for data retrieval
-file_name_input = input("Name for data file: ")
-dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
-file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
-file = open(file_name, "w") # Open a text file for storing data
+#file_name_input = input("Name for data file: ")
+#dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+#file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
+#file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
 
 while True:
@@ -164,6 +164,7 @@ average_theta = delta_average_theta # Total average change in rotation
 current_theta = new_theta # Variable used later to check change in rotation to tell if the roomba has rotated past the the x axis
 imu_counter = 0 # Counts how many times the roomba has rotated past the x axis according to the IMU's calculations
 encoder_counter = 0 # Counts how many times the roomba has rotated past the x axis according to the wheel encoder's calculations
+average_counter = 0 #Counts how many times the roomba has rotated past the x axis according to the average of the two calculations
 start_theta = new_theta # Stores the initial rotation for the roomba at the program's start
 
 S_theta = 2 # Weight of encoder rotation in rotation average
@@ -188,8 +189,8 @@ start_time = time.time()
 data_time = time.time()
 data_time_init = time.time() - data_time
 
-file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f}\n"\
-	.format(data_time_init,accel_x,accel_y,accel_z,mag_x,mag_y,mag_z,gyro_x,gyro_y,gyro_z,left_start, right_start,theta,new_theta,average_theta))
+#file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f}\n"\
+	#.format(data_time_init,accel_x,accel_y,accel_z,mag_x,mag_y,mag_z,gyro_x,gyro_y,gyro_z,left_start, right_start,theta,new_theta,average_theta))
 
 Roomba.StartQueryStream(43,44)
 
@@ -335,8 +336,12 @@ for i in range(len(dict.keys())):
 
 			delta_average_theta = ((S_theta*delta_theta_enc) + (S_new_theta*delta_theta_imu))/(S_theta+S_new_theta) # Average change in rotation
 			average_theta += delta_average_theta
-			if average_theta < 0:
+			if average_theta >= 2*math.pi:
+				average_theta -= 2*math.pi
+				average_counter += 1
+			elif average_theta < 0:
 				average_theta += 2*math.pi
+				average_counter -= 1
 
 			# Print acceleration, gyroscope and magnetometer values
 			print('Time: {0:0.6f}'.format(data_time2))
@@ -353,8 +358,8 @@ for i in range(len(dict.keys())):
 			print('Counter: {0}'.format(readings_counter))
 
 			# Write IMU data and wheel encoder data to a file.
-			file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},,{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f}\n"\
-				.format(data_time2,accel_x,accel_y,accel_z,mag_x,mag_y,mag_z,gyro_x,gyro_y,gyro_z,left_start, right_start,theta,new_theta,average_theta))
+			#file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},,{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f}\n"\
+				#.format(data_time2,accel_x,accel_y,accel_z,mag_x,mag_y,mag_z,gyro_x,gyro_y,gyro_z,left_start, right_start,theta,new_theta,average_theta))
 			#Set values to new ones for next iteration
 			left_start = left_encoder
 			right_start = right_encoder
@@ -389,16 +394,17 @@ for i in range(len(dict.keys())):
 
 total_theta = (encoder_counter * (2*math.pi)) + (theta - start_theta) # Calculates total rotation from the encoder
 total_new_theta = (imu_counter * (2*math.pi)) + (new_theta - start_theta) # Calculates total rotation from the IMU
+total_average_theta = (average_counter * (2*math.pi)) + (average_theta - start_theta) #Calculates average total rotation
 print('Encoder Total Rotation: {0:0.5f}'.format(total_theta))
 print('IMU Total Rotation: {0:0.5f}'.format(total_new_theta))
-file.write("{0:0.5f},{1:0.5f}".format(total_theta,total_new_theta))
+#file.write("{0:0.5f},{1:0.5f}".format(total_theta,total_new_theta))
 # End for i in range(len(dict.keys())):
 Roomba.Move(0,0) # Stop Roomba
 Roomba.PauseQueryStream() # Pause data stream
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	z = Roomba.DirectRead(Roomba.Available()) # Clear out excess Roomba data
 	print(z) # Include for debugging
-file.close() # Close data file
+#file.close() # Close data file
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
