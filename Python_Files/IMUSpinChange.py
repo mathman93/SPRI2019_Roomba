@@ -267,7 +267,7 @@ while True:
 				i_current = [(a+b) for a,b in zip(i_current_partial, i_current)] #Updates I vector for this iteration
 				dot_prod_ik = DotProduct(k_current, i_current)/2
 				i_prime = [(a-(b*dot_prod_ik)) for a,b in zip(i_current,k_current)] # Corrects I, J, and K vectors to a more accurate forms
-					k_prime = [(a-(b*dot_prod_ik)) for a,b in zip(k_current,i_current)]
+				k_prime = [(a-(b*dot_prod_ik)) for a,b in zip(k_current,i_current)]
 				j_prime = CrossProduct(k_prime,i_prime)
 				length_i = math.sqrt(DotProduct(i_prime,i_prime)) # Finds lengths of I prime, J prime, and K prime vectors
 				length_k = math.sqrt(DotProduct(k_prime,k_prime))
