@@ -115,6 +115,8 @@ y_position_imu = 0 # Position of Roomba along y-axis (in mm) according to IMU
 x_position_imu = 0 # Position of Roomba along x-axis (in mm) according to IMU
 y_position_avg = 0 # Position of Roomba along y-axis (in mm) according to average
 x_position_avg = 0 # Position of Roomba along x-axis (in mm) according to average
+x_position = 0 # Position of roomba along x-axis (in mm) according to chosen calculation
+y_position = 0 # Position of roomba along y-axis (in mm) according to chosen calculation
 distance = 0
 accel_length = math.sqrt((accel_x**2)+(accel_y**2)+(accel_z**2)) # Distance of vector made by acceleration
 r_accel_x = accel_x / accel_length #Normalized acceleration values
@@ -183,14 +185,16 @@ while True: #Loop that asks for initial goal x and y coordinates
 	try:
 		x_final = float(input("x position:"))
 		y_final = float(input("y position:"))
+		option = int(input("1=Encoder,2=IMU,3=Average:"))
 		break
 	except ValueError:
 		print("Please input a number")
 		continue
-distance_to_end = math.sqrt((x_final-x_position_avg)**2 +(y_final-y_position_avg)**2)
-theta_initial = math.atan2((y_final-y_position_avg),(x_final-x_position_avg))
-theta_d = theta_initial-average_theta
-print("{0:.6f},{1},{2}, ENC XY:{3:.3f},{4:.3f}, IMU XY:{5:.6f},{6:.6f}, AVG XY:{7:.6f},{8:.6f},{9:.6f},{10:.6f},{11:.6f}".format(theta_initial,left_start,right_start,x_position_enc,y_position_enc,x_position_imu,y_position_imu,x_position_avg,y_position_avg,average_theta,distance_to_end,theta_d))
+
+distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
+theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
+theta_d = theta_initial-theta
+print("{0:.5f},ENC XY:{1:.5f},{2:.5f},{3:.5f}, IMU XY:{4:.5f},{5:.5f},{6:.5f}, AVG XY:{7:.5f},{8:.5f},{9:.5f},{10:.5f},{11:.5f}".format(theta_initial,x_position_enc,y_position_enc,theta,x_position_imu,y_position_imu,new_theta,x_position_avg,y_position_avg,average_theta,distance_to_end,theta_d))
 print("")
 
 Roomba.StartQueryStream(43,44)
@@ -249,14 +253,16 @@ while True:
 				elif theta < 0:
 					theta += 2*math.pi
 					encoder_counter -= 1
-				# Determine what method to use to find the change in distance
-				if delta_l-delta_r == 0:
-					delta_d = 0.5*(delta_l+delta_r)*distance_per_count
-				else:
-					delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
-				# Find new x and y position
-				x_position_enc = x_position_enc + delta_d*math.cos(theta-.5*delta_theta)
-				y_position_enc = y_position_enc + delta_d*math.sin(theta-.5*delta_theta)
+
+				if option == 1:
+					# Determine what method to use to find the change in distance
+					if delta_l-delta_r == 0:
+						delta_d = 0.5*(delta_l+delta_r)*distance_per_count
+					else:
+						delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
+					# Find new x and y position
+					x_position = x_position_enc + delta_d*math.cos(theta-.5*delta_theta)
+					y_position = y_position_enc + delta_d*math.sin(theta-.5*delta_theta)
 
 				delta_theta_enc = delta_theta # Updates encoder rotation change into variable for calculation of average rotation
 
@@ -345,36 +351,42 @@ while True:
 					average_theta += 2*math.pi
 					average_counter -= 1
 
-				# Determine what method to use to find the change in distance
-				if delta_theta_imu == 0:
-					delta_d = 0.5*(delta_l+delta_r)*distance_per_count
-				else:
-					delta_d = (((delta_l+delta_r)*distance_per_count)/delta_theta_imu)*math.sin(delta_theta_imu/2)
-				# Find new x and y position according to IMU
-				x_position_imu = x_position_imu + delta_d*math.cos(new_theta-(.5*delta_theta_imu))
-				y_position_imu = y_position_imu + delta_d*math.sin(new_theta-(.5*delta_theta_imu))
-				distance += delta_d
+				if option == 2:
+					# Determine what method to use to find the change in distance
+					if delta_theta_imu == 0:
+						delta_d = 0.5*(delta_l+delta_r)*distance_per_count
+					else:
+						delta_d = (((delta_l+delta_r)*distance_per_count)/delta_theta_imu)*math.sin(delta_theta_imu/2)
+					# Find new x and y position according to IMU
+					x_position = x_position_imu + delta_d*math.cos(new_theta-(.5*delta_theta_imu))
+					y_position = y_position_imu + delta_d*math.sin(new_theta-(.5*delta_theta_imu))
 
-				# Determine what method to use to find the change in distance
-				if delta_average_theta == 0:
-					delta_d = 0.5*(delta_l+delta_r)*distance_per_count
-				else:
-					delta_d = (((delta_l+delta_r)*distance_per_count)/delta_average_theta)*math.sin(delta_average_theta/2)
-				# Find new x and y position according to IMU
-				x_position_avg = x_position_avg + delta_d*math.cos(new_theta-(.5*delta_average_theta))
-				y_position_avg = y_position_avg + delta_d*math.sin(new_theta-(.5*delta_average_theta))
+
+				if option == 3:
+					# Determine what method to use to find the change in distance
+					if delta_average_theta == 0:
+						delta_d = 0.5*(delta_l+delta_r)*distance_per_count
+					else:
+						delta_d = (((delta_l+delta_r)*distance_per_count)/delta_average_theta)*math.sin(delta_average_theta/2)
+						# Find new x and y position according to average
+					x_position = x_position_avg + delta_d*math.cos(new_theta-(.5*delta_average_theta))
+					y_position = y_position_avg + delta_d*math.sin(new_theta-(.5*delta_average_theta))
 				distance += delta_d
 
 				# Find distance to end and theta_initial
-				distance_to_end = math.sqrt((x_final-x_position_avg)**2 +(y_final-y_position_avg)**2)
-		
-				theta_initial = math.atan2((y_final-y_position_avg),(x_final-x_position_avg))
+				distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
+				theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
 				# Normalize what theta initial is to between 0-2pi
 				if theta_initial <0:
 					theta_initial += 2*math.pi
 				# Calculate theta_d and normalize it to 0-2pi
 				# This value is the difference between the direction were supposed to be going and the direction we are going
-				theta_d = ((theta_initial-average_theta)%(2*math.pi))
+				if option == 1:
+					theta_d = ((theta_initial-theta)%(2*math.pi))
+				elif option == 2:
+					theta_d = ((theta_initial-new_theta)%(2*math.pi))
+				elif option == 3:
+					theta_d = ((theta_initial-average_theta)%(2*math.pi))
 				# get theta_d between -pi and pi
 				if theta_d > math.pi:
 					theta_d -= 2*math.pi
@@ -408,7 +420,7 @@ while True:
 					f = f_set
 				Roomba.Move(f,s) #Makes the roomba move with the parameters given to
 				# Print and write the time, left encoder, right encoder, x position, y position, and theta
-				print("{0:.6f},{1},{2}, ENC XY:{3:.3f},{4:.3f}, IMU XY:{5:.6f},{6:.6f}, AVG XY:{7:.6f},{8:.6f},{9:.6f},{10:.6f},{11:.6f}".format(theta_initial,left_start,right_start,x_position_enc,y_position_enc,x_position_imu,y_position_imu,x_position_avg,y_position_avg,average_theta,distance_to_end,theta_d))
+				print("{0:.5f},ENC XY:{1:.5f},{2:.5f},{3:.5f}, IMU XY:{4:.5f},{5:.5f},{6:.5f}, AVG XY:{7:.5f},{8:.5f},{9:.5f},{10:.5f},{11:.5f}".format(theta_initial,x_position_enc,y_position_enc,theta,x_position_imu,y_position_imu,new_theta,x_position_avg,y_position_avg,average_theta,distance_to_end,theta_d))
 				print("")
 
 				# Write IMU data and wheel encoder data to a file.
@@ -452,10 +464,10 @@ while True:
 				x_final = float(input("x position:"))
 				y_final = float(input("y position:"))
 				break
-			except ValueError: #Prints the message if anything but a number is input, then re asks for th coordinates
+			except ValueError: #Prints the message if anything but a number is input, then re-asks for the coordinates
 				print("Please enter a number")
 				continue
-		distance_to_end = math.sqrt((x_final-x_position_avg)**2 +(y_final-y_position_avg)**2) #Recalculates distance_to_end before the main loop starts
+		distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2) #Recalculates distance_to_end before the main loop starts
 		Roomba.ResumeQueryStream() #Resumes the query stream to continue as the roomba moves again
 	except KeyboardInterrupt:
 		break
