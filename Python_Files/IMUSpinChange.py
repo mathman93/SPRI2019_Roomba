@@ -190,7 +190,7 @@ while True: #Loop that asks for initial goal x and y coordinates
 distance_to_end = math.sqrt((x_final-x_position_avg)**2 +(y_final-y_position_avg)**2)
 theta_initial = math.atan2((y_final-y_position_avg),(x_final-x_position_avg))
 theta_d = theta_initial-average_theta
-print("{0:.6f},{1},{2}, ENC XY:{3:.3f},{4:.3f}, IMU XY:{5:.6f},{6:.6f}, AVG XY:{7:.6f},{8:.6f},{9:.6f},{10:.6f}".format(0,left_start,right_start,x_position_enc,y_position_enc,x_position_imu,y_position_imu,x_position_avg,y_position_avg,average_theta,distance_to_end,theta_d))
+print("{0:.6f},{1},{2}, ENC XY:{3:.3f},{4:.3f}, IMU XY:{5:.6f},{6:.6f}, AVG XY:{7:.6f},{8:.6f},{9:.6f},{10:.6f},{11:.6f}".format(theta_initial,left_start,right_start,x_position_enc,y_position_enc,x_position_imu,y_position_imu,x_position_avg,y_position_avg,average_theta,distance_to_end,theta_d))
 print("")
 
 Roomba.StartQueryStream(43,44)
@@ -408,7 +408,7 @@ while True:
 					f = f_set
 				Roomba.Move(f,s) #Makes the roomba move with the parameters given to
 				# Print and write the time, left encoder, right encoder, x position, y position, and theta
-				print("{0:.6f},{1},{2}, ENC XY:{3:.3f},{4:.3f}, IMU XY:{5:.6f},{6:.6f}, AVG XY:{7:.6f},{8:.6f},{9:.6f},{10:.6f}".format(0,left_start,right_start,x_position_enc,y_position_enc,x_position_imu,y_position_imu,x_position_avg,y_position_avg,average_theta,distance_to_end,theta_d))
+				print("{0:.6f},{1},{2}, ENC XY:{3:.3f},{4:.3f}, IMU XY:{5:.6f},{6:.6f}, AVG XY:{7:.6f},{8:.6f},{9:.6f},{10:.6f},{11:.6f}".format(theta_initial,left_start,right_start,x_position_enc,y_position_enc,x_position_imu,y_position_imu,x_position_avg,y_position_avg,average_theta,distance_to_end,theta_d))
 				print("")
 
 				# Write IMU data and wheel encoder data to a file.
