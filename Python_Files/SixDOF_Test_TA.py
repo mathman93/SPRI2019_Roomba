@@ -92,12 +92,12 @@ def ReadIMU(imu, xl_sum, m_sum, g_sum, c):
 	accel_x, accel_y, accel_z = imu.acceleration
 	mag_x, mag_y, mag_z = imu.magnetic
 	gyro_x, gyro_y, gyro_z = imu.gyro
-	imu_counter += 1 # Increment counter
+	c += 1 # Increment counter
 	# Accumulate IMU readings
 	xl_sum += np.array([accel_x, accel_y, accel_z])
 	m_sum += np.array([mag_x, mag_y, mag_z])
 	g_sum += np.array([gyro_x, gyro_y, gyro_z])
-	return [xl_sum, m_sum, g_sum]
+	return [xl_sum, m_sum, g_sum, c]
 
 ## -- Code Starts Here -- ##
 # Setup Code #
