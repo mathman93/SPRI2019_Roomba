@@ -160,7 +160,7 @@ S_theta = 2 # Weight of encoder rotation in rotation average
 S_new_theta = 1 # Weight of IMU rotation in rotation average
 S_gyro = 10 # Weight of gyro
 S_accel = 1 # Weight of acceleromater
-S_mag = 0.5 #Weight of magnetometer
+S_mag = 0 #Weight of magnetometer
 
 accel_sum = [0, 0, 0] # Initializes lists to be used later in calculating averages of IMU readings
 gyro_sum = [0, 0, 0]
@@ -174,7 +174,6 @@ distance_between_wheels = 235
 C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
 distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 
-start_time = time.time()
 data_time = time.time()
 data_time_init = time.time() - data_time
 
@@ -193,7 +192,9 @@ while True: #Loop that asks for initial goal x and y coordinates
 
 distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
 theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
-theta_d = theta_initial-theta
+theta_d = (theta_initial-theta)%(2*math.pi)
+if theta_d < 0:
+	theta_d = theta_d + (2*math.pi)
 print("{0:.5f},ENC XY:{1:.5f},{2:.5f},{3:.5f}, IMU XY:{4:.5f},{5:.5f},{6:.5f}, AVG XY:{7:.5f},{8:.5f},{9:.5f},{10:.5f},{11:.5f}".format(theta_initial,x_position_enc,y_position_enc,theta,x_position_imu,y_position_imu,new_theta,x_position_avg,y_position_avg,average_theta,distance_to_end,theta_d))
 print("")
 
@@ -204,7 +205,6 @@ while True:
 		# Tell the roomba to move
 		while distance_to_end > 3:
 			if Roomba.Available()>0:
-				data_time2 = time.time()
 				data_time2 = time.time() - data_time
 				delta_time = data_time2 - data_time_init
 				# Get left and right encoder values and find the change in each
@@ -365,9 +365,8 @@ while True:
 				else:
 					delta_d = (((delta_l+delta_r)*distance_per_count)/delta_average_theta)*math.sin(delta_average_theta/2)
 				# Find new x and y position according to average
-				x_position_avg = x_position_avg + delta_d*math.cos(new_theta-(.5*delta_average_theta))
-				y_position_avg = y_position_avg + delta_d*math.sin(new_theta-(.5*delta_average_theta))
-				distance += delta_d
+				x_position_avg = x_position_avg + delta_d*math.cos(average_theta-(.5*delta_average_theta))
+				y_position_avg = y_position_avg + delta_d*math.sin(average_theta-(.5*delta_average_theta))
 
 				# Find distance to end and theta_initial
 				if option == 1:
@@ -456,7 +455,6 @@ while True:
 				gyro_sum = [(a+b) for a,b in zip(gyro_sum, gyro_list)]
 				mag_list = [mag_x, mag_y, mag_z]
 				mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
-			start_time = time.time()
 		Roomba.PauseQueryStream() #Pauses the query stream while new coordinates are being input
 		if Roomba.Available()>0:
 			z = Roomba.DirectRead(Roomba.Available())
