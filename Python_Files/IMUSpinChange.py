@@ -160,7 +160,7 @@ S_theta = 2 # Weight of encoder rotation in rotation average
 S_new_theta = 1 # Weight of IMU rotation in rotation average
 S_gyro = 10 # Weight of gyro
 S_accel = 1 # Weight of acceleromater
-S_mag = 0 #Weight of magnetometer
+S_mag = 0.5 #Weight of magnetometer
 
 accel_sum = [0, 0, 0] # Initializes lists to be used later in calculating averages of IMU readings
 gyro_sum = [0, 0, 0]
