@@ -98,6 +98,7 @@ GPIO.output(yled, GPIO.LOW)
 	# Will overwrite anything that was in the text file previously
 
 # Get initial wheel encoder values
+
 [left_start,right_start]=Roomba.Query(43,44)
 
 #Get initial IMU readings and then print them out
@@ -175,7 +176,6 @@ C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
 distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 
 data_time = time.time()
-data_time_init = time.time() - data_time
 
 #file.write("{0:0.6f},{1:0.5f},{2:0.5f},{3:0.5f},{4:0.5f},{5:0.5f},{6:0.5f},{7:0.5f},{8:0.5f},{9:0.5f},{10},{11},{12:0.5f},{13:0.5f},{14:0.5f}\n"\
 	#.format(data_time_init,accel_x,accel_y,accel_z,mag_x,mag_y,mag_z,gyro_x,gyro_y,gyro_z,left_start, right_start,theta,new_theta,average_theta))
@@ -198,6 +198,7 @@ if theta_d < 0:
 print("{0:.5f},ENC XY:{1:.5f},{2:.5f},{3:.5f}, IMU XY:{4:.5f},{5:.5f},{6:.5f}, AVG XY:{7:.5f},{8:.5f},{9:.5f},{10:.5f},{11:.5f}".format(theta_initial,x_position_enc,y_position_enc,theta,x_position_imu,y_position_imu,new_theta,x_position_avg,y_position_avg,average_theta,distance_to_end,theta_d))
 print("")
 
+data_time_init = time.time() - data_time
 Roomba.StartQueryStream(43,44)
 
 while True:
@@ -474,6 +475,7 @@ while True:
 			distance_to_end = math.sqrt((x_final-x_position_imu)**2 +(y_final-y_position_imu)**2) #Recalculates distance_to_end before the main loop starts
 		if option == 3:
 			distance_to_end = math.sqrt((x_final-x_position_avg)**2 +(y_final-y_position_avg)**2) #Recalculates distance_to_end before the main loop starts
+		data_time_init = time.time() - data_time
 		Roomba.ResumeQueryStream() #Resumes the query stream to continue as the roomba moves again
 	except KeyboardInterrupt:
 		break
