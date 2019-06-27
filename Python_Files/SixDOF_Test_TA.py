@@ -1,7 +1,7 @@
-''' SixDOF_Test.py
+''' SixDOF_Test_TA.py
 Purpose: Read and save data from IMU while Roomba is moving
 Also calculate Directional Cosine Matrix (DCM) to determine orientation
-Last Modified: 6/26/2019
+Last Modified: 6/27/2019
 '''
 
 ## Import libraries ##
@@ -93,10 +93,10 @@ def IMUCalibration(imu, Roomba, mag_cal = True, gyro_cal = True):
 		g_sym = 1x3 numpy array; accumulated sum of gyroscope readings
 		c = int; counter for the number of IMU readings
 	Returns:
-		xl_sum = 1x3 numpy array;
-		m_sum = 1x3 numpy array;
-		g_sum = 1x3 numpy array;
-		c = int;
+		xl_sum = 1x3 numpy array; previous sum with added accelerometer values
+		m_sum = 1x3 numpy array; previous sum with added magnetometer values
+		g_sum = 1x3 numpy array; previous sum with added gyroscope values
+		c = int; incremented number of IMU readings
 	'''
 def ReadIMU(imu, xl_sum, m_sum, g_sum, c):
 	# Read acceleration, magnetometer, gyroscope data
@@ -110,6 +110,16 @@ def ReadIMU(imu, xl_sum, m_sum, g_sum, c):
 	g_sum += np.array([gyro_x, gyro_y, gyro_z])
 	return [xl_sum, m_sum, g_sum, c]
 
+''' Determines wheel encoder differences, accounting for rollover
+	Parameters:
+		l1 = int; previous left wheel encoder count reading
+		r1 = int; previous right wheel encoder count reading
+		l2 = int; new left wheel encoder count reading
+		r2 = int; new right wheel encoder count reading
+	Returns
+		delta_l = int; difference between left wheel encoder count readings
+		delta_r = int; difference between right wheel encoder count readings
+	'''
 def WheelEncoderDiff(l1, r1, l2, r2):
 	delta_l = l2-l1
 	delta_r = r2-r1
@@ -124,6 +134,23 @@ def WheelEncoderDiff(l1, r1, l2, r2):
 		delta_r -+ (2**16)
 	return [delta_l, delta_r]
 
+''' Calculates updated versors using a complimentary filter
+	Based on calculations given at http://www.starlino.com/dcm_tutorial.html
+	Parameters:
+		delta_time = float; amount of time since the last function call
+		accel = 1x3 numpy array; current accelerometer readings from IMU
+		mag = 1x3 numpy array; current magnetometer readings from IMU
+		omega = 1x3 numpy array; current gyroscope readings from IMU
+		gyro_init = 1x3 numpy array; previous gyroscope readings from IMU
+		I_B = 1x3 numpy array;
+		K_B = 1x3 numpy array;
+		weights = list of length 5; desired weighting of accelerometer, magnetometer and gyroscope quantities
+			Values are passed in this order: [w_acc, w_gyro, s_acc, s_mag, s_gyro]
+	Returns:
+		I_B_new = 1x3 numpy array;
+		J_B_new = 1x3 numpy array;
+		K_B_new = 1x3 numpy array;
+	'''
 def UpdateDCM(delta_time, accel, mag, omega, gyro_init, I_B, K_B, weights = [1,10,1,0.5,10]):
 	# Calculate inertial force vector (i.e., direction of "up")
 	# Get readings from the accelerometer
@@ -260,6 +287,9 @@ x_position = 0 # Position of Roomba along x-axis (in mm)
 #theta_enc = 0 # Heading of Roomba (in radians)
 theta_enc = theta_imu # Heading of Roomba (using imu)
 #theta_enc = math.atan2(-mag[1],-mag[0]) # Heading of Roomba (using magnetometer)
+#theta_avg = 0 # Heading of Roomba (in radians)
+theta_avg = theta_imu # Heading of Roomba (using imu)
+#theta_avg = math.atan2(-mag[1],-mag[0]) # Heading of Roomba (using magnetometer)
 
 gyro_init = omega # Store initial values for next iteration
 
@@ -300,17 +330,17 @@ for i in range(len(dict.keys())):
 			delta_time = data_time2 - data_time_init
 			# Get left and right encoder values and find the change in each
 			[left_encoder, right_encoder] = Roomba.ReadQueryStream(43,44)
-
+			
 			# Read acceleration, magnetometer, gyroscope data
 			[accel_sum, mag_sum, omega_sum, imu_counter] = ReadIMU(imu, accel_sum, mag_sum, omega_sum, imu_counter)
-
+			
 			# Average summed values to get each initial reading
 			accel = accel_sum/imu_counter
 			mag = mag_sum/imu_counter
 			omega = omega_sum/imu_counter
 			#temp = temp_sum/imu_counter
 			#omega *= 1.00472 # experimentally determined scale factor for gyro values
-
+			
 			# Finds the change in the left and right wheel encoder values
 			[delta_l, delta_r] = WheelEncoderDiff(left_start, right_start, left_encoder, right_encoder)
 			# Determine the change in theta and what that is currently
@@ -325,9 +355,24 @@ for i in range(len(dict.keys())):
 			[I_B, J_B, K_B] = UpdateDCM(delta_time, accel, mag, omega, gyro_init, I_B, K_B, [1,10,1,0.5,10])
 			# Form DCM from component values
 			DCM_G = np.stack((I_B, J_B, K_B))
-			theta_imu = np.arctan2(J_B[0], I_B[0]) # Initial estimate of heading from IMU
+			
+			delta_theta_imu = np.arctan2(J_B[0], I_B[0]) - theta_imu # Estimate of change in heading from IMU
+			if delta_theta_imu < -math.pi:
+				delta_theta_imu += 2*math.pi
+			elif delta_theta_imu > math.pi:
+				delta_theta_imu -= 2*math.pi
+			theta_imu += delta_theta_imu # New estimate of heading from IMU
 			if theta_imu < 0:
-				theta_imu += 2*np.pi
+				theta_imu += 2*math.pi
+			elif theta_imu >= 2*math.pi
+				theta_imu -= 2*math.pi
+			
+			delta_theta_avg = (2*delta_theta_enc + delta_theta_imu)/(3)
+			theta_avg += delta_theta_avg
+			if theta_avg < 0:
+				theta_avg += 2*math.pi
+			elif theta_avg >= 2*math.pi
+				theta_avg -= 2*math.pi
 			
 			theta = theta_enc
 			delta_theta = delta_theta_enc
@@ -338,7 +383,7 @@ for i in range(len(dict.keys())):
 			# Find new x and y position
 			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
-
+			
 			# Print values
 			print('Time: {0:0.6f}'.format(data_time2))
 			print('Acceleration (m/s^2): {0:0.5f},{1:0.5f},{2:0.5f}'.format(accel[0], accel[1], accel[2]))
@@ -371,7 +416,7 @@ for i in range(len(dict.keys())):
 		else: # If Roomba data hasn't come in
 			# Read acceleration, magnetometer, gyroscope data
 			[accel_sum, mag_sum, omega_sum, imu_counter] = ReadIMU(imu, accel_sum, mag_sum, omega_sum, imu_counter)
-
+		
 		# End if Roomba.Available()
 	# End while time.time() - start_time <=t:
 # End for i in range(len(dict.keys())):
