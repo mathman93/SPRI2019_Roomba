@@ -198,6 +198,7 @@ if theta_d < 0:
 print("{0:.5f},ENC XY:{1:.5f},{2:.5f},{3:.5f}, IMU XY:{4:.5f},{5:.5f},{6:.5f}, AVG XY:{7:.5f},{8:.5f},{9:.5f},{10:.5f},{11:.5f}".format(theta_initial,x_position_enc,y_position_enc,theta,x_position_imu,y_position_imu,new_theta,x_position_avg,y_position_avg,average_theta,distance_to_end,theta_d))
 print("")
 
+data_time = time.time()
 data_time_init = time.time() - data_time
 Roomba.StartQueryStream(43,44)
 
