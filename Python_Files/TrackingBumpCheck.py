@@ -63,7 +63,7 @@ GPIO.output(gled, GPIO.LOW)
 start_time = time.time()
 
 # Variables and Constants
-backup_time = 2.0 # Amount of time spent backing up
+backup_time = 1.0 # Amount of time spent backing up
 f = 0 # Forward/Backward speed
 s = 0 # Rotation Speed
 bump_time = time.time() - 2.0 # Assures that the roomba doesn't start in backup mode
@@ -100,10 +100,10 @@ while True:
 			elif bump_mode: # If not having to back up but still has bumped into something before...
 				if bump_code == 1:
 					f = 100
-					s = 15
+					s = 30
 				if bump_code == 2 or bump_code == 3:
 					f = 100
-					s = -15
+					s = -30
 			else:
 				f = 100
 				s = 0
