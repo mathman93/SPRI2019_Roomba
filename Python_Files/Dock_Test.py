@@ -51,7 +51,7 @@ Roomba.ddPin = 23 # Set Roomba dd pin number
 GPIO.setup(Roomba.ddPin, GPIO.OUT, initial=GPIO.LOW)
 
 Roomba.DirectWrite(128) # From off, start Roomba OI (sets to Passive)
-time.sleep(1.0)
+time.sleep(5.0)
 Roomba.DirectWrite(131) # From Passive mode, send to Safe Mode
 time.sleep(0.1)
 Roomba.BlinkCleanLight() # Test if Roomba is in Safe Mode
@@ -83,10 +83,11 @@ time.sleep(0.5)
 
 print(" Now Docking...")
 charging_state = 0
+
+Roomba.Dock()
 blink_base = time.time()
 Roomba.StartQueryStream(21)
-Roomba.Dock()
-while chargin_state == 0:
+while charging_state == 0:
 	if Roomba.Available() > 0:
 		charging_state = ReadQueryStream(21)
 	if time.time() - blink_base > 0.5:
