@@ -93,7 +93,7 @@ Roomba.StartQueryStream(21)
 while charging_state == 0:
 	try:
 		if Roomba.Available() > 0:
-			charging_state = Roomba.ReadQueryStream(21)
+			[charging_state] = Roomba.ReadQueryStream(21)
 			print("Charging State Value: {0}".format(charging_state))
 		if time.time() - blink_base > 0.5:
 			rled_bool = BlinkLED(rled, rled_bool)
