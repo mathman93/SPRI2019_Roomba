@@ -76,7 +76,11 @@ rled_bool = False
 Roomba.Move(-40,0)
 while time.time() - backup_base < 12.5:
 	if time.time() - blink_base > 0.5:
-		rled_bool = BlinkLED(rled, rled_bool)
+		rled_bool = not rled_bool
+		if rled_bool:
+			GPIO.output(rled, GPIO.HIGH)
+		else:
+			GPIO.output(rled, GPIO.LOW)
 		blink_base += 0.5
 	# End if
 # End while
