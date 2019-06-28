@@ -52,7 +52,7 @@ GPIO.setup(Roomba.ddPin, GPIO.OUT, initial=GPIO.LOW)
 
 print("Reset Roomba")
 Roomba.DirectWrite(7) # Start up Roomba
-time.sleep(10.0))
+time.sleep(10.0)
 print("Start OI")
 Roomba.DirectWrite(128) # From off, start Roomba OI (sets to Passive)
 time.sleep(5.0)
