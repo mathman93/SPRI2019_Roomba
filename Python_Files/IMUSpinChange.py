@@ -118,7 +118,6 @@ y_position_avg = 0 # Position of Roomba along y-axis (in mm) according to averag
 x_position_avg = 0 # Position of Roomba along x-axis (in mm) according to average
 x_position = 0 # Position of roomba along x-axis (in mm) according to chosen calculation
 y_position = 0 # Position of roomba along y-axis (in mm) according to chosen calculation
-distance = 0
 accel_length = math.sqrt((accel_x**2)+(accel_y**2)+(accel_z**2)) # Distance of vector made by acceleration
 r_accel_x = accel_x / accel_length #Normalized acceleration values
 r_accel_y = accel_y / accel_length
@@ -128,7 +127,7 @@ r_estimate_y = r_accel_y
 r_estimate_z = r_accel_z
 init_gyro_x = gyro_x #Sets initial gyro readings for later usage
 init_gyro_y = gyro_y
-w_gyro = 15 #Constant used to weight measurements
+w_gyro = 15 #Constant used to weight gyroscope measurements
 
 k_current = [r_estimate_x, r_estimate_y, r_estimate_z] #Initial K vector in regards to body is set to initial normalized estimate vector
 i_current = [-mag_x,mag_y,mag_z] #Initial I vector is set to standard vector unit length, but can be set to initial magnetometer readings if using magnetometer
@@ -142,10 +141,10 @@ i_norm = [x / length_i for x in i_current] # Normalized values of initial I,K an
 k_norm = [x / length_k for x in k_current]
 j_norm = [x / length_j for x in j_current]
 theta = math.atan2(j_norm[0],i_norm[0]) # Heading of Roomba (in radians) as calculated by the wheel encoders
-if theta < 0:
+if theta < 0: #Normalized between 0-2pi
 	theta += 2*math.pi 
 new_theta = math.atan2(j_norm[0],i_norm[0]) # Heading of Roomba (in radians) as calculated by the IMU
-if new_theta < 0:
+if new_theta < 0: #Normalized between 0-2pi
 	new_theta += 2*math.pi
 
 delta_average_theta = math.atan2(j_norm[0],i_norm[0]) # Average change in rotation
@@ -190,15 +189,18 @@ while True: #Loop that asks for initial goal x and y coordinates
 		print("Please input a number")
 		continue
 
-distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
-theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
-theta_d = (theta_initial-theta)%(2*math.pi)
-if theta_d < 0:
+distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2) # Distance to goal coordinates
+theta_initial = math.atan2((y_final-y_position),(x_final-x_position)) # Angle needed to go straight to the goal coordinate
+theta_d = (theta_initial-theta)%(2*math.pi) # Amount of rotation needed from current heading to reach theta_initial
+if theta_d < 0: #Normalized between 0-2pi
 	theta_d = theta_d + (2*math.pi)
 print("{0:.5f},ENC XY:{1:.5f},{2:.5f},{3:.5f}, IMU XY:{4:.5f},{5:.5f},{6:.5f}, AVG XY:{7:.5f},{8:.5f},{9:.5f},{10:.5f},{11:.5f}".format(theta_initial,x_position_enc,y_position_enc,theta,x_position_imu,y_position_imu,new_theta,x_position_avg,y_position_avg,average_theta,distance_to_end,theta_d))
 print("")
 
+# Starts necessary timers for keeping data
+data_time = time.time()
 data_time_init = time.time() - data_time
+# Begins taking in data from the roomba wheel encoders
 Roomba.StartQueryStream(43,44)
 
 while True:
@@ -206,10 +208,13 @@ while True:
 		# Tell the roomba to move
 		while distance_to_end > 3:
 			if Roomba.Available()>0:
+				#Updates timers for current iteration
 				data_time2 = time.time() - data_time
 				delta_time = data_time2 - data_time_init
-				# Get left and right encoder values and find the change in each
+
+				# Get left and right encoder values
 				[left_encoder, right_encoder]=Roomba.ReadQueryStream(43,44)
+
 				# Read acceleration, magnetometer, gyroscope, and temperature data
 				accel_x, accel_y, accel_z = imu.acceleration
 				mag_x, mag_y, mag_z = imu.magnetic
@@ -218,15 +223,15 @@ while True:
 				readings_counter += 1 #Counts how many times readings have been gathered
 
 				# Find sum of the IMU readings so far and average the respective readings
-				accel_list = [accel_x, accel_y, accel_z]
+				accel_list = [accel_x, accel_y, accel_z] # Accelerometer readings
 				accel_sum = [(a+b) for a,b in zip(accel_sum, accel_list)]
 				accel_avg = [(x/readings_counter) for x in accel_sum]
 				accel_x, accel_y, accel_z = accel_avg # Set accelerometer values that will be used later to be the average of two readings
-				gyro_list = [gyro_x, gyro_y, gyro_z]
+				gyro_list = [gyro_x, gyro_y, gyro_z] # Gyroscope readings
 				gyro_sum = [(a+b) for a,b in zip(gyro_sum, gyro_list)]
 				gyro_avg = [(x/readings_counter) for x in gyro_sum]
 				gyro_x, gyro_y, gyro_z = gyro_avg # Set gyroscope values that will be used later to be the average of two readings
-				mag_list = [mag_x, mag_y, mag_z]
+				mag_list = [mag_x, mag_y, mag_z] # Magnetometer readings
 				mag_sum = [(a+b) for a,b in zip(mag_sum, mag_list)]
 				mag_avg = [(x/readings_counter) for x in mag_sum]
 				mag_x, mag_y, mag_z = mag_avg # Set magnetometer values that will be used later to be the average of two readings
@@ -244,7 +249,7 @@ while True:
 				elif delta_r > (2**15):
 					delta_r -+ (2**16)
 
-				# Determine the change in theta and what that is currently
+				# Determine the change in theta and update what overall rotation is currently
 				delta_theta = (delta_l-delta_r)*C_theta
 				theta += delta_theta
 				# If theta great than 2pi subtract 2pi and vice versus. Normalize theta to 0-2pi to show what my heading is. Add one to counter if subtracting 2pi, and subtract if adding 2pi
@@ -256,11 +261,11 @@ while True:
 					encoder_counter -= 1
 
 				# Determine what method to use to find the change in distance
-				if delta_l-delta_r == 0:
+				if delta_l-delta_r == 0: # If roomba is going straight forward...
 					delta_d = 0.5*(delta_l+delta_r)*distance_per_count
-				else:
+				else: # If roomba is spinning at all...
 					delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
-				# Find new x and y position
+				# Find new x and y position according to wheel encoders
 				x_position_enc = x_position_enc + delta_d*math.cos(theta-.5*delta_theta)
 				y_position_enc = y_position_enc + delta_d*math.sin(theta-.5*delta_theta)
 
@@ -291,8 +296,8 @@ while True:
 				delta_k = [(a-b) for a,b in zip(k_a, k_current)] #Finds difference between K vector from acceleration and current K vector
 				delta_theta_accel = CrossProduct(k_current, delta_k) #Calculates difference in radians between vectors detected by accelerometer
 				i_m = [-mag_x,mag_y,mag_z] # Updates current vector generated by magnetometer
-				i_m_length = math.sqrt(DotProduct(i_m,i_m))
-				i_m_norm = [(a/i_m_length) for a in i_m]
+				i_m_length = math.sqrt(DotProduct(i_m,i_m)) # Sets length of i_m vector to unit length
+				i_m_norm = [(a/i_m_length) for a in i_m] # Normalizes i_m vector
 				delta_theta_mag_dif = [(a-b) for a,b in zip(i_m_norm, i_current)] 
 				delta_theta_mag = CrossProduct(i_current,delta_theta_mag_dif) # Angle formed by magnetometer vector
 				delta_theta_mag_par = [(DotProduct(k_current,delta_theta_mag) * x) for x in k_current] # Calculates vector that is parallel to desired magnetometer vector
@@ -330,10 +335,10 @@ while True:
 
 				# Finds heading in radians from IMU
 				new_theta = math.atan2(j_norm[0],i_norm[0])
-				if new_theta < 0:
+				if new_theta < 0: #Normalized between 0-2pi
 					new_theta += 2*math.pi
 
-				delta_theta_imu = new_theta-current_theta
+				delta_theta_imu = new_theta-current_theta # Finds difference between current iteration rotation and previous iteration rotation from IMU
 				if(delta_theta_imu) < (-1 * math.pi): # If the roomba rotated clockwise over the x axis...
 					imu_counter += 1 # Add one to counter
 					delta_theta_imu += 2*math.pi
@@ -352,9 +357,9 @@ while True:
 					average_counter -= 1
 
 				# Determine what method to use to find the change in distance
-				if delta_theta_imu == 0:
+				if delta_theta_imu == 0: # If roomba has not rotated...
 					delta_d = 0.5*(delta_l+delta_r)*distance_per_count
-				else:
+				else: # If roomba has rotated...
 					delta_d = (((delta_l+delta_r)*distance_per_count)/delta_theta_imu)*math.sin(delta_theta_imu/2)
 				# Find new x and y position according to IMU
 				x_position_imu = x_position_imu + delta_d*math.cos(new_theta-(.5*delta_theta_imu))
@@ -370,13 +375,13 @@ while True:
 				y_position_avg = y_position_avg + delta_d*math.sin(average_theta-(.5*delta_average_theta))
 
 				# Find distance to end and theta_initial
-				if option == 1:
+				if option == 1: # If using encoders...
 					distance_to_end = math.sqrt((x_final-x_position_enc)**2 +(y_final-y_position_enc)**2)
 					theta_initial = math.atan2((y_final-y_position_enc),(x_final-x_position_enc))
-				if option == 2:
+				if option == 2: # If using IMU...
 					distance_to_end = math.sqrt((x_final-x_position_imu)**2 +(y_final-y_position_imu)**2)
 					theta_initial = math.atan2((y_final-y_position_imu),(x_final-x_position_imu))
-				if option == 3:
+				if option == 3: # If using average...
 					distance_to_end = math.sqrt((x_final-x_position_avg)**2 +(y_final-y_position_avg)**2)
 					theta_initial = math.atan2((y_final-y_position_avg),(x_final-x_position_avg))
 				# Normalize what theta initial is to between 0-2pi
@@ -444,12 +449,13 @@ while True:
 				mag_sum = [0, 0, 0]
 
 			else:
+				# Take in new readings
 				accel_x, accel_y, accel_z = imu.acceleration
 				mag_x, mag_y, mag_z = imu.magnetic
 				gyro_x, gyro_y, gyro_z = imu.gyro
 				#temp = imu.temperature
 				readings_counter += 1 #Counts how many times readings have been gathered
-				# Adds first readings to lists of IMU outputs for this iteration
+				# Adds readings to lists of IMU outputs for this iteration
 				accel_list = [accel_x, accel_y, accel_z]
 				accel_sum = [(a+b) for a,b in zip(accel_sum, accel_list)]
 				gyro_list = [gyro_x, gyro_y, gyro_z]
@@ -469,13 +475,13 @@ while True:
 			except ValueError: #Prints the message if anything but a number is input, then re-asks for the coordinates
 				print("Please enter a number")
 				continue
-		if option == 1:
+		if option == 1: # If using encoders...
 			distance_to_end = math.sqrt((x_final-x_position_enc)**2 +(y_final-y_position_enc)**2) #Recalculates distance_to_end before the main loop starts
-		if option == 2:
+		if option == 2: # If using IMU...
 			distance_to_end = math.sqrt((x_final-x_position_imu)**2 +(y_final-y_position_imu)**2) #Recalculates distance_to_end before the main loop starts
-		if option == 3:
+		if option == 3: # If using average...
 			distance_to_end = math.sqrt((x_final-x_position_avg)**2 +(y_final-y_position_avg)**2) #Recalculates distance_to_end before the main loop starts
-		data_time_init = time.time() - data_time
+		data_time_init = time.time() - data_time # Reset time for next movement
 		Roomba.ResumeQueryStream() #Resumes the query stream to continue as the roomba moves again
 	except KeyboardInterrupt:
 		break
