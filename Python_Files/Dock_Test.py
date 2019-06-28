@@ -60,7 +60,29 @@ time.sleep(2.0)
 #time.sleep(10)
 print("Start OI")
 Roomba.DirectWrite(128) # From off, start Roomba OI (sets to Passive)
-time.sleep(5.0)
+time.sleep(1.0)
+
+if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
+	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
+	print(x) # Include for debugging
+
+time.sleep(0.5)
+
+print("Start Safe Mode")
+Roomba.DirectWrite(131) # From Passive mode, send to Safe Mode
+time.sleep(0.1)
+if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
+	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
+	print(x) # Include for debugging
+
+oi_state = Roomba.QuerySingle(35)
+print(oi_state)
+
+Roomba.DirectWrite(128) # Send back to passive mode
+time.sleep(1.0)
+
+oi_state = Roomba.QuerySingle(35)
+print(oi_state)
 
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
