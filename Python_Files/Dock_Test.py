@@ -111,7 +111,7 @@ Roomba.PlaySMB() # For fun :)
 print(" Now Docking...")
 charging_state = 0
 
-#Roomba.Dock()
+Roomba.Dock()
 
 oi_state = Roomba.QuerySingle(35)
 print(oi_state)
