@@ -25,6 +25,8 @@ def DisplayDateTime():
 	date_time = time.strftime("%B %d, %Y, %H:%M:%S", time.gmtime())
 	print("Program run: ", date_time)
 
+''' Blinks an LED on/off
+	'''
 def BlinkLED(led, led_bool):
 	led_bool = not led_bool
 	if led_bool:
@@ -61,11 +63,6 @@ time.sleep(0.5)
 print("Start OI")
 Roomba.DirectWrite(128) # From off, start Roomba OI (sets to Passive)
 time.sleep(0.1)
-
-if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
-	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
-	print(x) # Include for debugging
-
 print("Start Safe Mode")
 Roomba.DirectWrite(131) # From Passive mode, send to Safe Mode
 time.sleep(0.1)
@@ -89,7 +86,7 @@ print("Backing Up")
 Roomba.Move(-40,0)
 while time.time() - backup_base < 5:
 	if time.time() - blink_base > 0.5:
-		yled_bool = BlinkLED(yled, yled_bool)
+		yled_bool = BlinkLED(yled, yled_bool) # Blink light while backing up
 		blink_base += 0.5
 	# End if
 # End while
