@@ -84,7 +84,7 @@ while True:
 		if Roomba.Available()>0:
 			data_time2 = time.time()
 			# Get bump value, light bumper value, then get left and right encoder values and find the change in each
-			bump = Roomba.ReadQueryStream(7)
+			[bump] = Roomba.ReadQueryStream(7)
 
 			if(bump%4) > 0: # If the roomba bumps into something...
 				bump_time = time.time() #Sets up timer
