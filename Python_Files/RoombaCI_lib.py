@@ -609,7 +609,7 @@ class Create_2:
 		Run at end of code to completely close Create_2 connection '''
 	def ShutDown(self):
 		self.conn.write(b'\x80') # Send Roomba to Passive Mode (128)
-		self.conn.write(b'\xad') # Stop Roomba OI (173)
+		#self.conn.write(b'\xad') # Stop Roomba OI (173)
 		time.sleep(0.05)
 		self.conn.close() # Close the Roomba serial port.
 
