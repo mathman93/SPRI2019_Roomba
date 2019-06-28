@@ -50,9 +50,7 @@ Roomba = RoombaCI_lib.Create_2("/dev/ttyS0", 115200)
 Roomba.ddPin = 23 # Set Roomba dd pin number
 GPIO.setup(Roomba.ddPin, GPIO.OUT, initial=GPIO.LOW)
 
-print("Reset Roomba")
-Roomba.DirectWrite(7) # Start up Roomba
-time.sleep(10.0)
+
 print("Start OI")
 Roomba.DirectWrite(128) # From off, start Roomba OI (sets to Passive)
 time.sleep(5.0)
@@ -96,7 +94,7 @@ while charging_state == 0:
 	try:
 		if Roomba.Available() > 0:
 			charging_state = Roomba.ReadQueryStream(21)
-			print("Charging State Value: {0}".format(chargin_state))
+			print("Charging State Value: {0}".format(charging_state))
 		if time.time() - blink_base > 0.5:
 			rled_bool = BlinkLED(rled, rled_bool)
 			blink_base += 0.5
