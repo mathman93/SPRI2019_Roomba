@@ -107,6 +107,7 @@ while True:
 			else:
 				f = 100
 				s = 0
+			Roomba.Move(f,s)
 
 			#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
 	except KeyboardInterrupt:
