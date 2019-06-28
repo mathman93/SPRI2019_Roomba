@@ -68,6 +68,7 @@ corner_time = 1.5 # Amount of time that it takes before the roomba starts turnin
 f = 0 # Forward/Backward speed
 s = 0 # Rotation Speed
 bump_time = time.time() - 2.0 # Assures that the roomba doesn't start in backup mode
+bump_count =0
 bump_track = 0 # Keeps track of how many times the roomba has bumped into a wall
 y_position = 0
 x_position = 0
