@@ -116,6 +116,7 @@ while True:
 					delta_r -+ (2**16)
 				# Determine the change in theta and what that is currently
 				delta_theta = (delta_l-delta_r)*C_theta
+				old_theta = theta
 				theta += delta_theta
 				# If theta great than 2pi subtract 2pi and vice versus. Normalize theta to 0-2pi to show what my heading is.
 				if theta >= 2*math.pi:
@@ -165,7 +166,7 @@ while True:
 					if bump_code == 2 or bump_code == 3: # If bump left or center...
 						s = 50 # Spin clockwise slower
 				elif bump_mode and time.time() - bump_time < (backup_time + corner_time): # If not having to back up but still has bumped into something before...
-					if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2):
+					if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2) or (theta > theta_initial and old_theta < theta_initial) or (theta < theta_initial and old_theta > theta_initial):
 						bump_mode = False
 					else:
 						f = 100 # Go forward
@@ -174,7 +175,7 @@ while True:
 						if bump_code == 2 or bump_code == 3: # If bump left or center...
 							s = -15 # Turn counterclockwise
 				elif bump_mode and time.time() - bump_time < (backup_time + (corner_time * 1.5)): # If not having to back up and bumped into something, but been a while...
-					if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2):
+					if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2) or (theta > theta_initial and old_theta < theta_initial) or (theta < theta_initial and old_theta > theta_initial):
 						bump_mode = False
 					else:
 						f = 100 # Go forward
@@ -183,7 +184,7 @@ while True:
 						if bump_code == 2 or bump_code == 3: # If bump left or center...
 							s = -50 # Turn more counterclockwise
 				elif bump_mode:
-					if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2):
+					if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2) or (theta > theta_initial and old_theta < theta_initial) or (theta < theta_initial and old_theta > theta_initial):
 						bump_mode = False
 					else:
 						f = 100 # Go forward
