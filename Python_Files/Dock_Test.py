@@ -78,7 +78,7 @@ blink_base = backup_base
 yled_bool = False
 
 print("Backing Up")
-Roomba.Move(-40,0)
+#Roomba.Move(-40,0)
 while time.time() - backup_base < 5:
 	if time.time() - blink_base > 0.5:
 		yled_bool = BlinkLED(yled, yled_bool)
@@ -87,14 +87,14 @@ while time.time() - backup_base < 5:
 # End while
 
 print("Stopping")
-Roomba.Move(0,0)
+#Roomba.Move(0,0)
 GPIO.output(yled, GPIO.LOW)
 time.sleep(0.5)
 Roomba.PlaySMB() # For fun :)
 print(" Now Docking...")
 charging_state = 0
 
-Roomba.Dock()
+#Roomba.Dock()
 blink_base = time.time()
 Roomba.StartQueryStream(34)
 while charging_state == 0:
