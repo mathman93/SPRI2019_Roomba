@@ -50,11 +50,11 @@ Roomba = RoombaCI_lib.Create_2("/dev/ttyS0", 115200)
 Roomba.ddPin = 23 # Set Roomba dd pin number
 GPIO.setup(Roomba.ddPin, GPIO.OUT, initial=GPIO.HIGH)
 GPIO.output(Roomba.ddPin, GPIO.HIGH)
-time.sleep(0.1)
+time.sleep(0.5)
 GPIO.output(Roomba.ddPin, GPIO.LOW)
 time.sleep(0.4)
 GPIO.output(Roomba.ddPin, GPIO.HIGH)
-time.sleep(1.0)
+time.sleep(2.0)
 
 #Roomba.DirectWrite(7)
 #time.sleep(10)
@@ -67,23 +67,6 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	print(x) # Include for debugging
 
 time.sleep(0.5)
-
-blink_base = time.time()
-yled_bool = False
-Roomba.StartQueryStream(35)
-while True:
-	try:
-		if Roomba.Available() > 0:
-			[oi_state] = Roomba.ReadQueryStream(35)
-			print("Charging State Value: {0}".format(oi_state))
-		if time.time() - blink_base > 0.5:
-			print("Blinking #2")
-			yled_bool = BlinkLED(yled, yled_bool)
-			blink_base += 0.5
-	except KeyboardInterrupt:
-		break
-# End while
-Roomba.PauseQueryStream()
 
 print("Start Safe Mode")
 Roomba.DirectWrite(131) # From Passive mode, send to Safe Mode
@@ -146,5 +129,8 @@ time.sleep(1.0)
 #Roomba.PlaySMB() # For fun :)
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
-Roomba.ShutDown() # Shutdown Roomba serial connection
+Roomba.DirectWrite(128) # Send to passive mode
+time.sleep(0.05)
+Roomba.conn.close()
+#Roomba.ShutDown() # Shutdown Roomba serial connection
 GPIO.cleanup() # Reset GPIO pins for next program
