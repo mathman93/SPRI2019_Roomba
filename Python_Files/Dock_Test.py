@@ -99,6 +99,7 @@ while charging_state == 0:
 			[charging_state] = Roomba.ReadQueryStream(34)
 			print("Charging State Value: {0}".format(charging_state))
 		if time.time() - blink_base > 0.5:
+			print("Blinking #2")
 			yled_bool = BlinkLED(yled, yled_bool)
 			blink_base += 0.5
 	except KeyboardInterrupt:
