@@ -75,6 +75,9 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
 	print(x) # Include for debugging
 
+oi_state = Roomba.QuerySingle(35)
+print(oi_state)
+
 Roomba.BlinkCleanLight() # Test if Roomba is in Safe Mode
 #StartUp(Roomba, 23, 131) # Start up Roomba in Safe mode
 print(" ROOMBA Setup Complete")
