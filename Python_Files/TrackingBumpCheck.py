@@ -154,7 +154,7 @@ while True:
 					theta_threshold = theta
 				if bump_count > 50:
 					if time.time() - bump_time < 5.0:
-						f = -50
+						f = -25
 						if bump_code == 1:
 							s = 100
 						if bump_code == 2 or bump_code == 3:
