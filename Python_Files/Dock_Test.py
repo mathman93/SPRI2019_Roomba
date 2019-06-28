@@ -25,13 +25,13 @@ def DisplayDateTime():
 	date_time = time.strftime("%B %d, %Y, %H:%M:%S", time.gmtime())
 	print("Program run: ", date_time)
 
-def BlinkLED(led):
-	led = not led
-	if rled_bool:
-		GPIO.output(rled, GPIO.HIGH)
+def BlinkLED(led, led_bool):
+	led_bool = not led_bool
+	if led_bool:
+		GPIO.output(led, GPIO.HIGH)
 	else:
-		GPIO.output(rled, GPIO.LOW)
-	return led
+		GPIO.output(led, GPIO.LOW)
+	return led_bool
 
 ## -- Code Starts Here -- ##
 # Setup Code #
@@ -50,8 +50,13 @@ Roomba = RoombaCI_lib.Create_2("/dev/ttyS0", 115200)
 Roomba.ddPin = 23 # Set Roomba dd pin number
 GPIO.setup(Roomba.ddPin, GPIO.OUT, initial=GPIO.LOW)
 
+print("Reset Roomba")
+Roomba.DirectWrite(7) # Start up Roomba
+time.sleep(10.0))
+print("Start OI")
 Roomba.DirectWrite(128) # From off, start Roomba OI (sets to Passive)
 time.sleep(5.0)
+print("Start Safe Mode")
 Roomba.DirectWrite(131) # From Passive mode, send to Safe Mode
 time.sleep(0.1)
 Roomba.BlinkCleanLight() # Test if Roomba is in Safe Mode
@@ -73,7 +78,7 @@ rled_bool = False
 Roomba.Move(-40,0)
 while time.time() - backup_base < 12.5:
 	if time.time() - blink_base > 0.5:
-		rled_bool = BlinkLED(rled_bool)
+		rled_bool = BlinkLED(rled, rled_bool)
 		blink_base += 0.5
 	# End if
 # End while
@@ -90,9 +95,10 @@ Roomba.StartQueryStream(21)
 while charging_state == 0:
 	try:
 		if Roomba.Available() > 0:
-			charging_state = ReadQueryStream(21)
+			charging_state = Roomba.ReadQueryStream(21)
+			print("Charging State Value: {0}".format(chargin_state))
 		if time.time() - blink_base > 0.5:
-			rled_bool = BlinkLED(rled_bool)
+			rled_bool = BlinkLED(rled, rled_bool)
 			blink_base += 0.5
 	except KeyboardInterrupt:
 		break
