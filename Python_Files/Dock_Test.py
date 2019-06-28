@@ -103,18 +103,27 @@ print("Stopping")
 Roomba.Move(0,0)
 GPIO.output(yled, GPIO.LOW)
 time.sleep(0.5)
+
+oi_state = Roomba.QuerySingle(35)
+print(oi_state)
+
 Roomba.PlaySMB() # For fun :)
 print(" Now Docking...")
 charging_state = 0
 
 Roomba.Dock()
+
+oi_state = Roomba.QuerySingle(35)
+print(oi_state)
+
 blink_base = time.time()
-Roomba.StartQueryStream(34)
+Roomba.StartQueryStream(34,35)
 while charging_state == 0:
 	try:
 		if Roomba.Available() > 0:
-			[charging_state] = Roomba.ReadQueryStream(34)
+			[charging_state, oi_state] = Roomba.ReadQueryStream(34,35)
 			print("Charging State Value: {0}".format(charging_state))
+			print("OI State Value: {0}".format(oi_state))
 		if time.time() - blink_base > 0.5:
 			print("Blinking #2")
 			yled_bool = BlinkLED(yled, yled_bool)
