@@ -68,11 +68,11 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 
 time.sleep(0.5)
 
-Roomba.SendQuery(34)
+Roomba.SendQuery(35)
 while Roomba.Available == 0:
 	pass
 # End while
-[x] = Roomba.ReadQuery(34)
+[x] = Roomba.ReadQuery(35)
 print(x)
 
 print("Start Safe Mode")
