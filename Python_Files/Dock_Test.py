@@ -75,14 +75,9 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
 	print(x) # Include for debugging
 
-oi_state = Roomba.QuerySingle(35)
-print(oi_state)
-
+print("Start OI")
 Roomba.DirectWrite(128) # Send back to passive mode
 time.sleep(1.0)
-
-oi_state = Roomba.QuerySingle(35)
-print(oi_state)
 
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
