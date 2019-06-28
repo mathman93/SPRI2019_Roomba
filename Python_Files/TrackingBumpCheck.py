@@ -162,6 +162,7 @@ while True:
 							s= -50
 					else:
 						bump_count = 0
+						bump_mode = False
 				elif time.time() - bump_time < backup_time and bump_count < 2: # If hasn't backed up for long enough and it's the first bump...
 					f = -50 #Back up
 					if bump_code == 1: # If bump right...
