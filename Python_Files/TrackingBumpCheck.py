@@ -106,9 +106,10 @@ while True:
 			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
 			if(bump%4) > 0: # If the roomba bumps into something...
 				bump_time = time.time() #Sets up timer
-				bump_code = (bump%4) #Will tell if left/right/center bump
 				bump_mode = True # Keeps in memory that the roomba will now try and track the object it bumped into
 				bump_count += 1 # Increases whenever the roomba bumps into something
+				if bump_count < 2:
+					bump_code = (bump%4) #Will tell if left/right/center bump
 			if time.time() - bump_time < backup_time and bump_count < 2: # If hasn't backed up for long enough and it's the first bump...
 				if bump_code == 1: # If bump right...
 					f = -50 #Back up, spin counterclockwise
