@@ -88,11 +88,14 @@ Roomba.Dock()
 blink_base = time.time()
 Roomba.StartQueryStream(21)
 while charging_state == 0:
-	if Roomba.Available() > 0:
-		charging_state = ReadQueryStream(21)
-	if time.time() - blink_base > 0.5:
-		rled_bool = BlinkLED(rled_bool)
-		blink_base += 0.5
+	try:
+		if Roomba.Available() > 0:
+			charging_state = ReadQueryStream(21)
+		if time.time() - blink_base > 0.5:
+			rled_bool = BlinkLED(rled_bool)
+			blink_base += 0.5
+	except KeyboardInterrupt:
+		break
 # End while
 Roomba.PauseQueryStream()
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
