@@ -68,12 +68,14 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 
 time.sleep(0.5)
 
+blink_base = time.time()
+yled_bool = False
 Roomba.StartQueryStream(35)
 while True:
 	try:
 		if Roomba.Available() > 0:
-			[charging_state] = Roomba.ReadQueryStream(35)
-			print("Charging State Value: {0}".format(charging_state))
+			[oi_state] = Roomba.ReadQueryStream(35)
+			print("Charging State Value: {0}".format(oi_state))
 		if time.time() - blink_base > 0.5:
 			print("Blinking #2")
 			yled_bool = BlinkLED(yled, yled_bool)
@@ -81,6 +83,7 @@ while True:
 	except KeyboardInterrupt:
 		break
 # End while
+Roomba.PauseQueryStream()
 
 print("Start Safe Mode")
 Roomba.DirectWrite(131) # From Passive mode, send to Safe Mode
