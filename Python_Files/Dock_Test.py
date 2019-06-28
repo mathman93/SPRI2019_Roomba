@@ -50,6 +50,10 @@ Roomba = RoombaCI_lib.Create_2("/dev/ttyS0", 115200)
 Roomba.ddPin = 23 # Set Roomba dd pin number
 GPIO.setup(Roomba.ddPin, GPIO.OUT, initial=GPIO.LOW)
 
+if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
+	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
+	print(x) # Include for debugging
+
 Roomba.DirectWrite(135)
 time.sleep(5.0)
 
