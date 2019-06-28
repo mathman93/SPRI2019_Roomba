@@ -117,10 +117,10 @@ while True:
 			elif bump_mode:
 				if bump_code == 1:
 					f = 100
-					s = 50
+					s = 100
 				if bump_code == 2 or bump_code == 3:
 					f = 100
-					s = -50
+					s = -100
 			else:
 				f = 100
 				s = 0
