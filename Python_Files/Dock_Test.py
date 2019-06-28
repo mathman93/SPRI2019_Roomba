@@ -141,8 +141,8 @@ time.sleep(1.0)
 #Roomba.PlaySMB() # For fun :)
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
-Roomba.DirectWrite(128) # Send to passive mode
-time.sleep(0.05)
-Roomba.conn.close()
-#Roomba.ShutDown() # Shutdown Roomba serial connection
+#Roomba.DirectWrite(128) # Send to passive mode
+#time.sleep(0.05)
+#Roomba.conn.close()
+Roomba.ShutDown() # Shutdown Roomba serial connection
 GPIO.cleanup() # Reset GPIO pins for next program
