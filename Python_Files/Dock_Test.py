@@ -72,17 +72,17 @@ Roomba.SendQuery(34)
 while Roomba.Available == 0:
 	pass
 # End while
-x = Roomba.ReadQuery(34)
+[x] = Roomba.ReadQuery(34)
 print(x)
 
 print("Start Safe Mode")
 Roomba.DirectWrite(131) # From Passive mode, send to Safe Mode
 time.sleep(0.1)
-Roomba.BlinkCleanLight() # Test if Roomba is in Safe Mode
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
 	print(x) # Include for debugging
 
+Roomba.BlinkCleanLight() # Test if Roomba is in Safe Mode
 #StartUp(Roomba, 23, 131) # Start up Roomba in Safe mode
 print(" ROOMBA Setup Complete")
 
