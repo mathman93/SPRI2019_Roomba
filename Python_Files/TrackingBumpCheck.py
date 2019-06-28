@@ -140,9 +140,10 @@ while True:
 				f = 100 # Go straight forward
 				s = 0
 			Roomba.Move(f,s) # Move with given forward and spin values
+			print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
 			left_start = left_encoder
 			right_start = right_encoder
-
+			
 			#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
 	except KeyboardInterrupt:
 		break
