@@ -54,21 +54,20 @@ time.sleep(0.1)
 GPIO.output(Roomba.ddPin, GPIO.LOW)
 time.sleep(0.4)
 GPIO.output(Roomba.ddPin, GPIO.HIGH)
-time.sleep(0.1)
-GPIO.output(Roomba.ddPin, GPIO.LOW)
-time.sleep(0.4)
-GPIO.output(Roomba.ddPin, GPIO.HIGH)
-time.sleep(0.1)
-GPIO.output(Roomba.ddPin, GPIO.LOW)
-time.sleep(0.4)
-GPIO.output(Roomba.ddPin, GPIO.HIGH)
-time.sleep(2.0)
+time.sleep(1.0)
 
 #Roomba.DirectWrite(7)
 #time.sleep(10)
 print("Start OI")
 Roomba.DirectWrite(128) # From off, start Roomba OI (sets to Passive)
 time.sleep(1.0)
+
+Roomba.SendQuery(34)
+while Roomba.Available == 0:
+	pass
+# End while
+x = Roomba.ReadQuery(34)
+
 print("Start Safe Mode")
 Roomba.DirectWrite(131) # From Passive mode, send to Safe Mode
 time.sleep(0.1)
