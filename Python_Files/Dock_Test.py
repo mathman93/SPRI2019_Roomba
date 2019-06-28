@@ -52,7 +52,7 @@ GPIO.setup(Roomba.ddPin, GPIO.OUT, initial=GPIO.LOW)
 
 print("Start OI")
 Roomba.DirectWrite(128) # From off, start Roomba OI (sets to Passive)
-time.sleep(5.0)
+time.sleep(1.0)
 print("Start Safe Mode")
 Roomba.DirectWrite(131) # From Passive mode, send to Safe Mode
 time.sleep(0.1)
