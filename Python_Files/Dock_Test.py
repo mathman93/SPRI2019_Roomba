@@ -75,24 +75,6 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
 	print(x) # Include for debugging
 
-print("Start OI")
-Roomba.DirectWrite(128) # Send back to passive mode
-#Roomba.Dock()
-time.sleep(1.0)
-
-if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
-	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
-	print(x) # Include for debugging
-
-time.sleep(0.5)
-
-print("Start Safe Mode")
-Roomba.DirectWrite(131) # From Passive mode, send to Safe Mode
-time.sleep(0.1)
-if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
-	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
-	print(x) # Include for debugging
-
 oi_state = Roomba.QuerySingle(35)
 print(oi_state)
 
@@ -129,7 +111,7 @@ Roomba.PlaySMB() # For fun :)
 print(" Now Docking...")
 charging_state = 0
 
-Roomba.Dock()
+#Roomba.Dock()
 
 oi_state = Roomba.QuerySingle(35)
 print(oi_state)
