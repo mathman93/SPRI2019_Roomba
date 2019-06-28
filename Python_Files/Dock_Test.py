@@ -50,14 +50,8 @@ Roomba = RoombaCI_lib.Create_2("/dev/ttyS0", 115200)
 Roomba.ddPin = 23 # Set Roomba dd pin number
 GPIO.setup(Roomba.ddPin, GPIO.OUT, initial=GPIO.LOW)
 
-GPIO.output(Roomba.ddPin, GPIO.HIGH)
-time.sleep(0.1)
-GPIO.output(Roomba.ddPin, GPIO.LOW)
-time.sleep(0.1)
-GPIO.output(Roomba.ddPin, GPIO.HIGH)
-time.sleep(0.1)
-GPIO.output(Roomba.ddPin, GPIO.LOW)
-time.sleep(0.1)
+Roomba.WakeUp(131)
+
 print("Start OI")
 Roomba.DirectWrite(128) # From off, start Roomba OI (sets to Passive)
 time.sleep(5.0)
@@ -81,7 +75,7 @@ blink_base = backup_base
 rled_bool = False
 
 Roomba.Move(-40,0)
-while time.time() - backup_base < 12.5:
+while time.time() - backup_base < 10:
 	if time.time() - blink_base > 0.5:
 		rled_bool = not rled_bool
 		if rled_bool:
