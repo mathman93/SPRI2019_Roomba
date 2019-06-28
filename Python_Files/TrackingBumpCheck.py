@@ -238,6 +238,8 @@ while True:
 				print("Please enter a number")
 				continue
 		distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2) #Recalculates distance_to_end before the main loop starts
+		bump_count = 0
+		bump_mode = False
 		Roomba.ResumeQueryStream() #Resumes the query stream to continue as the roomba moves again
 	except KeyboardInterrupt:
 		break
