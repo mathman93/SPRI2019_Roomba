@@ -83,6 +83,7 @@ while time.time() - backup_base < 5:
 
 print("Stopping")
 Roomba.Move(0,0)
+GPIO.output(yled, GPIO.LOW)
 time.sleep(0.5)
 Roomba.PlaySMB() # For fun :)
 print(" Now Docking...")
