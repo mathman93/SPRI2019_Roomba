@@ -156,9 +156,9 @@ while True:
 					if time.time() - bump_time < 5.0:
 						f = -25
 						if bump_code == 1:
-							s = 100
+							s = 75
 						if bump_code == 2 or bump_code == 3:
-							s= -100
+							s= -75
 					else:
 						bump_count = 0
 						bump_mode = False
