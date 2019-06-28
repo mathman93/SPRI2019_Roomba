@@ -67,6 +67,7 @@ backup_time = 1.0 # Amount of time spent backing up
 f = 0 # Forward/Backward speed
 s = 0 # Rotation Speed
 bump_time = time.time() - 2.0 # Assures that the roomba doesn't start in backup mode
+bump_track = 0 # Keeps track of how many times the roomba has bumped into a wall
 wheel_diameter = 72
 counts_per_rev = 508.8
 distance_between_wheels = 235
@@ -90,13 +91,21 @@ while True:
 				bump_time = time.time() #Sets up timer
 				bump_code = (bump%4) #Will tell if left/right/center bump
 				bump_mode = True # Keeps in memory that the roomba will now try and track the object it bumped into
-			if time.time() - bump_time < backup_time: # If hasn't backed up for long enough...
+				bump_track += 1
+			if time.time() - bump_time < backup_time and bump_track < 2: # If hasn't backed up for long enough...
 				if bump_code == 1: # If bump right...
 					f = -100
 					s = -100
 				if bump_code == 2 or bump_code == 3: # If bump left or center...
 					f = -100
 					s = 100
+			elif time.time() - bump_time < backup_time:
+				if bump_code == 1: # If bump right...
+					f = -50
+					s = -50
+				if bump_code == 2 or bump_code == 3: # If bump left or center...
+					f = -50
+					s = 50
 			elif bump_mode: # If not having to back up but still has bumped into something before...
 				if bump_code == 1:
 					f = 100
