@@ -79,6 +79,7 @@ C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
 distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 data_time = time.time()
 bump_mode = False # Used to tell whether or not the roomba has bumped into something and is supposed to be "tracking"
+bump_code = 0 # Used to distinguish if the right, left, or center bumpers are being triggered
 
 while True: #Loop that asks for initial x and y coordinates
 	try:
@@ -145,38 +146,43 @@ while True:
 				if theta_d > math.pi:
 					theta_d -= 2*math.pi
 
+				# Checks if the roomba is currently bumping into something; if so, sets up bump mode or corner mode
 				if(bump%4) > 0: # If the roomba bumps into something...
 					bump_time = time.time() #Sets up timer
 					bump_mode = True # Keeps in memory that the roomba will now try and track the object it bumped into
 					bump_count += 1 # Increases whenever the roomba bumps into something, increases by about ten whenever a bump occurs
-					if bump_count < 2:
-						bump_code = (bump%4) #Will tell if left/right/center bump
+					if bump_count < 15: # If it is the first bump...
+						bump_code = (bump%4) # Remembers if left/right/center bump for the current object/wall
 					theta_threshold = theta # Remembers what heading was when bumped
+				# Once the roomba has gone in a certain direction for long enough, sets the roomba to try the otehr direction
 				if bump_count > 100: # When the roomba has bumped in one direction for more than about ten times...
-					if time.time() - bump_time < 5.0:
-						f = -25
-						if bump_code == 1:
-							s = 75
-						if bump_code == 2 or bump_code == 3:
-							s= -75
-					else:
-						bump_count = 0
-						bump_mode = False
-				elif bump_mode and time.time() - bump_time < backup_time and bump_count < 2: # If hasn't backed up for long enough and it's the first bump...
+					if time.time() - bump_time < 5.0: # For five seconds...
+						f = -25 # Go backwards
+						if bump_code == 1: # If bump right...
+							s = 75 # Rotate clockwise
+						if bump_code == 2 or bump_code == 3: # If bump left or center...
+							s= -75 # Rotate counterclockwise
+					else: # After five seconds is up...
+						bump_count = 0 # Reset bump count
+				# Tells the roomba to move backwards and rotate sharply on its first bump
+				elif bump_mode and time.time() - bump_time < backup_time and bump_count < 15: # If hasn't backed up for long enough and it's the first bump...
 					f = -50 #Back up
 					if bump_code == 1: # If bump right...
 						s = -150 #Spin counterclockwise
 					if bump_code == 2 or bump_code == 3: # If bump left or center...
 						s = 150 #Spin clockwise
-				elif bump_mode and time.time() - bump_time < (backup_time / 2): # If hasn't backed up for long enough and is not the first bump...
+				# Tells the roomba to move backwards and rotate less sharply on bumps after the first 
+				elif bump_mode and time.time() - bump_time < backup_time: # If hasn't backed up for long enough and is not the first bump...
 					f = -50 # Back up
 					if bump_code == 1: # If bump right...
 						s = -50 # Spin counterclockwise slower
 					if bump_code == 2 or bump_code == 3: # If bump left or center...
 						s = 50 # Spin clockwise slower
+				# Tells the roomba to move for a short period of time after the bump in "wall mode"
 				elif bump_mode and time.time() - bump_time < (backup_time + corner_time): # If not having to back up but still has bumped into something before...
+					# If the roomba has turned more than 90 degrees, or the heading crossed over theta_initial...
 					if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2) or (theta > theta_initial and old_theta < theta_initial) or (theta < theta_initial and old_theta > theta_initial):
-						bump_mode = False
+						bump_mode = False # Exit bump mode, and re enter "goal mode"
 					else:
 						f = 100 # Go forward
 						if bump_code == 1: # If bump right...
@@ -184,6 +190,7 @@ while True:
 						if bump_code == 2 or bump_code == 3: # If bump left or center...
 							s = -15 # Turn counterclockwise
 				elif bump_mode and time.time() - bump_time < (backup_time + (corner_time * 1.5)): # If not having to back up and bumped into something, but been a while...
+					# If the roomba has turned more than 90 degrees, or the heading crossed over theta_initial...
 					if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2) or (theta > theta_initial and old_theta < theta_initial) or (theta < theta_initial and old_theta > theta_initial):
 						bump_mode = False
 					else:
@@ -193,6 +200,7 @@ while True:
 						if bump_code == 2 or bump_code == 3: # If bump left or center...
 							s = -50 # Turn more counterclockwise
 				elif bump_mode:
+					# If the roomba has turned more than 90 degrees, or the heading crossed over theta_initial...
 					if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2) or (theta > theta_initial and old_theta < theta_initial) or (theta < theta_initial and old_theta > theta_initial):
 						bump_mode = False
 					else:
