@@ -79,6 +79,7 @@ backup_base = time.time()
 blink_base = backup_base
 yled_bool = False
 
+print("Backing Up")
 Roomba.Move(-40,0)
 while time.time() - backup_base < 5:
 	if time.time() - blink_base > 0.5:
@@ -86,7 +87,8 @@ while time.time() - backup_base < 5:
 		blink_base += 0.5
 	# End if
 # End while
-	
+
+print("Stopping")
 Roomba.Move(0,0)
 time.sleep(0.5)
 Roomba.PlaySMB() # For fun :)
