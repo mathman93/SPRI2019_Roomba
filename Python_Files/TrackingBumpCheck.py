@@ -64,7 +64,7 @@ start_time = time.time()
 
 # Variables and Constants
 backup_time = 1.0 # Amount of time spent backing up
-corner_time = 2.0 # Amount of time that it takes before the roomba starts turning more sharply (makes sure it turns around corners)
+corner_time = 1.5 # Amount of time that it takes before the roomba starts turning more sharply (makes sure it turns around corners)
 f = 0 # Forward/Backward speed
 s = 0 # Rotation Speed
 bump_time = time.time() - 2.0 # Assures that the roomba doesn't start in backup mode
@@ -100,13 +100,13 @@ while True:
 				if bump_code == 2 or bump_code == 3: # If bump left or center...
 					f = -50
 					s = 100
-			elif time.time() - bump_time < backup_time:
+			elif time.time() - bump_time < (backup_time / 2):
 				if bump_code == 1: # If bump right...
 					f = -50
-					s = -30
+					s = -50
 				if bump_code == 2 or bump_code == 3: # If bump left or center...
 					f = -50
-					s = 30
+					s = 50
 			elif bump_mode and time.time() - bump_time < (backup_time + corner_time): # If not having to back up but still has bumped into something before...
 				if bump_code == 1:
 					f = 100
