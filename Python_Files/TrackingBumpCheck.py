@@ -219,8 +219,6 @@ while True:
 						f = 0
 					else:
 						f = f_set
-					if l_bump > 0: #If the light bumper detects anything
-						f = int(f_set / 2) #Goes forward at half speed
 				Roomba.Move(f,s) # Move with given forward and spin values
 				print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}".format(data_time2-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d))
 				left_start = left_encoder
