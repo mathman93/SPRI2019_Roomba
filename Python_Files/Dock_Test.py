@@ -72,16 +72,12 @@ GPIO.output(gled, GPIO.LOW) # Turn off green LED to say we have finished setup s
 print(" Now Undocking...")
 backup_base = time.time()
 blink_base = backup_base
-rled_bool = False
+yled_bool = False
 
 Roomba.Move(-40,0)
 while time.time() - backup_base < 10:
 	if time.time() - blink_base > 0.5:
-		rled_bool = not rled_bool
-		if rled_bool:
-			GPIO.output(yled, GPIO.HIGH)
-		else:
-			GPIO.output(yled, GPIO.LOW)
+		yled_bool = BlinkLED(yled, yled_bool)
 		blink_base += 0.5
 	# End if
 # End while
@@ -101,11 +97,7 @@ while charging_state == 0:
 			[charging_state] = Roomba.ReadQueryStream(34)
 			print("Charging State Value: {0}".format(charging_state))
 		if time.time() - blink_base > 0.5:
-			rled_bool = not rled_bool
-			if rled_bool:
-				GPIO.output(yled, GPIO.HIGH)
-			else:
-				GPIO.output(yled, GPIO.LOW)
+			yled_bool = BlinkLED(yled, yled_bool)
 			blink_base += 0.5
 	except KeyboardInterrupt:
 		break
