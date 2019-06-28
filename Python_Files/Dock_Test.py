@@ -90,7 +90,7 @@ while time.time() - backup_base < 12.5:
 	
 Roomba.Move(0,0)
 time.sleep(0.5)
-
+Roomba.PlaySMB() # For fun :)
 print(" Now Docking...")
 charging_state = 0
 
