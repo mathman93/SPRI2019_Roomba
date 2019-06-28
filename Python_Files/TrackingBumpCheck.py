@@ -230,7 +230,7 @@ while True:
 					else:
 						f = f_set
 				Roomba.Move(f,s) # Move with given forward and spin values
-				print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}".format(data_time2-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d))
+				print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}, bump_count:{8}".format(data_time2-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d,bump_count))
 				left_start = left_encoder
 				right_start = right_encoder
 				#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
