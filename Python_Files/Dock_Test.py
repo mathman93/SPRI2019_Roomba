@@ -109,7 +109,7 @@ Roomba.PauseQueryStream()
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
 	print(x) # Include for debugging
-time.sleep(3.0)
+time.sleep(1.0)
 
 #Roomba.PlaySMB() # For fun :)
 ## -- Ending Code Starts Here -- ##
