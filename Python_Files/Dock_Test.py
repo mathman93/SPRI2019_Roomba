@@ -49,6 +49,11 @@ print(" Starting ROOMBA...")
 Roomba = RoombaCI_lib.Create_2("/dev/ttyS0", 115200)
 Roomba.ddPin = 23 # Set Roomba dd pin number
 GPIO.setup(Roomba.ddPin, GPIO.OUT, initial=GPIO.HIGH)
+time.sleep(1.0)
+GPIO.output(Roomba.ddPin, GPIO.LOW)
+time.sleep(1.0)
+GPIO.output(Roomba.ddPin, GPIO.HIGH)
+time.sleep(0.1)
 
 print("Start OI")
 Roomba.DirectWrite(128) # From off, start Roomba OI (sets to Passive)
