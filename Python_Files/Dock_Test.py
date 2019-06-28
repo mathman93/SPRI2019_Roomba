@@ -73,7 +73,7 @@ time.sleep(0.5)
 #	pass
 ## End while
 #[x] = Roomba.ReadQuery(35)
-[x] = Roomba.QuerySingle(35)
+x = Roomba.QuerySingle(35)
 print(x)
 
 print("Start Safe Mode")
