@@ -61,7 +61,7 @@ GPIO.output(gled, GPIO.LOW)
 	# Will overwrite anything that was in the text file previously
 
 start_time = time.time()
-
+[left_start,right_start]=Roomba.Query(43,44)
 # Variables and Constants
 backup_time = 1.0 # Amount of time spent backing up
 corner_time = 1.5 # Amount of time that it takes before the roomba starts turning more sharply (makes sure it turns around corners)
