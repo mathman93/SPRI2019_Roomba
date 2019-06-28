@@ -68,11 +68,10 @@ corner_time = 1.5 # Amount of time that it takes before the roomba starts turnin
 f = 0 # Forward/Backward speed
 s = 0 # Rotation Speed
 bump_time = time.time() - 2.0 # Assures that the roomba doesn't start in backup mode
-bump_count =0
-bump_track = 0 # Keeps track of how many times the roomba has bumped into a wall
-y_position = 0
-x_position = 0
-theta = 0
+bump_count = 0 # Keeps track of how many times the roomba has bumped into a wall
+y_position = 0 # Current position on the y-axis
+x_position = 0 # Current position on the x-axis
+theta = 0 # Current heading
 wheel_diameter = 72
 counts_per_rev = 508.8
 distance_between_wheels = 235
@@ -89,9 +88,9 @@ while True: #Loop that asks for initial x and y coordinates
 	except ValueError:
 		print("Please input a number")
 		continue
-distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2)
-theta_initial = math.atan2((y_final-y_position),(x_final-x_position))
-theta_d = theta_initial-theta
+distance_to_end = math.sqrt((x_final-x_position)**2 +(y_final-y_position)**2) # Distance of straight line between where the roomba is and where the end point is
+theta_initial = math.atan2((y_final-y_position),(x_final-x_position)) # Angle of the line between the x-axis and the initial distance to end line
+theta_d = theta_initial-theta # Rotation needed from current heading to face goal
 
 print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}".format(time.time()-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d))
 #file.write("{0},{1},{2},{3},{4},{5}\n".format(0,left_start, right_start,x_position,y_position,theta))
@@ -116,7 +115,7 @@ while True:
 					delta_r -+ (2**16)
 				# Determine the change in theta and what that is currently
 				delta_theta = (delta_l-delta_r)*C_theta
-				old_theta = theta
+				old_theta = theta # Heading of last iteration
 				theta += delta_theta
 				# If theta great than 2pi subtract 2pi and vice versus. Normalize theta to 0-2pi to show what my heading is.
 				if theta >= 2*math.pi:
@@ -153,6 +152,16 @@ while True:
 					if bump_count < 2:
 						bump_code = (bump%4) #Will tell if left/right/center bump
 					theta_threshold = theta
+				if bump_count > 10:
+					retry_time = time.time()
+					if time.time() - retry_time < 5.0
+						f = -100
+						if theta - theta_initial > math.pi or (theta - theta_initial < 0 and theta - theta_initial > (-1*math.pi)):
+							s = 50
+						else:
+							s= -50
+					else:
+						bump_count = 0
 				if time.time() - bump_time < backup_time and bump_count < 2: # If hasn't backed up for long enough and it's the first bump...
 					f = -50 #Back up
 					if bump_code == 1: # If bump right...
