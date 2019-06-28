@@ -148,11 +148,11 @@ while True:
 				if(bump%4) > 0: # If the roomba bumps into something...
 					bump_time = time.time() #Sets up timer
 					bump_mode = True # Keeps in memory that the roomba will now try and track the object it bumped into
-					bump_count += 1 # Increases whenever the roomba bumps into something
+					bump_count += 1 # Increases whenever the roomba bumps into something, increases by about ten whenever a bump occurs
 					if bump_count < 2:
 						bump_code = (bump%4) #Will tell if left/right/center bump
-					theta_threshold = theta
-				if bump_count > 50:
+					theta_threshold = theta # Remembers what heading was when bumped
+				if bump_count > 100: # When the roomba has bumped in one direction for more than about ten times...
 					if time.time() - bump_time < 5.0:
 						f = -25
 						if bump_code == 1:
