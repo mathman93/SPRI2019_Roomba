@@ -69,6 +69,9 @@ f = 0 # Forward/Backward speed
 s = 0 # Rotation Speed
 bump_time = time.time() - 2.0 # Assures that the roomba doesn't start in backup mode
 bump_track = 0 # Keeps track of how many times the roomba has bumped into a wall
+y_position = 0
+x_position = 0
+theta = 0
 wheel_diameter = 72
 counts_per_rev = 508.8
 distance_between_wheels = 235
@@ -86,8 +89,20 @@ while True:
 		if Roomba.Available()>0:
 			data_time2 = time.time()
 			# Get bump value
-			[bump] = Roomba.ReadQueryStream(7)
-
+			[bump,left_encoder, right_encoder] = Roomba.ReadQueryStream(7,43,44)
+			delta_l = left_encoder-left_start
+			delta_r = right_encoder-right_start
+			# Determine the change in theta and what that is currently
+			delta_theta = (delta_l-delta_r)*C_theta
+			theta += delta_theta
+			# Determine what method to use to find the change in distance
+			if delta_l-delta_r == 0:
+				delta_d = 0.5*(delta_l+delta_r)*distance_per_count
+			else:
+				delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)
+			# Find new x and y position
+			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
+			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
 			if(bump%4) > 0: # If the roomba bumps into something...
 				bump_time = time.time() #Sets up timer
 				bump_code = (bump%4) #Will tell if left/right/center bump
@@ -125,6 +140,8 @@ while True:
 				f = 100 # Go straight forward
 				s = 0
 			Roomba.Move(f,s) # Move with given forward and spin values
+			left_start = left_encoder
+			right_start = right_encoder
 
 			#file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
 	except KeyboardInterrupt:
