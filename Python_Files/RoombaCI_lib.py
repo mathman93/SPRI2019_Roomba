@@ -601,8 +601,8 @@ class Create_2:
 	''' Dock the Roomba Sequence
 		'''
 	def Dock(self):
-		#self.conn.write(b'\x80\xa5\x04') # Send to Passive Mode, and push Dock button
-		self.conn.write(b'\x8f') # Seek Dock command
+		self.conn.write(b'\x80\xa5\x04') # Send to Passive Mode, and push Dock button
+		#self.conn.write(b'\x8f') # Seek Dock command
 		time.sleep(2.0) # Wait for Dock "happy noise" to play.
 
 	''' Roomba Shut-down Sequence
