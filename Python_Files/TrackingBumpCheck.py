@@ -83,7 +83,7 @@ data_time = time.time()
 bump_mode = False # Used to tell whether or not the roomba has bumped into something and is supposed to be "tracking"
 
 #file.write("{0},{1},{2},{3},{4},{5}\n".format(0,left_start, right_start,x_position,y_position,theta))
-Roomba.StartQueryStream(7) # Start getting bumper values
+Roomba.StartQueryStream(7,43,44) # Start getting bumper values
 
 while True:
 	try:
