@@ -155,9 +155,9 @@ while True:
 				if bump_count > 50:
 					if time.time() - bump_time < 5.0:
 						f = -100
-						if theta - theta_initial > math.pi or (theta - theta_initial < 0 and theta - theta_initial > (-1*math.pi)):
+						if bump_code == 1:
 							s = 50
-						else:
+						if bump_code == 2 or bump_code == 3:
 							s= -50
 					else:
 						bump_count = 0
