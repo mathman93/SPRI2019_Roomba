@@ -51,9 +51,13 @@ Roomba.ddPin = 23 # Set Roomba dd pin number
 GPIO.setup(Roomba.ddPin, GPIO.OUT, initial=GPIO.LOW)
 
 GPIO.output(Roomba.ddPin, GPIO.HIGH)
-time.sleep(1.0)
+time.sleep(0.1)
 GPIO.output(Roomba.ddPin, GPIO.LOW)
-time.sleep(1.0)
+time.sleep(0.1)
+GPIO.output(Roomba.ddPin, GPIO.HIGH)
+time.sleep(0.1)
+GPIO.output(Roomba.ddPin, GPIO.LOW)
+time.sleep(0.1)
 print("Start OI")
 Roomba.DirectWrite(128) # From off, start Roomba OI (sets to Passive)
 time.sleep(5.0)
@@ -118,7 +122,7 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	print(x) # Include for debugging
 time.sleep(3.0)
 
-Roomba.PlaySMB() # For fun :)
+#Roomba.PlaySMB() # For fun :)
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
 Roomba.ShutDown() # Shutdown Roomba serial connection
