@@ -96,18 +96,18 @@ charging_state = 0
 
 Roomba.Dock()
 blink_base = time.time()
-Roomba.StartQueryStream(21)
+Roomba.StartQueryStream(34)
 while charging_state == 0:
 	try:
 		if Roomba.Available() > 0:
-			[charging_state] = Roomba.ReadQueryStream(21)
+			[charging_state] = Roomba.ReadQueryStream(34)
 			print("Charging State Value: {0}".format(charging_state))
 		if time.time() - blink_base > 0.5:
 			rled_bool = not rled_bool
 			if rled_bool:
-				GPIO.output(rled, GPIO.HIGH)
+				GPIO.output(yled, GPIO.HIGH)
 			else:
-				GPIO.output(rled, GPIO.LOW)
+				GPIO.output(yled, GPIO.LOW)
 			blink_base += 0.5
 	except KeyboardInterrupt:
 		break
@@ -116,7 +116,7 @@ Roomba.PauseQueryStream()
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
 	print(x) # Include for debugging
-time.sleep(2.0)
+time.sleep(3.0)
 
 Roomba.PlaySMB() # For fun :)
 ## -- Ending Code Starts Here -- ##
