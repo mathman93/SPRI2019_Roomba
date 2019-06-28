@@ -1,4 +1,4 @@
-''' ChangeMoveOnFly.py
+''' TrackingBumpCheck.py
 Purpose: Use bumpers to try and follow a wall or object continuously
 Last Modified: 6/28/2019
 '''
