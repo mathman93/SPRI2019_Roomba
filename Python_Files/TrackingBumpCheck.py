@@ -165,7 +165,7 @@ while True:
 					if bump_code == 2 or bump_code == 3: # If bump left or center...
 						s = 50 # Spin clockwise slower
 				elif bump_mode and time.time() - bump_time < (backup_time + corner_time): # If not having to back up but still has bumped into something before...
-					if theta - threshold > (math.pi/2) or theta - threshold < (math.pi/-2):
+					if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2):
 						bump_mode = False
 					else:
 						f = 100 # Go forward
@@ -174,7 +174,7 @@ while True:
 						if bump_code == 2 or bump_code == 3: # If bump left or center...
 							s = -15 # Turn counterclockwise
 				elif bump_mode and time.time() - bump_time < (backup_time + (corner_time * 1.5)): # If not having to back up and bumped into something, but been a while...
-					if theta - threshold > (math.pi/2) or theta - threshold < (math.pi/-2):
+					if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2):
 						bump_mode = False
 					else:
 						f = 100 # Go forward
@@ -183,7 +183,7 @@ while True:
 						if bump_code == 2 or bump_code == 3: # If bump left or center...
 							s = -50 # Turn more counterclockwise
 				elif bump_mode:
-					if theta - threshold > (math.pi/2) or theta - threshold < (math.pi/-2):
+					if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2):
 						bump_mode = False
 					else:
 						f = 100 # Go forward
