@@ -152,7 +152,7 @@ while True:
 					if bump_count < 2:
 						bump_code = (bump%4) #Will tell if left/right/center bump
 					theta_threshold = theta
-				if bump_count > 10:
+				if bump_count > 50:
 					retry_time = time.time()
 					if time.time() - retry_time < 5.0:
 						f = -100
@@ -162,7 +162,7 @@ while True:
 							s= -50
 					else:
 						bump_count = 0
-				if time.time() - bump_time < backup_time and bump_count < 2: # If hasn't backed up for long enough and it's the first bump...
+				elif time.time() - bump_time < backup_time and bump_count < 2: # If hasn't backed up for long enough and it's the first bump...
 					f = -50 #Back up
 					if bump_code == 1: # If bump right...
 						s = -150 #Spin counterclockwise
