@@ -70,7 +70,7 @@ time.sleep(0.5)
 
 print("Start Safe Mode")
 Roomba.DirectWrite(131) # From Passive mode, send to Safe Mode
-time.sleep(0.1)
+time.sleep(2.0)
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
 	print(x) # Include for debugging
