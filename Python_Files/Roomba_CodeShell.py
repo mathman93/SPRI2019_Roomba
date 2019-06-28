@@ -26,6 +26,40 @@ def DisplayDateTime():
 	date_time = time.strftime("%B %d, %Y, %H:%M:%S", time.gmtime())
 	print("Program run: ", date_time)
 
+''' Set up IMU and (optionally) calibrate magnetometer and gyroscope
+	Parameters:
+		imu = instance of LSM9DS1_I2C class;
+		Roomba = instance of Create_2 class;
+		mag_cal = boolean; If magnetometer calibration is desired, set to True
+		gyro_cal = boolean; If gyroscope calibration is desired, set to True
+	'''
+def IMUCalibration(imu, Roomba, mag_cal = True, gyro_cal = True):
+	# Clear out first reading from all sensors (They can sometimes be bad)
+	x = imu.magnetic
+	x = imu.acceleration
+	x = imu.gyro
+	x = imu.temperature
+	# Calibrate the magnetometer and the gyroscope
+	if mag_cal:
+		Roomba.Move(0,100) # Start the Roomba spinning
+		imu.CalibrateMag() # Determine magnetometer offset values
+		Roomba.Move(0,0) # Stop the Roomba
+		time.sleep(0.1) # Wait for the Roomba to settle
+		# Display offset values
+		print("mx_offset = {:f}; my_offset = {:f}; mz_offset = {:f}"\
+			.format(imu.m_offset[0], imu.m_offset[1], imu.m_offset[2]))
+	else:
+		print(" Skipping magnetometer calibration.")
+	
+	if gyro_cal:
+		imu.CalibrateGyro() # Determine gyroscope offset values
+		# Display offset values
+		print("gx_offset = {:f}; gy_offset = {:f}; gz_offset = {:f}"\
+			.format(imu.g_offset[0], imu.g_offset[1], imu.g_offset[2]))
+	else:
+		print(" Skipping gyroscope calibration")
+	time.sleep(1.0) # Give some time to read the offset values
+
 ## -- Code Starts Here -- ##
 # Setup Code #
 GPIO.setmode(GPIO.BCM) # Use BCM pin numbering for GPIO
@@ -56,29 +90,16 @@ GPIO.output(yled, GPIO.HIGH) # Indicate within setup sequence
 print(" Starting IMU...")
 imu = RoombaCI_lib.LSM9DS1_I2C() # Initialize IMU
 time.sleep(0.1)
-# Clear out first reading from all sensors
-x = imu.magnetic
-x = imu.acceleration
-x = imu.gyro
-# Calibrate IMU
 print(" Calibrating IMU...")
-Roomba.Move(0,75) # Start Roomba spinning
-imu.CalibrateMag() # Calculate magnetometer offset values
-Roomba.Move(0,0) # Stop Roomba spinning
-time.sleep(0.5)
-imu.CalibrateGyro() # Calculate gyroscope offset values
-# Display offset values
-print("mx_offset = {:f}; my_offset = {:f}; mz_offset = {:f}"\
-	.format(imu.m_offset[0], imu.m_offset[1], imu.m_offset[2]))
-print("gx_offset = {:f}; gy_offset = {:f}; gz_offset = {:f}"\
-	.format(imu.g_offset[0], imu.g_offset[1], imu.g_offset[2]))
-print(" IMU Setup Complete")
-time.sleep(3) # Gives time to read offset values before continuing
-GPIO.output(yled, GPIO.LOW) # Indicate setup sequence is complete
+IMUCalibration(imu, Roomba, False, False)
+print(" Calibration Complete")
+
+GPIO.output(yled, GPIO.LOW) # Indicate IMU setup sequence is complete
 
 if Xbee.inWaiting() > 0: # If anything is in the Xbee receive buffer
 	x = Xbee.read(Xbee.inWaiting()).decode() # Clear out Xbee input buffer
 	#print(x) # Include for debugging
+GPIO.output(gled, GPIO.LOW)
 
 # Main Code #
 
