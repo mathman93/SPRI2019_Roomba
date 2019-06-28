@@ -49,6 +49,8 @@ print(" Starting ROOMBA...")
 Roomba = RoombaCI_lib.Create_2("/dev/ttyS0", 115200)
 Roomba.ddPin = 23 # Set Roomba dd pin number
 GPIO.setup(Roomba.ddPin, GPIO.OUT, initial=GPIO.HIGH)
+# Pulse Device Detection pin (ddPin) to wake Roomba from sleep
+# Only seems to work when the Roomba is not docked
 GPIO.output(Roomba.ddPin, GPIO.HIGH)
 time.sleep(0.5)
 GPIO.output(Roomba.ddPin, GPIO.LOW)
@@ -56,8 +58,6 @@ time.sleep(0.4)
 GPIO.output(Roomba.ddPin, GPIO.HIGH)
 time.sleep(0.5)
 
-#Roomba.DirectWrite(7)
-#time.sleep(10)
 print("Start OI")
 Roomba.DirectWrite(128) # From off, start Roomba OI (sets to Passive)
 time.sleep(0.1)
@@ -66,17 +66,12 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
 	print(x) # Include for debugging
 
-#time.sleep(0.5)
-
 print("Start Safe Mode")
 Roomba.DirectWrite(131) # From Passive mode, send to Safe Mode
 time.sleep(0.1)
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
 	print(x) # Include for debugging
-
-oi_state = Roomba.QuerySingle(35)
-print(oi_state)
 
 Roomba.BlinkCleanLight() # Test if Roomba is in Safe Mode
 #StartUp(Roomba, 23, 131) # Start up Roomba in Safe mode
@@ -104,21 +99,15 @@ Roomba.Move(0,0)
 GPIO.output(yled, GPIO.LOW)
 time.sleep(0.5)
 
-oi_state = Roomba.QuerySingle(35)
-print(oi_state)
-
 Roomba.PlaySMB() # For fun :)
 print(" Now Docking...")
 charging_state = 0
 
-Roomba.Dock()
-
-oi_state = Roomba.QuerySingle(35)
-print(oi_state)
+Roomba.Dock() # Send Roomba to dock (built-in function)
 
 blink_base = time.time()
 Roomba.StartQueryStream(34,35)
-while charging_state == 0:
+while charging_state == 0: # Until Roomba is on the dock
 	try:
 		if Roomba.Available() > 0:
 			[charging_state, oi_state] = Roomba.ReadQueryStream(34,35)
@@ -136,13 +125,9 @@ Roomba.PauseQueryStream()
 if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 	x = Roomba.DirectRead(Roomba.Available()) # Clear out Roomba boot-up info
 	print(x) # Include for debugging
-time.sleep(1.0)
+time.sleep(0.1)
 
-#Roomba.PlaySMB() # For fun :)
 ## -- Ending Code Starts Here -- ##
 # Make sure this code runs to end the program cleanly
-#Roomba.DirectWrite(128) # Send to passive mode
-#time.sleep(0.05)
-#Roomba.conn.close()
 Roomba.ShutDown() # Shutdown Roomba serial connection
 GPIO.cleanup() # Reset GPIO pins for next program
