@@ -154,7 +154,7 @@ while True:
 					theta_threshold = theta
 				if bump_count > 10:
 					retry_time = time.time()
-					if time.time() - retry_time < 5.0
+					if time.time() - retry_time < 5.0:
 						f = -100
 						if theta - theta_initial > math.pi or (theta - theta_initial < 0 and theta - theta_initial > (-1*math.pi)):
 							s = 50
