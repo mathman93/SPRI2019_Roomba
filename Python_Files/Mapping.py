@@ -59,17 +59,17 @@ def makeworld(x_range,y_range):
 			MyWorld.points.append((x,y))
 	# Finds the neighbors of the points and determines if they are in the world
 	for point in MyWorld.points:
-	x = point[0]
-	y = point[1]
-	# All eight directions around the position of the roomba. Could do just the four next to the point.
-	neighbors = [(x+1,y+1),(x+1,y),(x+1,y-1),(x,y-1),(x,y+1),(x-1,y-1),(x-1,y),(x-1,y+1)]
-	group = []
-	# Checking points to make sure that they are in the world 
-	for point1 in neighbors:
-		if point1 in MyWorld.points:
-			group.append(point1)
-	# Update points that are connect by edges
-	MyWorld.edges[point] = group
+		x = point[0]
+		y = point[1]
+		# All eight directions around the position of the roomba. Could do just the four next to the point.
+		neighbors = [(x+1,y+1),(x+1,y),(x+1,y-1),(x,y-1),(x,y+1),(x-1,y-1),(x-1,y),(x-1,y+1)]
+		group = []
+		# Checking points to make sure that they are in the world 
+		for point1 in neighbors:
+			if point1 in MyWorld.points:
+				group.append(point1)
+		# Update points that are connect by edges
+		MyWorld.edges[point] = group
 	return MyWorld
 
 start = (0,0)
