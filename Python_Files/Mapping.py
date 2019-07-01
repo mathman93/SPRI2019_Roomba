@@ -71,21 +71,28 @@ for point in MyWorld.points:
 	# Update points that are connect by edges
 	MyWorld.edges[point] = group
 
-
+# frontier of points that havent been searched
 frontier = Queue()
+# put a point in frontier
 frontier.put(start)
+# dictionary of squares that other squares came from
 came_from = {}
 came_from[start]=None
 
+# 
 while not frontier.empty():
 	current = frontier.get()
+	# If the place we are at is the goal end the search
 	if current == goal:
 		break
+	# Search for each point that is next to current
 	for next in MyWorld.neighbors(current):
+		# if it has not be searched through put it in came from
 		if next not in came_from:
 			frontier.put(next)
 			came_from[next] = current
 
+# Find the path from the start to end
 current=goal
 path = []
 while  current!=start:
