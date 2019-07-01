@@ -107,18 +107,18 @@ def A_star(start,goal,MyWorld):
 		current=came_from[current]
 
 	path.append(start)
-	return path.reverse()
-
+	path.reverse()
+	return path
 
 ## -- Code Starts Here -- ##
 start = (0,0)
 goal = (5,3)
 MyWorld = makeworld(6,4)
-Path = A_star(start,goal,MyWorld)
+path = A_star(start,goal,MyWorld)
 
 
 #Print Stuff
-print(Path)
+print(path)
 #for point in MyWorld.edges.keys():
 #	value = MyWorld.edges[point]
 #	print("{0}:{1}".format(point,value))
