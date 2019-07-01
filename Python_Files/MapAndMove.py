@@ -196,7 +196,7 @@ print(path)
 for point in path:
 	current_goal = MyWorld.Location(point)
 	distance_to_end = math.sqrt((current_goal[0]-x_position)**2 +(current_goal[1]-y_position)**2) # Distance of straight line between where the roomba is and where the end point is
-	theta_initial = math.atan2((current[1]-y_position),(current_goal[0]-x_position)) # Angle of the line between the x-axis and the initial distance to end line
+	theta_initial = math.atan2((current_goal[1]-y_position),(current_goal[0]-x_position)) # Angle of the line between the x-axis and the initial distance to end line
 	theta_d = theta_initial-theta # Rotation needed from current heading to face goal
 	print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}".format(time.time()-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d))
 	Roomba.StartQueryStream(7,43,44) # Start getting bumper values
