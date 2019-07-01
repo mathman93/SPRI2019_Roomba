@@ -302,9 +302,9 @@ while True:
 								s = 50 # Turn more clockwise
 							if bump_code == 2 or bump_code == 3: # If bump left or center...
 								s = -50 # Turn more counterclockwise
-						elif bump_mode:
-						# If the roomba has turned more than 90 degrees, or the heading crossed over theta_initial...
-							if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2) or (theta > theta_initial and old_theta < theta_initial) or (theta < theta_initial and old_theta > theta_initial):
+					elif bump_mode:
+					# If the roomba has turned more than 90 degrees, or the heading crossed over theta_initial...
+						if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2) or (theta > theta_initial and old_theta < theta_initial) or (theta < theta_initial and old_theta > theta_initial):
 							bump_mode = False
 						else:
 							f = 100 # Go forward
