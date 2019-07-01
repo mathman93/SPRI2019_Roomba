@@ -15,12 +15,18 @@ import math
 
 
 ## Functions and Definitions ##
+# defines a world, finds the neighbors of certain points, and the location of thos points
 class GridWorld():
 	def __init__(self):
+		# Points that can connect to other points in the world
 		self.edges = {}
+		# Points that exist in the world
 		self.points = []
+	# Tells you which points are able to be connected to
+	# Note: ID needs to be a tuple 
 	def neighbors(self,id):
 		return self.edges.get(id,[])
+	# Gives the physical world location 
 	def Location(self,id):
 		x_pos = (id[0]*200)+100
 		y_pos = (id[1]*200)+100
@@ -30,30 +36,34 @@ class GridWorld():
 
 
 ## -- Code Starts Here -- ##
+# Call the class gridworld
 MyWorld = GridWorld()
 
+# Create points that exist in the world
 for x in range(6):
 	for y in range(4):
 		MyWorld.points.append((x,y))
-
+# Finds the neighbors of the points and determines if they are in the world
 for point in MyWorld.points:
 	x = point[0]
 	y = point[1]
+	# All eight directions around the position of the roomba. Could do just the full next to the point.
 	neighbors = [(x+1,y+1),(x+1,y),(x+1,y-1),(x,y-1),(x,y+1),(x-1,y-1),(x-1,y),(x-1,y+1)]
 	group = []
+	# Defines points that are in the world 
 	for point1 in neighbors:
 		if point1 in MyWorld.points:
 			group.append(point1)
 	MyWorld.edges[point] = group
 
+#Print Stuff
+#for point in MyWorld.edges.keys():
+#	value = MyWorld.edges[point]
+#	print("{0}:{1}".format(point,value))
 
-for point in MyWorld.edges.keys():
-	value = MyWorld.edges[point]
-	print("{0}:{1}".format(point,value))
-
-print(MyWorld.neighbors((10,1)))
-print(MyWorld.neighbors((5,1)))
-print(MyWorld.Location((5,2)))
+#print(MyWorld.neighbors((10,1)))
+#print(MyWorld.neighbors((5,1)))
+#print(MyWorld.Location((5,2)))
 
 ## -- Ending Code Starts Here -- ##
 
