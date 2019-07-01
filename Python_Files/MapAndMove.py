@@ -124,19 +124,12 @@ def angle_cost(previous,current,next): # Calculates a cost used to determine the
 		return 0
 	else:
 		theta = math.atan2(current[1]-previous[1],current[0]-previous[0])
-		if theta < 0:
-			theta += 2*math.pi
-		elif theta >= 2*math.pi:
-			theta -= 2*math.pi
 		theta_initial = math.atan2(next[1]-current[1],next[0]-current[0])
-		if theta_initial < 0:
-			theta_initial += 2*math.pi
-		elif theta_initial >= 2*math.pi:
-			theta_initial -= 2*math.pi
-		theta_d = (theta_initial - theta)%(2*math.pi)
+		theta_d = theta_initial - theta
 		if theta_d > math.pi:
 			theta_d -= 2*math.pi
-		print(abs(theta_d))
+		elif theta_d <= math.pi
+			theta_d += 2*math.pi
 		return abs(theta_d)
 
 ## -- Code Starts Here -- ##
