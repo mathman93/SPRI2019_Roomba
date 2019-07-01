@@ -119,7 +119,7 @@ def A_star(start,goal,MyWorld):
 	path.reverse()
 	return path
 
-def angle_cost(previous,current,next) # Calculates a cost used to determine the past path in regards to how the Roomba rotates
+def angle_cost(previous,current,next): # Calculates a cost used to determine the past path in regards to how the Roomba rotates
 	if previous == None: # If first movement...
 		return 0
 	else:
