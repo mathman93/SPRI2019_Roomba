@@ -47,8 +47,8 @@ class GridWorld:
 		return(x_pos,y_pos)
 
 
-start = (0,0)
-goal = (4,3)
+start = (0,2)
+goal = (5,1)
 ## -- Code Starts Here -- ##
 # Call the class gridworld
 MyWorld = GridWorld()
