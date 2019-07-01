@@ -52,7 +52,7 @@ for point in MyWorld.edges.keys():
 
 print(MyWorld.neighbors((10,1)))
 print(MyWorld.neighbors((5,1)))
-
+print(MyWorld.Location((5,2)))
 
 ## -- Ending Code Starts Here -- ##
 
