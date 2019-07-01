@@ -67,7 +67,7 @@ MyWorld.points.remove((1,1))
 MyWorld.points.remove((1,2))
 MyWorld.points.remove((4,1))
 MyWorld.points.remove((4,2))
-MyWorld.points.remove((4,3))
+MyWorld.points.remove((5,2))
 # Finds the neighbors of the points and determines if they are in the world
 for point in MyWorld.points:
 	x = point[0]
