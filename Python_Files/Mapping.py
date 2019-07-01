@@ -52,7 +52,7 @@ def distance(p1,p2):
 
 
 
-start = (0,2)
+start = (2,2)
 goal = (5,1)
 ## -- Code Starts Here -- ##
 # Call the class gridworld
