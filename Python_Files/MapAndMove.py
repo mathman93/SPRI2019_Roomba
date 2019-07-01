@@ -183,8 +183,8 @@ bump_code = 0 # Used to distinguish if the right, left, or center bumpers are be
 
 while True: #Loop that asks for initial x and y coordinates
 	try:
-		x_final = float(input("X axis coordinate:"))
-		y_final = float(input("Y axis coordinate:"))
+		x_final = int(input("X axis coordinate:"))
+		y_final = int(input("Y axis coordinate:"))
 		break
 	except ValueError:
 		print("Please input a number")
@@ -366,8 +366,8 @@ while True:
 	start = goal
 	while True: #Loop that asks for initial x and y coordinates
 		try:
-			x_final = float(input("X axis coordinate:"))
-			y_final = float(input("Y axis coordinate:"))
+			x_final = int(input("X axis coordinate:"))
+			y_final = int(input("Y axis coordinate:"))
 			break
 		except ValueError:
 			print("Please input a number")
