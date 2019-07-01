@@ -11,22 +11,23 @@ import RoombaCI_lib
 import os.path
 import math
 import collections
+import heapq
 ## Variables and Constants ##
 
 
 ## Functions and Definitions ##
-class Queue:
+class PriorityQueue:
     def __init__(self):
         self.elements = collections.deque()
     # Returns True if queue is empty, otherwise it returns false
     def empty(self):
         return len(self.elements) == 0
     # Put x into the queue
-    def put(self, x):
-        self.elements.append(x)
+    def put(self, item, priority):
+        heapq.heappush(self.elements,(priority,item))
     # Takes first thing from list
     def get(self):
-        return self.elements.popleft()
+        return heapq.heappop(self.elements)[1]
 
 
 # defines a world, finds the neighbors of certain points, and the location of thos points
@@ -45,6 +46,11 @@ class GridWorld:
 		x_pos = (id[0]*200)+100
 		y_pos = (id[1]*200)+100
 		return(x_pos,y_pos)
+
+
+def distance(p1,p2):
+	return math.sqrt((p2[0]-p1[0])**2+(p2[1]-p1[1])**2)
+
 
 
 start = (0,2)
@@ -72,14 +78,16 @@ for point in MyWorld.points:
 	MyWorld.edges[point] = group
 
 # frontier of points that havent been searched
-frontier = Queue()
+frontier = PriorityQueue()
 # put a point in frontier
-frontier.put(start)
+frontier.put(start,0)
 # dictionary of squares that other squares came from
 came_from = {}
 came_from[start]=None
+cost_so_far={}
+cost_so_far[start]=0
 
-# 
+
 while not frontier.empty():
 	current = frontier.get()
 	# If the place we are at is the goal end the search
@@ -87,9 +95,11 @@ while not frontier.empty():
 		break
 	# Search for each point that is next to current
 	for next in MyWorld.neighbors(current):
-		# if it has not be searched through put it in came from
-		if next not in came_from:
-			frontier.put(next)
+		new_cost = cost_so_far[current]+distance(current,next)
+		if new_cost < cost_so_far.get(next,math.inf):
+			cost_so_far[next]=new_cost
+			priority = new_cost
+			frontier.put(next,priority)
 			came_from[next] = current
 
 # Find the path from the start to end
