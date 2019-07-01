@@ -52,8 +52,8 @@ def distance(p1,p2):
 
 
 
-start = (2,2)
-goal = (5,1)
+start = (0,0)
+goal = (5,3)
 ## -- Code Starts Here -- ##
 # Call the class gridworld
 MyWorld = GridWorld()
@@ -62,6 +62,12 @@ MyWorld = GridWorld()
 for x in range(6):
 	for y in range(4):
 		MyWorld.points.append((x,y))
+MyWorld.points.remove((1,0))
+MyWorld.points.remove((1,1))
+MyWorld.points.remove((1,2))
+MyWorld.points.remove((4,1))
+MyWorld.points.remove((4,2))
+MyWorld.points.remove((4,3))
 # Finds the neighbors of the points and determines if they are in the world
 for point in MyWorld.points:
 	x = point[0]
