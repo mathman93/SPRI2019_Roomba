@@ -10,7 +10,6 @@ import RPi.GPIO as GPIO
 import RoombaCI_lib
 import os.path
 import math
-import collections
 import heapq
 ## Variables and Constants ##
 
@@ -18,7 +17,7 @@ import heapq
 ## Functions and Definitions ##
 class PriorityQueue:
     def __init__(self):
-        self.elements = collections.deque()
+        self.elements = []
     # Returns True if queue is empty, otherwise it returns false
     def empty(self):
         return len(self.elements) == 0
