@@ -50,26 +50,15 @@ class GridWorld:
 def distance(p1,p2):
 	return math.sqrt((p2[0]-p1[0])**2+(p2[1]-p1[1])**2)
 
-
-
-start = (0,0)
-goal = (5,3)
-## -- Code Starts Here -- ##
-# Call the class gridworld
-MyWorld = GridWorld()
-
-# Create points that exist in the world
-for x in range(6):
-	for y in range(4):
-		MyWorld.points.append((x,y))
-MyWorld.points.remove((1,0))
-MyWorld.points.remove((1,1))
-MyWorld.points.remove((1,2))
-MyWorld.points.remove((4,3))
-MyWorld.points.remove((4,2))
-MyWorld.points.remove((5,2))
-# Finds the neighbors of the points and determines if they are in the world
-for point in MyWorld.points:
+def makeworld(x_range,y_range):
+	# Call the class gridworld
+	MyWorld = GridWorld()
+	# Create points that exist in the world
+	for x in range(x_range):
+		for y in range(y_range):
+			MyWorld.points.append((x,y))
+	# Finds the neighbors of the points and determines if they are in the world
+	for point in MyWorld.points:
 	x = point[0]
 	y = point[1]
 	# All eight directions around the position of the roomba. Could do just the four next to the point.
@@ -81,6 +70,13 @@ for point in MyWorld.points:
 			group.append(point1)
 	# Update points that are connect by edges
 	MyWorld.edges[point] = group
+	return MyWorld
+
+start = (0,0)
+goal = (5,3)
+## -- Code Starts Here -- ##
+
+MyWorld = makeworld(6,4)
 
 # frontier of points that havent been searched
 frontier = PriorityQueue()
