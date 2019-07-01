@@ -97,6 +97,7 @@ path.reverse()
 
 
 #Print Stuff
+print(path)
 #for point in MyWorld.edges.keys():
 #	value = MyWorld.edges[point]
 #	print("{0}:{1}".format(point,value))
