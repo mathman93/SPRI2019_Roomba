@@ -16,7 +16,7 @@ import math
 
 ## Functions and Definitions ##
 class GridWorld():
-	def__init__(self):
+	def __init__(self):
 		self.edges = {}
 		self.points = []
 	def neighbors(self,id):
