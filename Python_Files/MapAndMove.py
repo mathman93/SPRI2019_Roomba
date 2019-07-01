@@ -128,12 +128,14 @@ def angle_cost(previous,current,next): # Calculates a cost used to determine the
 			theta += 2*math.pi
 		elif theta >= 2*math.pi:
 			theta -= 2*math.pi
-		theta_initial = (next[1]-current[1],next[0]-current[0])
+		theta_initial = math.atan2(next[1]-current[1],next[0]-current[0])
 		if theta_initial < 0:
 			theta_initial += 2*math.pi
 		elif theta_initial >= 2*math.pi:
 			theta_initial -= 2*math.pi
-		theta_d = math.abs(theta_initial - theta)
+		theta_d = (math.abs(theta_initial - theta))%(2*math.pi)
+			if theta_d > math.pi:
+				theta_d -= 2*math.pi
 		return theta_d
 
 ## -- Code Starts Here -- ##
