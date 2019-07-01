@@ -83,6 +83,7 @@ def makeworld(x_range,y_range):
 		MyWorld.edges[point] = group
 	return MyWorld
 
+# Uses A* method of pathfinding to find best path the fastest
 def A_star(start,goal,MyWorld):
 	# frontier of points that havent been searched
 	frontier = PriorityQueue()
@@ -93,8 +94,6 @@ def A_star(start,goal,MyWorld):
 	came_from[start]=None
 	cost_so_far={}
 	cost_so_far[start]=0
-
-
 	while not frontier.empty():
 		current = frontier.get()
 		print("Searching {0}".format(current))
@@ -103,7 +102,7 @@ def A_star(start,goal,MyWorld):
 			break
 		# Search for each point that is next to current
 		for next in MyWorld.neighbors(current):
-			new_cost = cost_so_far[current]+distance(current,next)
+			new_cost = cost_so_far[current]+distance(current,next) + angle_cost(previous,current,next)
 			if new_cost < cost_so_far.get(next,math.inf):
 				cost_so_far[next]=new_cost
 				priority = new_cost+distance(next,goal)
@@ -119,6 +118,23 @@ def A_star(start,goal,MyWorld):
 
 	path.reverse()
 	return path
+
+def angle_cost(previous,current,next) # Calculates a cost used to determine the past path in regards to how the Roomba rotates
+	if previous == None: # If first movement...
+		return 0
+	else:
+		theta = math.atan2(current[1]-previous[1],current[0]-previous[0])
+		if theta < 0:
+			theta += 2*math.pi
+		elif theta >= 2*math.pi:
+			theta -= 2*math.pi
+		theta_initial = (next[1]-currrent[1],next[0]-current[0])
+		if theta_initial < 0:
+			theta_initial += 2*math.pi
+		elif theta_initial >= 2*math.pi:
+			theta_initial -= 2*math.pi
+		theta_d = math.abs(theta_initial - theta)
+		return theta_d
 
 ## -- Code Starts Here -- ##
 # Setup Code #
