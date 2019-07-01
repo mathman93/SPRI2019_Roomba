@@ -180,7 +180,7 @@ while True: #Loop that asks for initial x and y coordinates
 
 start = (0,0)
 goal = (x_final,y_final)
-MyWorld = makeworld(6,4)
+MyWorld = makeworld(10,6)
 path = A_star(start,goal,MyWorld)
 
 #Print Stuff
