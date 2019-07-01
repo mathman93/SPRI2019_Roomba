@@ -72,7 +72,7 @@ def makeworld(x_range,y_range):
 		MyWorld.edges[point] = group
 	return MyWorld
 
-def A*(start,goal,MyWorld):
+def A_star(start,goal,MyWorld):
 	# frontier of points that havent been searched
 	frontier = PriorityQueue()
 	# put a point in frontier
@@ -114,7 +114,7 @@ def A*(start,goal,MyWorld):
 start = (0,0)
 goal = (5,3)
 MyWorld = makeworld(6,4)
-Path = A*(start,goal,MyWorld)
+Path = A_star(start,goal,MyWorld)
 
 
 #Print Stuff
