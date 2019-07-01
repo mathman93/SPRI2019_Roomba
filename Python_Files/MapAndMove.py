@@ -102,7 +102,7 @@ def A_star(start,goal,MyWorld):
 			break
 		# Search for each point that is next to current
 		for next in MyWorld.neighbors(current):
-			new_cost = cost_so_far[current]+distance(current,next) + angle_cost(previous,current,next)
+			new_cost = cost_so_far[current]+distance(current,next) + angle_cost(came_from[current],current,next)
 			if new_cost < cost_so_far.get(next,math.inf):
 				cost_so_far[next]=new_cost
 				priority = new_cost+distance(next,goal)
