@@ -24,6 +24,7 @@ class GridWorld():
 	def Location(self,id):
 		x_pos = (id[0]*200)+100
 		y_pos = (id[1]*200)+100
+		return(x_pos,y_pos)
 
 
 
