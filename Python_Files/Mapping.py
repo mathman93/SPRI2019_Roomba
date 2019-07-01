@@ -72,51 +72,53 @@ def makeworld(x_range,y_range):
 		MyWorld.edges[point] = group
 	return MyWorld
 
+def A*(start,goal,MyWorld):
+	# frontier of points that havent been searched
+	frontier = PriorityQueue()
+	# put a point in frontier
+	frontier.put(start,0)
+	# dictionary of squares that other squares came from
+	came_from = {}
+	came_from[start]=None
+	cost_so_far={}
+	cost_so_far[start]=0
+
+
+	while not frontier.empty():
+		current = frontier.get()
+		print("Searching {0}".format(current))
+		# If the place we are at is the goal end the search
+		if current == goal:
+			break
+		# Search for each point that is next to current
+		for next in MyWorld.neighbors(current):
+			new_cost = cost_so_far[current]+distance(current,next)
+			if new_cost < cost_so_far.get(next,math.inf):
+				cost_so_far[next]=new_cost
+				priority = new_cost+distance(next,goal)
+				frontier.put(next,priority)
+				came_from[next] = current
+
+	# Find the path from the start to end
+	current=goal
+	path = []
+	while  current!=start:
+		path.append(current)
+		current=came_from[current]
+
+	path.append(start)
+	return path.reverse()
+
+
+## -- Code Starts Here -- ##
 start = (0,0)
 goal = (5,3)
-## -- Code Starts Here -- ##
-
 MyWorld = makeworld(6,4)
-
-# frontier of points that havent been searched
-frontier = PriorityQueue()
-# put a point in frontier
-frontier.put(start,0)
-# dictionary of squares that other squares came from
-came_from = {}
-came_from[start]=None
-cost_so_far={}
-cost_so_far[start]=0
-
-
-while not frontier.empty():
-	current = frontier.get()
-	print("Searching {0}".format(current))
-	# If the place we are at is the goal end the search
-	if current == goal:
-		break
-	# Search for each point that is next to current
-	for next in MyWorld.neighbors(current):
-		new_cost = cost_so_far[current]+distance(current,next)
-		if new_cost < cost_so_far.get(next,math.inf):
-			cost_so_far[next]=new_cost
-			priority = new_cost+distance(next,goal)
-			frontier.put(next,priority)
-			came_from[next] = current
-
-# Find the path from the start to end
-current=goal
-path = []
-while  current!=start:
-	path.append(current)
-	current=came_from[current]
-
-path.append(start)
-path.reverse()
+Path = A*(start,goal,MyWorld)
 
 
 #Print Stuff
-print(path)
+print(Path)
 #for point in MyWorld.edges.keys():
 #	value = MyWorld.edges[point]
 #	print("{0}:{1}".format(point,value))
