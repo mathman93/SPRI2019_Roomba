@@ -47,13 +47,14 @@ for x in range(6):
 for point in MyWorld.points:
 	x = point[0]
 	y = point[1]
-	# All eight directions around the position of the roomba. Could do just the full next to the point.
+	# All eight directions around the position of the roomba. Could do just the four next to the point.
 	neighbors = [(x+1,y+1),(x+1,y),(x+1,y-1),(x,y-1),(x,y+1),(x-1,y-1),(x-1,y),(x-1,y+1)]
 	group = []
-	# Defines points that are in the world 
+	# Checking points to make sure that they are in the world 
 	for point1 in neighbors:
 		if point1 in MyWorld.points:
 			group.append(point1)
+	# Update points that are connect by edges
 	MyWorld.edges[point] = group
 
 #Print Stuff
