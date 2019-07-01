@@ -349,20 +349,20 @@ while True:
 				z = Roomba.DirectRead(Roomba.Available())
 				print(z)
 			Roomba.Move(0,0)
-		start = goal
-		while True: #Loop that asks for initial x and y coordinates
-			try:
-				x_final = float(input("X axis coordinate:"))
-				y_final = float(input("Y axis coordinate:"))
-				break
-			except ValueError:
-				print("Please input a number")
-				continue
-		goal = (x_final,y_final)
-		path = A_star(start,goal,MyWorld)
-		print(path)
-	except KeyboardInterrupt:
-		break
+		except KeyboardInterrupt:
+			break
+	start = goal
+	while True: #Loop that asks for initial x and y coordinates
+		try:
+			x_final = float(input("X axis coordinate:"))
+			y_final = float(input("Y axis coordinate:"))
+			break
+		except ValueError:
+			print("Please input a number")
+			continue
+	goal = (x_final,y_final)
+	path = A_star(start,goal,MyWorld)
+	print(path)
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
 if Roomba.Available()>0:
