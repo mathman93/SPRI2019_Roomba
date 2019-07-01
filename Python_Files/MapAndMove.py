@@ -212,6 +212,7 @@ print(path)
 #print(MyWorld.neighbors((5,1)))
 #print(MyWorld.Location((5,2)))
 
+'''
 while True:
 	for point in path:
 		current_goal = MyWorld.Location(point)
@@ -382,6 +383,7 @@ while True:
 	goal = (x_final,y_final)
 	path = A_star(start,goal,MyWorld)
 	print(path)
+'''
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
 if Roomba.Available()>0:
