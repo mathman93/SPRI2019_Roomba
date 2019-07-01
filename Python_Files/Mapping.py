@@ -98,7 +98,7 @@ while not frontier.empty():
 		new_cost = cost_so_far[current]+distance(current,next)
 		if new_cost < cost_so_far.get(next,math.inf):
 			cost_so_far[next]=new_cost
-			priority = new_cost
+			priority = new_cost+distance(next,goal)
 			frontier.put(next,priority)
 			came_from[next] = current
 
