@@ -235,7 +235,7 @@ for point in path:
 				x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 				y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
 				# Find distance to end and theta_initial
-				distance_to_end = math.sqrt((current_goal[0]-x_position)**2 +(current_goal[1]_final-y_position)**2)
+				distance_to_end = math.sqrt((current_goal[0]-x_position)**2 +(current_goal[1]-y_position)**2)
 
 				theta_initial = math.atan2((current_goal[1]-y_position),(current_goal[0]-x_position))
 				# Normalize what theta initial is to between 0-2pi
