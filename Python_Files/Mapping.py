@@ -1,6 +1,6 @@
 ''' Mapping.py
-Purpose: Use bumpers to try and follow a wall or object continuously
-Last Modified: 6/1/2019
+Purpose: Display a virtual map
+Last Modified: 7/1/2019
 '''
 
 ## Import libraries ##
@@ -45,7 +45,11 @@ for point in MyWorld.points:
 			group.append(point1)
 	MyWorld.edges[point] = group
 
-print(MyWorld.edges)
+
+for point in MyWorld.edges.keys:
+	value = MyWorld.edges[point]
+	print("{0}:{1}".format(point,value))
+
 
 
 
