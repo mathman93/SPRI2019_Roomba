@@ -89,6 +89,7 @@ cost_so_far[start]=0
 
 while not frontier.empty():
 	current = frontier.get()
+	print("Searching {0}".format(current))
 	# If the place we are at is the goal end the search
 	if current == goal:
 		break
