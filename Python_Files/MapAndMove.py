@@ -119,13 +119,13 @@ def A_star(start,goal,MyWorld):
 	path.reverse()
 	return path
 
-def removePointFromWorld(x,y,MyWorld):
+def removePointFromWorld(xy,MyWorld): # Removes the point from the world at the specified tuple 'xy' from the world 'MyWorld'
 	NewWorld = MyWorld
-	list = NewWorld.edges.pop((x,y))
+	list = NewWorld.edges.pop(xy)
 	for p in list:
-		NewWorld.edges[p].remove((x,y))
+		NewWorld.edges[p].remove(xy)
 
-	NewWorld.points.remove((x,y))
+	NewWorld.points.remove(xy)
 	return NewWorld
 	
 
