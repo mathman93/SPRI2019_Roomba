@@ -210,6 +210,7 @@ goal = (x_final,y_final) # Final goal
 MyWorld = makeworld(12,6) # Creates grid world for the roomba to move in
 path = A_star(start,goal,MyWorld) # Creates the optimal pathway between the start and goal
 current_point = start # Saves grid coordinate that the roomba just came from
+bump_break = False # Checks if the roomba has bumped into something and broken out of the loop
 
 #Print Stuff
 print(path)
