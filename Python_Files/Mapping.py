@@ -128,7 +128,7 @@ for point in path:
 	location = MyWorld.Location(point)
 	print("Moving to point {0}".format(location))
 
-MyWorld.removePointFromWorld(2,2,MyWorld)
+removePointFromWorld(2,2,MyWorld)
 path = A_star(start,goal,MyWorld)
 
 for point in path:
