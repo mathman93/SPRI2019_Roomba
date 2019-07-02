@@ -399,6 +399,7 @@ while True:
 			break
 	if bump_break:
 		bump_break = False
+		bump_time = time.time() - 3.0
 		MyWorld = removePointFromWorld(point,MyWorld)
 		print("Removing: {0}".format(point))
 		path = A_star(current_point,goal,MyWorld)
