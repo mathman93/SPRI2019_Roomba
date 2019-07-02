@@ -280,7 +280,6 @@ while True:
 
 					# Checks if the roomba is bumping into something, and if so, activates wall detection protocol
 					if(bump%4) > 0: # If the roomba bumps into something...
-						MyWorld = MyWorld.removePointFromWorld(point,MyWorld) # Removes the point in the path where something was bumped into
 						bump_time = time.time() #Sets up timer that tells how long to back up
 
 					if time.time() - bump_time < 2.0: # If has bumped into something less than 2 seconds ago, back up
