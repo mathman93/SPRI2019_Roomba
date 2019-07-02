@@ -112,7 +112,7 @@ def A_star(start,goal,MyWorld):
 
 
 def removePointFromWorld(x,y,MyWorld):
-	for p in edges.itervalues():
+	for p in MyWorld.edges.itervalues():
 		p.remove((x,y))
 	MyWorld.edges.remove((x,y))
 	MyWorld.points.remove((x,y))
