@@ -289,7 +289,7 @@ while True:
 						bump_break = True
 						break
 
-					'''
+						'''
 					# Checks if the roomba is currently bumping into something; if so, sets up bump mode or corner mode
 					if(bump%4) > 0: # If the roomba bumps into something...
 						bump_time = time.time() #Sets up timer
