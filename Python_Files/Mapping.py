@@ -117,7 +117,6 @@ def removePointFromWorld(x,y,MyWorld):
 	for p in list:
 		NewWorld.edges[p].remove((x,y))
 
-	NewWorld.edges.remove((x,y))
 	NewWorld.points.remove((x,y))
 	return NewWorld
 
