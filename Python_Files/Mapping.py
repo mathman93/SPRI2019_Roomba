@@ -113,8 +113,8 @@ def A_star(start,goal,MyWorld):
 
 def removePointFromWorld(xy,MyWorld): # Removes the point from the world at the specified tuple 'xy' from the world 'MyWorld'
 	NewWorld = MyWorld
-	list = NewWorld.edges.pop(xy)
-	for p in list:
+	neighborlist = NewWorld.edges.pop(xy)
+	for p in neighborlist:
 		NewWorld.edges[p].remove(xy)
 
 	NewWorld.points.remove(xy)
