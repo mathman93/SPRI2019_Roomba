@@ -120,7 +120,7 @@ def A_star(start,goal,MyWorld):
 	return path
 
 def removePointFromWorld(x,y,MyWorld):
-	for p in MyWorld.edges.iterate():
+	for p in MyWorld.edges.itervalues():
 		p.remove((x,y))
 	
 	MyWorld.edges.remove((x,y))
