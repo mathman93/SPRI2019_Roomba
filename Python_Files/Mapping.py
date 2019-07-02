@@ -130,7 +130,8 @@ for point in path:
 	location = MyWorld.Location(point)
 	print("Moving to point {0}".format(location))
 
-removePointFromWorld(2,2,MyWorld)
+MyWorld = removePointFromWorld(2,2,MyWorld)
+
 path = A_star(start,goal,MyWorld)
 
 for point in path:
@@ -139,9 +140,9 @@ for point in path:
 
 #Print Stuff
 #print(path)
-#for point in MyWorld.edges.keys():
-#	value = MyWorld.edges[point]
-#	print("{0}:{1}".format(point,value))
+for point in MyWorld.edges.keys():
+	value = MyWorld.edges[point]
+	print("{0}:{1}".format(point,value))
 
 #print(MyWorld.neighbors((10,1)))
 #print(MyWorld.neighbors((5,1)))
