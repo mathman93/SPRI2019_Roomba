@@ -115,6 +115,7 @@ def A_star(start,goal,MyWorld):
 	current=goal
 	path = []
 	while  current!=start:
+		print(current)
 		path.append(current)
 		current=came_from[current]
 
@@ -399,6 +400,7 @@ while True:
 	if bump_break:
 		bump_break = False
 		MyWorld = removePointFromWorld(point,MyWorld)
+		print(point)
 		path = A_star(current_point,goal,MyWorld)
 	else:
 		start = goal
