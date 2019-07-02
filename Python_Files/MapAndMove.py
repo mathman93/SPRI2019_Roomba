@@ -130,12 +130,6 @@ def A_star(start,goal,MyWorld):
 	path.reverse()
 	return path
 
-
-	
-
-
-
-
 def angle_cost(previous,current,next): # Calculates a cost used to determine the past path in regards to how the Roomba rotates
 	if previous == None: # If first movement...
 		return 0
@@ -186,8 +180,6 @@ f = 0 # Forward/Backward speed
 s = 0 # Rotation Speed
 bump_time = time.time() - 2.0 # Assures that the roomba doesn't start in backup mode
 bump_count = 0 # Keeps track of how many times the roomba has bumped into a wall
-y_position = 100 # Current position on the y-axis
-x_position = 100 # Current position on the x-axis
 theta = 0 # Current heading
 wheel_diameter = 72
 counts_per_rev = 508.8
@@ -207,6 +199,8 @@ while True: #Loop that asks for initial x and y coordinates
 		print("Please input a number")
 		continue
 
+y_position = 150 # Current position on the y-axis
+x_position = 150 # Current position on the x-axis
 start = (0,0) # Starting position in the MyWorld grid
 goal = (x_final,y_final) # Final goal
 MyWorld = makeworld(12,6) # Creates grid world for the roomba to move in
