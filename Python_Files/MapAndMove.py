@@ -386,14 +386,14 @@ while True:
 					print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}, bump_count:{8}".format(data_time2-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d,bump_count))
 					left_start = left_encoder
 					right_start = right_encoder
-			if bump_break: # If had to break out of the loop after bumping...
-				break
-			current_point = point
 			Roomba.PauseQueryStream() #Pauses the query stream while new coordinates are being input
 			if Roomba.Available()>0:
 				z = Roomba.DirectRead(Roomba.Available())
 				print(z)
 			Roomba.Move(0,0)
+			if bump_break: # If had to break out of the loop after bumping...
+				break
+			current_point = point
 		except KeyboardInterrupt:
 			break
 	if bump_break:
