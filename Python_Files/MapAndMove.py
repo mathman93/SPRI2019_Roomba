@@ -26,6 +26,7 @@ def DisplayDateTime():
 	date_time = time.strftime("%B %d, %Y, %H:%M:%S", time.gmtime())
 	print("Program run: ", date_time)
 
+# Queue that allows for elements with a higher priority (lower priority value) to be put closer to the front of the line
 class PriorityQueue:
     def __init__(self):
         self.elements = []
@@ -57,10 +58,11 @@ class GridWorld:
 		y_pos = (id[1]*300)+150
 		return(x_pos,y_pos)
 
-
+# Calculates euclidian distance
 def distance(p1,p2):
 	return math.sqrt((p2[0]-p1[0])**2+(p2[1]-p1[1])**2)
 
+# Creates a grid world with given x and y parameters
 def makeworld(x_range,y_range):
 	# Call the class gridworld
 	MyWorld = GridWorld()
@@ -203,10 +205,11 @@ while True: #Loop that asks for initial x and y coordinates
 		print("Please input a number")
 		continue
 
-start = (0,0)
-goal = (x_final,y_final)
-MyWorld = makeworld(10,6)
-path = A_star(start,goal,MyWorld)
+start = (0,0) # Starting position in the MyWorld grid
+goal = (x_final,y_final) # Final goal
+MyWorld = makeworld(10,6) # Creates grid world for the roomba to move in
+path = A_star(start,goal,MyWorld) # Creates the optimal pathway between the start and goal
+current_point = start # Saves grid coordinate that the roomba just came from
 
 #Print Stuff
 print(path)
@@ -272,8 +275,21 @@ while True:
 					theta_d = ((theta_initial-theta)%(2*math.pi))
 					# get theta_d between -pi and pi
 					if theta_d > math.pi:
-						theta_d -= 2*math.pi	
+						theta_d -= 2*math.pi
 
+					# Checks if the roomba is bumping into something, and if so, activates wall detection protocol
+					if(bump%4) > 0: # If the roomba bumps into something...
+						MyWorld = MyWorld.removePointFromWorld(point,MyWorld) # Removes the point in the path where something was bumped into
+						bump_time = time.time() #Sets up timer that tells how long to back up
+
+					if time.time() - bump_time < 2.0: # If has bumped into something less than 2 seconds ago, back up
+						f = -100
+						s = 0
+					elif time.time() - bump_time < 2.5: # If done backing up...
+						bump_break = True
+						break
+
+'''
 					# Checks if the roomba is currently bumping into something; if so, sets up bump mode or corner mode
 					if(bump%4) > 0: # If the roomba bumps into something...
 						bump_time = time.time() #Sets up timer
@@ -337,6 +353,7 @@ while True:
 								s = 100 # Turn hard clockwise
 							if bump_code == 2 or bump_code == 3: # If bump left or center...
 								s = -100 # Turn hard counterclockwise
+'''
 					else: # If haven't bumped into anything yet...
 						if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 radians...
 							s_set = 100 # Spin faster
@@ -369,6 +386,9 @@ while True:
 					print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}, bump_count:{8}".format(data_time2-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d,bump_count))
 					left_start = left_encoder
 					right_start = right_encoder
+			if bump_break: # If had to break out of the loop after bumping...
+				break
+			current_point = point
 			Roomba.PauseQueryStream() #Pauses the query stream while new coordinates are being input
 			if Roomba.Available()>0:
 				z = Roomba.DirectRead(Roomba.Available())
@@ -376,18 +396,23 @@ while True:
 			Roomba.Move(0,0)
 		except KeyboardInterrupt:
 			break
-	start = goal
-	while True: #Loop that asks for initial x and y coordinates
-		try:
-			x_final = int(input("X axis coordinate:"))
-			y_final = int(input("Y axis coordinate:"))
-			break
-		except ValueError:
-			print("Please input a number")
-			continue
-	goal = (x_final,y_final)
-	path = A_star(start,goal,MyWorld)
-	print(path)
+	if bump_break:
+		bump_break = False
+		MyWorld = removePointFromWorld(point,MyWorld)
+		path = A_star(current_point,goal,MyWorld)
+	else:
+		start = goal
+		while True: #Loop that asks for initial x and y coordinates
+			try:
+				x_final = int(input("X axis coordinate:"))
+				y_final = int(input("Y axis coordinate:"))
+				break
+			except ValueError:
+				print("Please input a number")
+				continue
+		goal = (x_final,y_final)
+		path = A_star(start,goal,MyWorld)
+		print(path)
 
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
