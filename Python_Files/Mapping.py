@@ -36,6 +36,8 @@ class GridWorld:
 		self.edges = {}
 		# Points that exist in the world
 		self.points = []
+		# Walls that are found in the world
+		self.walls = []
 	# Tells you which points are able to be connected to
 	# Note: ID needs to be a tuple 
 	def neighbors(self,id):
@@ -118,6 +120,7 @@ def removePointFromWorld(xy,MyWorld): # Removes the point from the world at the 
 		NewWorld.edges[p].remove(xy)
 
 	NewWorld.points.remove(xy)
+	NewWorld.walls.append(xy)
 	return NewWorld
 
 ## -- Code Starts Here -- ##
@@ -151,7 +154,7 @@ print(path)
 for point in MyWorld.edges.keys():
 	value = MyWorld.edges[point]
 	print("{0}:{1}".format(point,value))
-
+print(MyWorld.walls)
 #print(MyWorld.neighbors((10,1)))
 #print(MyWorld.neighbors((5,1)))
 #print(MyWorld.Location((5,2)))
