@@ -207,7 +207,7 @@ while True: #Loop that asks for initial x and y coordinates
 
 start = (0,0) # Starting position in the MyWorld grid
 goal = (x_final,y_final) # Final goal
-MyWorld = makeworld(10,6) # Creates grid world for the roomba to move in
+MyWorld = makeworld(12,6) # Creates grid world for the roomba to move in
 path = A_star(start,goal,MyWorld) # Creates the optimal pathway between the start and goal
 current_point = start # Saves grid coordinate that the roomba just came from
 
