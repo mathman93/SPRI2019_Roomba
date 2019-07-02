@@ -63,7 +63,7 @@ Roomba.StartQueryStream(7,45,46,47,48,49,50,51)
 while True:
 	data_time = time.time() - start_time
 	[bump, l_bump, l_l_bump, fl_l_bump, cl_l_bump, cr_l_bump, fr_l_bump, r_l_bump]=Roomba.ReadQueryStream(7,45,46,47,48,49,50,51)
-	print("Time: {0:0.5f}\nBumper: {1}, Light Bumper: {2}\nL L-Bumper:{3}, FL L-Bumper: {4}, CL L-Bumper: {5}, CR L-Bumper: {6}, FR L-Bumper: {7}, R L-Bumper: {8}\n".format(data_time,bump,l_bump,l_l_bump,fl_l_bump,cl_l_bump,cr_l_bump,fr_l_bump,r_l_bump))
+	print("Time: {0:0.5f}\nBumper: {1}, Light Bumper: {2:0>6b}\nL L-Bumper:{3}, FL L-Bumper: {4}, CL L-Bumper: {5}, CR L-Bumper: {6}, FR L-Bumper: {7}, R L-Bumper: {8}\n".format(data_time,bump,l_bump,l_l_bump,fl_l_bump,cl_l_bump,cr_l_bump,fr_l_bump,r_l_bump))
 Roomba.PauseQueryStream()
 if Roomba.Available()>0:
 	z = Roomba.DirectRead(Roomba.Available())
