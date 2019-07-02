@@ -289,7 +289,7 @@ while True:
 						bump_break = True
 						break
 
-'''
+					'''
 					# Checks if the roomba is currently bumping into something; if so, sets up bump mode or corner mode
 					if(bump%4) > 0: # If the roomba bumps into something...
 						bump_time = time.time() #Sets up timer
@@ -353,7 +353,7 @@ while True:
 								s = 100 # Turn hard clockwise
 							if bump_code == 2 or bump_code == 3: # If bump left or center...
 								s = -100 # Turn hard counterclockwise
-'''
+					'''
 					else: # If haven't bumped into anything yet...
 						if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 radians...
 							s_set = 100 # Spin faster
