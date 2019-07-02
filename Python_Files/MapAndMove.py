@@ -48,6 +48,8 @@ class GridWorld:
 		self.edges = {}
 		# Points that exist in the world
 		self.points = []
+		# Walls that are found in the world
+		self.walls = []
 	# Tells you which points are able to be connected to
 	# Note: ID needs to be a tuple 
 	def neighbors(self,id):
@@ -57,6 +59,12 @@ class GridWorld:
 		x_pos = (id[0]*300)+150
 		y_pos = (id[1]*300)+150
 		return(x_pos,y_pos)
+	def removePointFromWorld(self,xy): # Removes the point from the world at the specified tuple 'xy' from the world 'MyWorld'
+		neighborlist = self.edges.pop(xy)
+		for p in neighborlist:
+			self.edges[p].remove(xy)
+		self.points.remove(xy)
+		self.walls.append(xy)
 
 # Calculates euclidian distance
 def distance(p1,p2):
@@ -122,14 +130,7 @@ def A_star(start,goal,MyWorld):
 	path.reverse()
 	return path
 
-def removePointFromWorld(xy,MyWorld): # Removes the point from the world at the specified tuple 'xy' from the world 'MyWorld'
-	NewWorld = MyWorld
-	neighborlist = NewWorld.edges.pop(xy)
-	for p in neighborlist:
-		NewWorld.edges[p].remove(xy)
 
-	NewWorld.points.remove(xy)
-	return NewWorld
 	
 
 
