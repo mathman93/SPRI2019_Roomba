@@ -112,14 +112,14 @@ def A_star(start,goal,MyWorld):
 
 
 def removePointFromWorld(x,y,MyWorld):
-	for p in MyWorld.neighbors((x,y)):
-		n = MyWorld.edges[p]
-		n.remove((x,y))
-		MyWorld.edges[p] = n
+	NewWorld = MyWorld
+	list = NewWorld.edges.pop((x,y))
+	for p in list:
+		NewWorld.edges[p].remove((x,y))
 
-	MyWorld.edges.remove((x,y))
-	MyWorld.points.remove((x,y))
-	return MyWorld
+	NewWorld.edges.remove((x,y))
+	NewWorld.points.remove((x,y))
+	return NewWorld
 
 ## -- Code Starts Here -- ##
 start = (0,0)
