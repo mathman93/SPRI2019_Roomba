@@ -55,7 +55,9 @@ class GridWorld:
 		self.walls.append(xy)
 
 def distance(p1,p2):
-	return math.sqrt((p2[0]-p1[0])**2+(p2[1]-p1[1])**2)
+	dist = math.sqrt((p2[0]-p1[0])**2+(p2[1]-p1[1])**2)
+	print(dist)
+	return dist
 
 def makeworld(x_range,y_range):
 	# Call the class gridworld
@@ -141,6 +143,8 @@ def CanMakeEdge(start,goal,wall):
 		b2 = xc + (yc/mc)
 		y = (b2-b1)/(m+(1/m))
 		x = m*y+b1
+		print(x)
+		print(y)
 	if outside:
 		return True
 	elif distance((x,y),(xc,yc))>200:
