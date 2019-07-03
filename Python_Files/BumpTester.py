@@ -25,11 +25,36 @@ def DisplayDateTime():
 	date_time = time.strftime("%B %d, %Y, %H:%M:%S", time.gmtime())
 	print("Program run: ", date_time)
 
-''' Function that returns the angle of an object that the roomba is bumping into.
+''' Function that returns the angle of an object (in degrees in the range 0-360) that the roomba is bumping into.
 	Uses the 'bumper' bumper reading (query code 7) and the 'l_bumper' light bumper reading (query code 45)
 	'''
-#def BumpAngle(bumper, l_bumper):
-	
+def BumpAngle(bumper, l_bumper):
+	if bump == 1:
+		if l_bumper == 23:
+			return 10
+		elif l_bumper == 22:
+			return 20
+		elif l_bumper == 44 or if l_bumper == 60:
+			return 30
+		elif l_bumper == 12 or if l_bumper == 28:
+			return 40
+		elif l_bumper == 56:
+			return 50
+		elif l_bumper == 24:
+			return 60
+	elif bump == 2:
+		if l_bumper == 27:
+			return 350
+		elif l_bumper == 13:
+			return 340
+		elif l_bumper == 15:
+			return 330
+		elif l_bumper == 14:
+			return 320
+		elif l_bumper == 6:
+			return 310
+		elif l_bumper == 3 or l_bumper == 1:
+			return 300
 
 ## -- Code Starts Here -- ##
 # Setup Code #
@@ -70,6 +95,7 @@ while True:
 	[bump, l_bump, l_l_bump, fl_l_bump, cl_l_bump, cr_l_bump, fr_l_bump, r_l_bump]=Roomba.ReadQueryStream(7,45,46,47,48,49,50,51)
 	if (bump%4) > 0:
 		print("Time: {0:0.5f}\nBumper: {1}, Light Bumper: {2:0>6b}\nL L-Bumper:{3}, FL L-Bumper: {4}, CL L-Bumper: {5}, CR L-Bumper: {6}, FR L-Bumper: {7}, R L-Bumper: {8}\n".format(data_time,bump,l_bump,l_l_bump,fl_l_bump,cl_l_bump,cr_l_bump,fr_l_bump,r_l_bump))
+		print("Angle of Object: {0}".format(BumpAngle(bump,l_bump)))
 Roomba.PauseQueryStream()
 if Roomba.Available()>0:
 	z = Roomba.DirectRead(Roomba.Available())
