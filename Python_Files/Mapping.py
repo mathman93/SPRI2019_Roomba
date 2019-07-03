@@ -132,11 +132,11 @@ def CanMakeEdge(start,goal,wall):
 	if y1 == y2:
 		x=xc
 		y=y1
-		outside = (x<x1 and x<x2) and (x>x1 and x>x2)
+		outside = (x<x1 and x<x2) or (x>x1 and x>x2)
 	elif x1==x2:
 		x = x1
 		y = yc
-		outside = (y<y1 and y<y2) and (y>y1 and y>y2)
+		outside = (y<y1 and y<y2) or (y>y1 and y>y2)
 	else:
 		m=(x2-x1)/(y2-y1)
 		b1 = x1 - m*y1
