@@ -153,8 +153,8 @@ def CanMakeEdge(start,goal,wall):
 	else:
 		return False
 ## -- Code Starts Here -- ##
-start = (400,0)
-goal = (300,0)
+start = (0,400)
+goal = (0,300)
 wall = (100,100)
 print(CanMakeEdge(start,goal,wall))
 
