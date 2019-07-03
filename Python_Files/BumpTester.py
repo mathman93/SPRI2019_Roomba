@@ -26,7 +26,7 @@ def DisplayDateTime():
 	print("Program run: ", date_time)
 
 ''' Function that returns the angle of an object (in degrees in the range 0-360) that the roomba is bumping into.
-	Uses the 'bumper' bumper reading (query code 7) and the 'l_bumper' light bumper reading (query code 45)
+	Uses the 'bumper' bumper reading (query code 7) and the 'l_bumper' light bumper reading (query code 45). Should at least be accurate to a range of 20 degrees
 	'''
 def BumpAngle(bumper, l_bumper):
 	if bumper == 1 or bumper == 3:
@@ -42,8 +42,12 @@ def BumpAngle(bumper, l_bumper):
 			return 50
 		elif l_bumper == 24:
 			return 60
-	if bumper == 2:
-		elif l_bumper == 27 or l_bumper == 9:
+		elif l_bumper == 0:
+			return 70
+		else:
+			return 0
+	elif bumper == 2:
+		if l_bumper == 27 or l_bumper == 9:
 			return 350
 		elif l_bumper == 13:
 			return 340
@@ -55,8 +59,12 @@ def BumpAngle(bumper, l_bumper):
 			return 310
 		elif l_bumper == 3 or l_bumper == 1:
 			return 300
+		elif l_bumper == 0:
+			return 290
+		else:
+			return 0
 	else:
-		return 0
+		return None
 
 ## -- Code Starts Here -- ##
 # Setup Code #
