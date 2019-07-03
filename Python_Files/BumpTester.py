@@ -34,9 +34,9 @@ def BumpAngle(bumper, l_bumper):
 			return 10
 		elif l_bumper == 22:
 			return 20
-		elif l_bumper == 44 or if l_bumper == 60:
+		elif l_bumper == 44 or l_bumper == 60:
 			return 30
-		elif l_bumper == 12 or if l_bumper == 28:
+		elif l_bumper == 12 or l_bumper == 28:
 			return 40
 		elif l_bumper == 56:
 			return 50
