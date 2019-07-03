@@ -47,7 +47,12 @@ class GridWorld:
 		x_pos = (id[0]*200)+100
 		y_pos = (id[1]*200)+100
 		return(x_pos,y_pos)
-
+	def removePointFromWorld(self,xy): # Removes the point from the world at the specified tuple 'xy' from the world 'MyWorld'
+		neighborlist = self.edges.pop(xy)
+		for p in neighborlist:
+			self.edges[p].remove(xy)
+		self.points.remove(xy)
+		self.walls.append(xy)
 
 def distance(p1,p2):
 	return math.sqrt((p2[0]-p1[0])**2+(p2[1]-p1[1])**2)
@@ -113,47 +118,69 @@ def A_star(start,goal,MyWorld):
 	return path
 
 
-def removePointFromWorld(xy,MyWorld): # Removes the point from the world at the specified tuple 'xy' from the world 'MyWorld'
-	NewWorld = MyWorld
-	neighborlist = NewWorld.edges.pop(xy)
-	for p in neighborlist:
-		NewWorld.edges[p].remove(xy)
+def CanMakeEdge(start,goal,wall):
+	x1 = start[0]
+	x2 = goal[0]
+	y1 = start[1]
+	y2 = goal[1]
+	xc = wall[0]
+	yc = wall[1]
 
-	NewWorld.points.remove(xy)
-	NewWorld.walls.append(xy)
-	return NewWorld
 
+	if y1 == y2:
+		x=xc
+		y=y1
+		outside = (x<x1 and x<x2) and (x>x1 and x>x2)
+	elif x1==x2:
+		x = x1
+		y = yc
+		outside = (y<y1 and y<y2) and (y>y1 and y>y2)
+	else:
+		m=(x2-x1)/(y2-y1)
+		b1 = x1 - m*y1
+		b2 = xc + (yc/mc)
+		y = (b2-b1)/(m+(1/m))
+		x = m*y+b1
+	if outside:
+		return True
+	elif distance((x,y)(xc,yc))>200
+		return True
+	else:
+		return False
 ## -- Code Starts Here -- ##
-start = (0,0)
-goal = (5,3)
-MyWorld = makeworld(6,4)
-path = A_star(start,goal,MyWorld)
-print(path)
-for point in path:
-	location = MyWorld.Location(point)
-	print("Moving to point {0}".format(location))
+start = (400,0)
+goal = (300,0)
+wall = (100,100)
+print(CanMakeEdge(start,goal,wall))
 
-MyWorld = removePointFromWorld((2,1),MyWorld)
+#MyWorld = makeworld(6,4)
+#path = A_star(start,goal,MyWorld)
+#print(path)
+#for point in path:
+#	location = MyWorld.Location(point)
+#	print("Moving to point {0}".format(location))
 
-path = A_star(start,goal,MyWorld)
-print(path)
-for point in path:
-	location = MyWorld.Location(point)
-	print("Moving to point {0}".format(location))
+#MyWorld = removePointFromWorld((2,1),MyWorld)
 
-MyWorld = removePointFromWorld((2,2),MyWorld)
+#path = A_star(start,goal,MyWorld)
+#print(path)
+#for point in path:
+#	location = MyWorld.Location(point)
+#	print("Moving to point {0}".format(location))
+#
+#MyWorld = removePointFromWorld((2,2),MyWorld)
 
-path = A_star(start,goal,MyWorld)
+#path = A_star(start,goal,MyWorld)
 
-for point in path:
-	location = MyWorld.Location(point)
-	print("Moving to point {0}".format(location))
+#for point in path:
+#	location = MyWorld.Location(point)
+#	print("Moving to point {0}".format(location))
 
 #Print Stuff
-print(path)
-for point in MyWorld.edges.keys():
-	value = MyWorld.edges[point]
-	print("{0}:{1}".format(point,value))
+#print(path)
+#for point in MyWorld.edges.keys():
+#	value = MyWorld.edges[point]
+#	print("{0}:{1}".format(point,value))
 print(MyWorld.walls)
 #print(MyWorld.neighbors((10,1)))
 #print(MyWorld.neighbors((5,1)))
