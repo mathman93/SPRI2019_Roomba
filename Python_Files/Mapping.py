@@ -181,7 +181,7 @@ print(CanMakeEdge(start,goal,wall))
 #for point in MyWorld.edges.keys():
 #	value = MyWorld.edges[point]
 #	print("{0}:{1}".format(point,value))
-print(MyWorld.walls)
+#print(MyWorld.walls)
 #print(MyWorld.neighbors((10,1)))
 #print(MyWorld.neighbors((5,1)))
 #print(MyWorld.Location((5,2)))
