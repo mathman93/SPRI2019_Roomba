@@ -1,5 +1,5 @@
 ''' BumpTester.py
-Purpose: Used to test how the bumpers detect collision at different angles
+Purpose: Used to test how the bumpers detect collision at different angles. Also used to test BumpAngle function
 Last Modified: 7/2/2019
 '''
 
@@ -25,6 +25,11 @@ def DisplayDateTime():
 	date_time = time.strftime("%B %d, %Y, %H:%M:%S", time.gmtime())
 	print("Program run: ", date_time)
 
+''' Function that returns the angle of an object that the roomba is bumping into.
+	Uses the 'bumper' bumper reading (query code 7) and the 'l_bumper' light bumper reading (query code 45)
+	'''
+#def BumpAngle(bumper, l_bumper):
+	
 
 ## -- Code Starts Here -- ##
 # Setup Code #
