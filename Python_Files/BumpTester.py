@@ -29,30 +29,34 @@ def DisplayDateTime():
 	Uses the 'bumper' bumper reading (query code 7) and the 'l_bumper' light bumper reading (query code 45)
 	'''
 def BumpAngle(bumper, l_bumper):
-	if l_bumper == 23:
-		return 10
-	elif l_bumper == 22:
-		return 20
-	elif l_bumper == 44 or l_bumper == 60:
-		return 30
-	elif l_bumper == 12 or l_bumper == 28:
-		return 40
-	elif l_bumper == 56:
-		return 50
-	elif l_bumper == 24:
-		return 60
-	elif l_bumper == 27:
-		return 350
-	elif l_bumper == 13:
-		return 340
-	elif l_bumper == 15:
-		return 330
-	elif l_bumper == 14:
-		return 320
-	elif l_bumper == 6:
-		return 310
-	elif l_bumper == 3 or l_bumper == 1:
-		return 300
+	if bumper == 1 or bumper == 3:
+		if l_bumper == 23:
+			return 10
+		elif l_bumper == 22:
+			return 20
+		elif l_bumper == 44 or l_bumper == 60:
+			return 30
+		elif l_bumper == 12 or l_bumper == 28:
+			return 40
+		elif l_bumper == 56:
+			return 50
+		elif l_bumper == 24:
+			return 60
+	if bumper == 2:
+		elif l_bumper == 27 or l_bumper == 9:
+			return 350
+		elif l_bumper == 13:
+			return 340
+		elif l_bumper == 15:
+			return 330
+		elif l_bumper == 14:
+			return 320
+		elif l_bumper == 6:
+			return 310
+		elif l_bumper == 3 or l_bumper == 1:
+			return 300
+	else:
+		return 0
 
 ## -- Code Starts Here -- ##
 # Setup Code #
