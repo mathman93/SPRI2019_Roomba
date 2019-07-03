@@ -143,7 +143,7 @@ def CanMakeEdge(start,goal,wall):
 		x = m*y+b1
 	if outside:
 		return True
-	elif distance((x,y)(xc,yc))>200:
+	elif distance((x,y),(xc,yc))>200:
 		return True
 	else:
 		return False
