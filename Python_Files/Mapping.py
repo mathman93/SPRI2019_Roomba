@@ -143,6 +143,7 @@ def CanMakeEdge(start,goal,wall):
 		b2 = xc + (yc/mc)
 		y = (b2-b1)/(m+(1/m))
 		x = m*y+b1
+		outside = (x<x1 and x<x2) or (x>x1 and x>x2)
 	print(x)
 	print(y)
 	if outside:
