@@ -32,15 +32,15 @@ def BumpAngle(bumper, l_bumper):
 	if bumper == 1 or bumper == 3: # If bumped on right or center...
 		if l_bumper == 23 or l_bumper == 15 or (l_bumper == 20 and bumper == 3): # If (L, FL, CL, FR) or (FL) or (CL, FR, center)
 			return 10
-		elif l_bumper == 22 or l_bumper == 20 or l_bumper == 16 or l_bumper == 4: # If (FL, CL, FR) or (CL, FR) or (FR) or (CL)
+		elif l_bumper == 22 or (l_bumper == 20 and bumper == 3) or (l_bumper == 16 and bumper == 3) or (l_bumper == 4 and bumper == 3): # If (FL, CL, FR) or (CL, FR and center) or (FR and center) or (CL and center)
 			return 20
-		elif l_bumper == 44 or l_bumper == 60: # If (FL, CL, R) or (FL, CL, FR, R) or (R, CR)
+		elif l_bumper == 44 or l_bumper == 60 or l_bumper == 20: # If (FL, CL, R) or (FL, CL, FR, R) or (CL, FR)
 			return 30
-		elif l_bumper == 12 or l_bumper == 28 or l_bumper == 40: # If (CL, CR) or (CL, CR, FR) or (R, CR)
+		elif l_bumper == 12 or l_bumper == 28 or l_bumper == 40 or l_bumper == 36 or l_bumper == 4: # If (CL, CR) or (CL, CR, FR) or (R, CR) or (R, CL) or (CL)
 			return 40
-		elif l_bumper == 56: # If CR, FR, R light sensors triggered...
+		elif l_bumper == 56 or l_bumper == 40 or l_bumper == 8: # If (CR, FR, R) or (CR)
 			return 50
-		elif l_bumper == 24: # If CR, FR light sensors triggered...
+		elif l_bumper == 24 or l_bumper == 40: # If (CR, FR) or (CR, R)
 			return 60
 		elif l_bumper == 32: # If R light sensor triggered...
 			return 70
