@@ -71,6 +71,7 @@ def BumpAngle(bumper, l_bumper):
 	'''
 
 def BumpAngle(bumper,l_bumper):
+	l_bumper_list = []
 	for i in range(6): #For all the possible binary digits that represent light bumpers being activated...
 		if l_bumper & pow(2,1) == pow(2,i): #If the light bumper value indicates that the "i" light bumper is being triggered...
 			l_bumper_list[i] = True # The placeholder boolean for that light bumper is set to true
