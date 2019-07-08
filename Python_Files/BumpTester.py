@@ -83,18 +83,18 @@ def BumpAngle(bumper,l_bumper):
 		return 0
 	if bumper == 1: # If the roomba detects a bump on the right...
 		if not (CL or CR or FR): # If the center two or front right light bumpers are not triggered at all...
-			return 70
+			return math.radians(70)
 		elif CL: # If the center left light bumper is triggered...
-			return 20
+			return math.radians(20)
 		else:
-			return 45
+			return math.radians(45)
 	if bumper == 2: # If roomba detects a bump on the left...
 		if not (L or FL or CL or CR): # If any of the left side or center right light bumpers are not triggered...
-			return -70
+			return math.radians(-70)
 		elif CR: # If the center right light bumper is triggered...
-			return -20
+			return math.radians(-20)
 		else: 
-			return -45
+			return math.radians(-45)
 ## -- Code Starts Here -- ##
 # Setup Code #
 GPIO.setmode(GPIO.BCM) # Use BCM pin numbering for GPIO
