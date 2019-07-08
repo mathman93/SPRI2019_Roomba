@@ -1,6 +1,6 @@
 ''' BumpTester.py
 Purpose: Used to test how the bumpers detect collision at different angles. Also used to test BumpAngle function
-Last Modified: 7/3/2019
+Last Modified: 7/8/2019
 '''
 
 ## Import libraries ##
