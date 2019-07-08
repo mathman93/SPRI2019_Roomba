@@ -1,6 +1,6 @@
 ''' BumpTester.py
 Purpose: Used to test how the bumpers detect collision at different angles. Also used to test BumpAngle function
-Last Modified: 7/2/2019
+Last Modified: 7/3/2019
 '''
 
 ## Import libraries ##
@@ -28,6 +28,7 @@ def DisplayDateTime():
 ''' Function that returns the angle of an object (in degrees in the range 0-360) that the roomba is bumping into.
 	Uses the 'bumper' bumper reading (query code 7) and the 'l_bumper' light bumper reading (query code 45). Should at least be accurate to a range of 20 degrees
 	'''
+'''
 def BumpAngle(bumper, l_bumper):
 	if bumper == 1 or bumper == 3: # If bumped on right or center...
 		if l_bumper == 23 or l_bumper == 15 or (l_bumper == 20 and bumper == 3): # If (L, FL, CL, FR) or (FL) or (CL, FR, center)
@@ -67,7 +68,31 @@ def BumpAngle(bumper, l_bumper):
 			return 0
 	else:
 		return None
+	'''
 
+def BumpAngle(bumper,l_bumper)
+	for i in range(6) #For all the possible binary digits that represent light bumpers being activated...
+		if l_bumper & math.pow(2,i) == math.pow(2,i): #If the light bumper value indicates that the "i" light bumper is being triggered...
+			l_bumper_list[i] = True # The placeholder boolean for that light bumper is set to true
+		else: # If the "i" light bumper is not being triggered...
+			l_bumper_list[i] = False # The placeholder boolean is set to false
+	[L,FL,CL,CR,FR,R] = l_bumper_list # Sets the booleans to be used in conditionals to their own variables for easy reference
+	if bumper == 3: # If roomba detects a bump in the center...
+		return 0
+	if bumper == 1: # If the roomba detects a bump on the right...
+		if R: # If the far right light bumper is triggered at all...
+			return 70
+		elif not CR: # If the center right light bumper is not triggered at all...
+			return 20
+		else:
+			return 45
+	if bumper == 2: # If roomba detects a bump on the left...
+		if not (L or FL or CL or CR): # If any of the left side or center right light bumpers are not triggered...
+			return -70
+		elif CR: # If the center right light bumper is triggered...
+			return -20
+		else: 
+			return -45
 ## -- Code Starts Here -- ##
 # Setup Code #
 GPIO.setmode(GPIO.BCM) # Use BCM pin numbering for GPIO
