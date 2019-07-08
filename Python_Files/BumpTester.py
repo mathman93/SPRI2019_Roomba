@@ -77,6 +77,7 @@ def BumpAngle(bumper,l_bumper):
 			l_bumper_list.append(True) # The placeholder boolean for that light bumper is set to true
 		else: # If the "i" light bumper is not being triggered...
 			l_bumper_list.append(False) # The placeholder boolean is set to false
+	print(l_bumper_list)
 	[L,FL,CL,CR,FR,R] = l_bumper_list # Sets the booleans to be used in conditionals to their own variables for easy reference
 	if bumper == 3: # If roomba detects a bump in the center...
 		return 0
