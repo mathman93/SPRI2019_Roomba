@@ -53,6 +53,16 @@ class GridWorld:
 			self.edges[p].remove(xy)
 		self.points.remove(xy)
 		self.walls.append(xy)
+	def addEdgeToWorld(self,point1,point2):
+		if point1 in self.points and point2 in self.points:
+			ls1 = self.edges[point1]
+			ls1.append(point2)
+			self.edges[point1] = ls1
+			ls2 = self.edges[point2]
+			ls2.append(point1)
+			self.edges[point2] = ls2
+		else:
+			print("Points not in world")
 
 def distance(p1,p2):
 	dist = math.sqrt((p2[0]-p1[0])**2+(p2[1]-p1[1])**2)
