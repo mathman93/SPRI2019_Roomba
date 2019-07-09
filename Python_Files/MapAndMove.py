@@ -394,6 +394,7 @@ while True:
                         f = -100
                         s = 0
                     elif time.time() - bump_time < 2.5: # If done backing up...
+                        current_point = (x_pos_int,y_pos_int)
                         bump_break = True # Validates that the roomba has broken out of the loop
                         new_points[0] = (x_pos_int,y_pos_int) # Current point after backing up from wall
                         np1x = int(x_pos_int + (350 * math.cos(theta+wall_dir+(math.pi/2)))) # X position of point to right of roomba
