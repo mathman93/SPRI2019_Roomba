@@ -474,6 +474,7 @@ while True:
                             break
                     if point_check == True:
                         MyWorld.addEdgeToWorld(p1,p2)
+                        print("Made an edge")
         for point in MyWorld.edges.keys():
             value = MyWorld.edges[point]
             print("{0}:{1}".format(point,value))
