@@ -461,7 +461,7 @@ while True:
                 if distance(p1,wall) < 200:
                     point_check = False
                     break
-            if boolean == True:
+            if point_check == True:
                 new_list.append(p1)
                 MyWorld.edges[p1]= []
         for p1 in new_list: # Check if any of the cleared points from the last loop can be moved to
