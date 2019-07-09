@@ -69,22 +69,22 @@ class GridWorld:
 		self.walls.append(xy)
 	def addEdgeToWorld(self,point1,point2): # Adds an edge from the world between two given tuple coordinate points
 		if point1 in self.points and point2 in self.points:
-			ls1 = self.edges{point1}
+			ls1 = self.edges[point1]
 			ls1.append(point2)
-			self.edges{point1} = ls1
-			ls2 = self.edges{point2}
+			self.edges[point1] = ls1
+			ls2 = self.edges[point2]
 			ls2.append(point1)
-			self.edges{point2} = ls2
+			self.edges[point2] = ls2
 		else:
 			print("Point is not in world")
 	def removeEdgeFromWorld(self,point1,point2): # Removes an edge from the world between two given tuple coordinate points
 		if point1 in self.points and point2 in self.points:
-			p1 = self.edges{point1}
+			p1 = self.edges[point1]
 			p1.remove(point2)
-			self.edges{point1} = p1
-			p2 = self.edges{point2}
+			self.edges[point1] = p1
+			p2 = self.edges[point2]
 			p2.remove(point1)
-			self.edges{point2} = p2
+			self.edges[point2] = p2
 		else:
 			print("Point is not in world")
 
