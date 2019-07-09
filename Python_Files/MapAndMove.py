@@ -487,6 +487,9 @@ while True:
             print("{0}:{1}".format(point,value))
         path = A_star(current_point,goal,MyWorld) # Generate a new path with updated walls, points, and edges
     else:
+        print("World Points: {0}".format(MyWorld.points))
+        print("World Edges: {0}".format(MyWorld.edges))
+        print("World Walls: {0}".format(MyWorld.walls))
         start = goal
         while True: #Loop that asks for initial x and y coordinates
             try:
