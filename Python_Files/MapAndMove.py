@@ -381,11 +381,12 @@ while True:
                     # Checks if the roomba is bumping into something, and if so, activates wall detection protocol
                     if(bump%4) > 0: # If the roomba bumps into something...
                         bump_count += 1 # Updates the amount of times the bumpers have detected a bump
-                        l_bump_current = l_bump # Keeps track of what the light bumper detected when the roomba bumped
+                        wall_dir = BumpAngle(bump,l_bump) # Keeps track of what the light bumper detected when the roomba bumped
+                        print('Bump Angle: {0:.4f}'.format(wall_dir))
                         if bump_count < 2:# If first bump in the cycle...
                             MyWorld.removeEdgeFromWorld(start,goal) # Remove the edge from the previous starting point to the goal
-                            x_wall = int(x_pos_int + (175*math.cos(theta + BumpAngle(bump,l_bump_current)))) # Calculates x position of wall
-                            y_wall = int(y_pos_int + (175*math.sin(theta + BumpAngle(bump,l_bump_current)))) # Calculates y position of wall
+                            x_wall = int(x_pos_int + (175*math.cos(theta + wall_dir))) # Calculates x position of wall
+                            y_wall = int(y_pos_int + (175*math.sin(theta + wall_dir))) # Calculates y position of wall
                             MyWorld.walls.append((x_wall,y_wall)) # Adds the coordinate position of the wall to the list of walls
                         bump_time = time.time() #Sets up timer that tells how long to back up
 
@@ -395,11 +396,11 @@ while True:
                     elif time.time() - bump_time < 2.5: # If done backing up...
                         bump_break = True # Validates that the roomba has broken out of the loop
                         new_points[0] = (x_pos_int,y_pos_int) # Current point after backing up from wall
-                        np1x = int(x_pos_int + (350 * math.cos(theta+BumpAngle(bump,l_bump_current)+90))) # X position of point to right of roomba
-                        np1y = int(y_pos_int + (350 * math.sin(theta+BumpAngle(bump,l_bump_current)+90))) # Y position of point to right of roomba
+                        np1x = int(x_pos_int + (350 * math.cos(theta+wall_dir+(math.pi/2)))) # X position of point to right of roomba
+                        np1y = int(y_pos_int + (350 * math.sin(theta+wall_dir+(math.pi/2)))) # Y position of point to right of roomba
                         new_points[1] = (np1x,np1y)
-                        np2x = int(x_pos_int + (350 * math.cos(theta+BumpAngle(bump,l_bump_current)-90))) # X position of point to left of roomba
-                        np2y = int(y_pos_int + (350 * math.sin(theta+BumpAngle(bump,l_bump_current)-90))) # Y position of point to left of roomba
+                        np2x = int(x_pos_int + (350 * math.cos(theta+wall_dir-(math.pi/2)))) # X position of point to left of roomba
+                        np2y = int(y_pos_int + (350 * math.sin(theta+wall_dir-(math.pi/2)))) # Y position of point to left of roomba
                         new_points[2] = (np2x,np2y)
                         break
 
