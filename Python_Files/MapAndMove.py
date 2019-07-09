@@ -98,8 +98,8 @@ def distance(p1,p2):
 def makeworld(start,goal):
 	# Call the class gridworld
 	MyWorld = GridWorld()
-	MyWorld.append(start)
-	MyWorld.append(goal)
+	MyWorld.points.append(start)
+	MyWorld.points.append(goal)
 	MyWorld.addEdgeToWorld(start,goal)
 	return MyWorld
 '''
