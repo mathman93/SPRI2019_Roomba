@@ -1,6 +1,7 @@
-''' Mapping.py
-Purpose: Display a virtual map
-Last Modified: 7/1/2019
+''' MapAndMove.py
+Purpose: Draws a virtual map with the origin and the coordinates given, and moves from the start to its goal. Also adds points that it bumps into to the map as walls
+	 that it will attempt to move around to get to the goal, and keep the walls in memory for its movement in the future
+Last Modified: 7/9/2019
 '''
 
 ## Import libraries ##
@@ -40,7 +41,6 @@ class PriorityQueue:
     def get(self):
         return heapq.heappop(self.elements)[1]
 
-
 # defines a world, finds the neighbors of certain points, and the location of thos points
 class GridWorld:
 	def __init__(self):
@@ -65,6 +65,16 @@ class GridWorld:
 			self.edges[p].remove(xy)
 		self.points.remove(xy)
 		self.walls.append(xy)
+	def addEdgeToWorld(self,point1,point2):
+		if point1 in self.points and point2 in self.points:
+			ls1 = self.edges[point1]
+			ls1.append(point2)
+			self.edges[point1] = ls1
+			ls2 = self.edges[point2]
+			ls2.append(point1)
+			self.edges[point2] = ls2
+		else:
+			print("Points not in world")
 
 # Calculates euclidian distance
 def distance(p1,p2):
@@ -127,6 +137,7 @@ def A_star(start,goal,MyWorld):
 		path.append(current)
 		current=came_from[current]
 
+	path.append(start)
 	path.reverse()
 	return path
 
@@ -143,6 +154,67 @@ def angle_cost(previous,current,next): # Calculates a cost used to determine the
 			theta_d += 2*math.pi
 		return abs(theta_d)
 
+def CanMakeEdge(start,goal,wall):
+	x1 = start[0]
+	x2 = goal[0]
+	y1 = start[1]
+	y2 = goal[1]
+	xc = wall[0]
+	yc = wall[1]
+
+
+	if y1 == y2:
+		x=xc
+		y=y1
+		outside = (x<x1 and x<x2) or (x>x1 and x>x2)
+	elif x1==x2:
+		x = x1
+		y = yc
+		outside = (y<y1 and y<y2) or (y>y1 and y>y2)
+	else:
+		m=(x2-x1)/(y2-y1)
+		b1 = x1 - m*y1
+		b2 = xc + (yc/mc)
+		y = (b2-b1)/(m+(1/m))
+		x = m*y+b1
+		outside = (x<x1 and x<x2) or (x>x1 and x>x2)
+	print(x)
+	print(y)
+	if outside:
+		return True
+	elif distance((x,y),(xc,yc))>200:
+		return True
+	else:
+		return False
+
+''' Function that returns the angle of an object (in degrees in the range 0-360) that the roomba is bumping into.
+    Uses the 'bumper' bumper reading (query code 7) and the 'l_bumper' light bumper reading (query code 45). Should at least be accurate to a range of 20 degrees
+	'''
+def BumpAngle(bumper,l_bumper):
+	l_bumper_list = []
+	for i in range(6): #For all the possible binary digits that represent light bumpers being activated...
+		if l_bumper & pow(2,i) == pow(2,i): #If the light bumper value indicates that the "i" light bumper is being triggered...
+			l_bumper_list.append(True) # The placeholder boolean for that light bumper is set to true
+		else: # If the "i" light bumper is not being triggered...
+			l_bumper_list.append(False) # The placeholder boolean is set to false
+	print(l_bumper_list)
+	[L,FL,CL,CR,FR,R] = l_bumper_list # Sets the booleans to be used in conditionals to their own variables for easy reference
+	if bumper == 3: # If roomba detects a bump in the center...
+		return 0
+	if bumper == 1: # If the roomba detects a bump on the right...
+		if not (CL or CR or FR): # If the center two or front right light bumpers are not triggered at all...
+			return math.radians(70)
+		elif CL: # If the center left light bumper is triggered...
+			return math.radians(20)
+		else:
+			return math.radians(45)
+	if bumper == 2: # If roomba detects a bump on the left...
+		if not (L or FL or CL or CR): # If any of the left side or center right light bumpers are not triggered...
+			return math.radians(-70)
+		elif CR: # If the center right light bumper is triggered...
+			return math.radians(-20)
+		else: 
+			return math.radians(-45)
 ## -- Code Starts Here -- ##
 # Setup Code #
 GPIO.setmode(GPIO.BCM) # Use BCM pin numbering for GPIO

@@ -1,6 +1,6 @@
 ''' Mapping.py
 Purpose: Display a virtual map
-Last Modified: 7/1/2019
+Last Modified: 7/8/2019
 '''
 
 ## Import libraries ##
