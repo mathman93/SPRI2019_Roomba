@@ -27,7 +27,8 @@ def DisplayDateTime():
 	date_time = time.strftime("%B %d, %Y, %H:%M:%S", time.gmtime())
 	print("Program run: ", date_time)
 
-# Queue that allows for elements with a higher priority (lower priority value) to be put closer to the front of the line
+''' Queue that allows for elements with a higher priority (lower priority value) to be put closer to the front of the line
+	'''
 class PriorityQueue:
     def __init__(self):
         self.elements = []
@@ -41,7 +42,8 @@ class PriorityQueue:
     def get(self):
         return heapq.heappop(self.elements)[1]
 
-# defines a world, finds the neighbors of certain points, and the location of thos points
+''' Defines a world, finds the neighbors of certain points, and the location of thos points
+	'''
 class GridWorld:
 	def __init__(self):
 		# Points that can connect to other points in the world
@@ -65,7 +67,7 @@ class GridWorld:
 			self.edges[p].remove(xy)
 		self.points.remove(xy)
 		self.walls.append(xy)
-	def addEdgeToWorld(self,point1,point2):
+	def addEdgeToWorld(self,point1,point2): # Adds an edge from the world between two given tuple coordinate points
 		if point1 in self.points and point2 in self.points:
 			ls1 = self.edges[point1]
 			ls1.append(point2)
@@ -74,16 +76,33 @@ class GridWorld:
 			ls2.append(point1)
 			self.edges[point2] = ls2
 		else:
-			print("Points not in world")
+			print("Point is not in world")
+	def removeEdgeFromWorld(self,point1,point2) # Removes an edge from the world between two given tuple coordinate points
+		if point1 in self.points and point2 in self.points:
+			p1 = self.edges[point1]
+			p1.remove(point2)
+			self.edges[point1] = p1
+			p2 = self.edges[point2]
+			p2.remove(point1)
+			self.edges[point2] = p2
+		else:
+			print("Point is not in world")
 
-# Calculates euclidian distance
+''' Calculates euclidian distance between two given tuple coordinate points
+	'''
 def distance(p1,p2):
 	return math.sqrt((p2[0]-p1[0])**2+(p2[1]-p1[1])**2)
 
-# Creates a grid world with given x and y parameters
-def makeworld(x_range,y_range):
+''' Creates a grid world with the two given "start" and "goal" locations
+	'''
+def makeworld(start,goal):
 	# Call the class gridworld
 	MyWorld = GridWorld()
+	MyWorld.append(start)
+	MyWorld.append(goal)
+	MyWorld.addEdgeToWorld(start,goal)
+	return MyWorld
+'''
 	# Create points that exist in the world
 	for x in range(x_range):
 		for y in range(y_range):
@@ -102,8 +121,10 @@ def makeworld(x_range,y_range):
 		# Update points that are connect by edges
 		MyWorld.edges[point] = group
 	return MyWorld
+	'''
 
-# Uses A* method of pathfinding to find best path the fastest
+''' Uses A* method of pathfinding to find best path the fastest between a given start and goal on the given plane "MyWorld"
+	'''
 def A_star(start,goal,MyWorld):
 	# frontier of points that havent been searched
 	frontier = PriorityQueue()
@@ -141,7 +162,9 @@ def A_star(start,goal,MyWorld):
 	path.reverse()
 	return path
 
-def angle_cost(previous,current,next): # Calculates a cost used to determine the past path in regards to how the Roomba rotates
+''' Calculates a cost used to determine the past path in regards to how the Roomba rotates according to its previous, current, and next locations in its path
+	'''
+def angle_cost(previous,current,next):
 	if previous == None: # If first movement...
 		return 0
 	else:
@@ -154,6 +177,8 @@ def angle_cost(previous,current,next): # Calculates a cost used to determine the
 			theta_d += 2*math.pi
 		return abs(theta_d)
 
+''' Finds if it is possible for a path to be formed without intersecting a circle drawn around a given wall point
+	'''
 def CanMakeEdge(start,goal,wall):
 	x1 = start[0]
 	x2 = goal[0]
@@ -188,7 +213,7 @@ def CanMakeEdge(start,goal,wall):
 		return False
 
 ''' Function that returns the angle of an object (in degrees in the range 0-360) that the roomba is bumping into.
-    Uses the 'bumper' bumper reading (query code 7) and the 'l_bumper' light bumper reading (query code 45). Should at least be accurate to a range of 20 degrees
+    Uses the 'bumper' bumper reading (query code 7) and the 'l_bumper' light bumper reading (query code 45), returns angles in range of -70,-45,-20,0,20,45,70
 	'''
 def BumpAngle(bumper,l_bumper):
 	l_bumper_list = []
@@ -261,6 +286,9 @@ distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
 data_time = time.time()
 bump_mode = False # Used to tell whether or not the roomba has bumped into something and is supposed to be "tracking"
 bump_code = 0 # Used to distinguish if the right, left, or center bumpers are being triggered
+bump_count = 0 # Keeps track of how many times the bumper has detected a bump
+new_points = [0,0,0] # Initializes list of new points to be used to recalculated path after bumping into object
+new_list = [] # List of points viable for the roomba to move to after bumping into an object
 
 while True: #Loop that asks for initial x and y coordinates
 	try:
@@ -271,11 +299,11 @@ while True: #Loop that asks for initial x and y coordinates
 		print("Please input a number")
 		continue
 
-y_position = 150 # Current position on the y-axis
-x_position = 150 # Current position on the x-axis
+y_position = 0 # Current position on the y-axis
+x_position = 0 # Current position on the x-axis
 start = (0,0) # Starting position in the MyWorld grid
 goal = (x_final,y_final) # Final goal
-MyWorld = makeworld(12,6) # Creates grid world for the roomba to move in
+MyWorld = makeworld(start,goal) # Creates a grid world for the roomba to move in with two points, the start and goal, and draws a line between them
 path = A_star(start,goal,MyWorld) # Creates the optimal pathway between the start and goal
 current_point = start # Saves grid coordinate that the roomba just came from
 bump_break = False # Checks if the roomba has bumped into something and broken out of the loop
@@ -292,18 +320,18 @@ print(path)
 
 while True:
 	for point in path:
-		current_goal = MyWorld.Location(point)
+		current_goal = point
 		distance_to_end = math.sqrt((current_goal[0]-x_position)**2 +(current_goal[1]-y_position)**2) # Distance of straight line between where the roomba is and where the end point is
 		theta_initial = math.atan2((current_goal[1]-y_position),(current_goal[0]-x_position)) # Angle of the line between the x-axis and the initial distance to end line
 		theta_d = theta_initial-theta # Rotation needed from current heading to face goal
 		print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}".format(time.time()-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d))
-		Roomba.StartQueryStream(7,43,44) # Start getting bumper values
+		Roomba.StartQueryStream(7,43,44,45) # Start getting bumper values
 		try:
 			while distance_to_end > 3:
 				if Roomba.Available()>0:
 					data_time2 = time.time()
 					# Get bump value, then get left and right encoder values and find the change in each
-					[bump,left_encoder, right_encoder] = Roomba.ReadQueryStream(7,43,44)
+					[bump,left_encoder, right_encoder, l_bump] = Roomba.ReadQueryStream(7,43,44,45)
 					delta_l = left_encoder-left_start
 					if delta_l < -1*(2**15): #Checks if the encoder values have rolled over, and if so, subtracts/adds accordingly to assure normal delta values
 						delta_l += (2**16)
@@ -329,9 +357,11 @@ while True:
 					else:
 						delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)						
 
-					# Find new x and y position
+					# Find new x and y position, and their integer versions
 					x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 					y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
+					x_pos_int = int(x_position)
+					y_pos_int = int(y_position)
 					# Find distance to end and theta_initial
 					distance_to_end = math.sqrt((current_goal[0]-x_position)**2 +(current_goal[1]-y_position)**2)
 
@@ -348,80 +378,29 @@ while True:
 
 					# Checks if the roomba is bumping into something, and if so, activates wall detection protocol
 					if(bump%4) > 0: # If the roomba bumps into something...
+						bump_count += 1 # Updates the amount of times the bumpers have detected a bump
+						l_bump_current = l_bump # Keeps track of what the light bumper detected when the roomba bumped
+						if bump_count < 2:# If first bump in the cycle...
+							MyWorld.removeEdgeFromWorld(start,goal) # Remove the edge from the previous starting point to the goal
+							x_wall = int(x_pos_int + (175*math.cos(theta + BumpAngle(bump,l_bump_current)))) # Calculates x position of wall
+							y_wall = int(y_pos_int + (175*math.sin(theta + BumpAngle(bump,l_bump_current)))) # Calculates y position of wall
+							MyWorld.walls.append((x_wall,y_wall)) # Adds the coordinate position of the wall to the list of walls
 						bump_time = time.time() #Sets up timer that tells how long to back up
 
 					if time.time() - bump_time < 2.0: # If has bumped into something less than 2 seconds ago, back up
 						f = -100
 						s = 0
 					elif time.time() - bump_time < 2.5: # If done backing up...
-						bump_break = True
+						bump_break = True # Validates that the roomba has broken out of the loop
+						new_points[0] = (x_pos_int,y_pos_int) # Current point after backing up from wall
+						np1x = int(x_pos_int + (350 * math.cos(theta+BumpAngle(bump,l_bump_current)+90))) # X position of point to right of roomba
+						np1y = int(y_pos_int + (350 * math.sin(theta+BumpAngle(bump,l_bump_current)+90))) # Y position of point to right of roomba
+						new_points[1] = (np1x,np1y)
+						np2x = int(x_pos_int + (350 * math.cos(theta+BumpAngle(bump,l_bump_current)-90))) # X position of point to left of roomba
+						np2y = int(y_pos_int + (350 * math.sin(theta+BumpAngle(bump,l_bump_current)-90))) # Y position of point to left of roomba
+						new_points[2] = (np2x,np2y)
 						break
 
-						'''
-					# Checks if the roomba is currently bumping into something; if so, sets up bump mode or corner mode
-					if(bump%4) > 0: # If the roomba bumps into something...
-						bump_time = time.time() #Sets up timer
-						bump_mode = True # Keeps in memory that the roomba will now try and track the object it bumped into
-						bump_count += 1 # Increases whenever the roomba bumps into something, increases by about ten whenever a bump occurs
-						if bump_count < 15: # If it is the first bump...
-							bump_code = (bump%4) # Remembers if left/right/center bump for the current object/wall
-						theta_threshold = theta # Remembers what heading was when bumped
-					# Once the roomba has gone in a certain direction for long enough, sets the roomba to try the otehr direction
-					if bump_count > 100: # When the roomba has bumped in one direction for more than about ten times...
-						if time.time() - bump_time < 5.0: # For five seconds...
-							f = -25 # Go backwards
-							if bump_code == 1: # If bump right...
-								s = 75 # Rotate clockwise
-							if bump_code == 2 or bump_code == 3: # If bump left or center...
-								s= -75 # Rotate counterclockwise
-						else: # After five seconds is up...
-							bump_count = 0 # Reset bump count
-					# Tells the roomba to move backwards and rotate sharply on its first bump
-					elif bump_mode and time.time() - bump_time < backup_time and bump_count < 15: # If hasn't backed up for long enough and it's the first bump...
-						f = -50 #Back up
-						if bump_code == 1: # If bump right...
-							s = -150 #Spin counterclockwise
-						if bump_code == 2 or bump_code == 3: # If bump left or center...
-							s = 150 #Spin clockwise
-					# Tells the roomba to move backwards and rotate less sharply on bumps after the first 
-					elif bump_mode and time.time() - bump_time < backup_time: # If hasn't backed up for long enough and is not the first bump...
-						f = -50 # Back up
-						if bump_code == 1: # If bump right...
-							s = -50 # Spin counterclockwise slower
-						if bump_code == 2 or bump_code == 3: # If bump left or center...
-							s = 50 # Spin clockwise slower
-					# Tells the roomba to move for a short period of time after the bump in "wall mode"
-					elif bump_mode and time.time() - bump_time < (backup_time + corner_time): # If not having to back up but still has bumped into something before...
-						# If the roomba has turned more than 90 degrees, or the heading crossed over theta_initial...
-						if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2) or (theta > theta_initial and old_theta < theta_initial) or (theta < theta_initial and old_theta > theta_initial):
-							bump_mode = False # Exit bump mode, and re enter "goal mode"
-						else:
-							f = 100 # Go forward
-							if bump_code == 1: # If bump right...
-								s = 15 # Turn clockwise
-							if bump_code == 2 or bump_code == 3: # If bump left or center...
-								s = -15 # Turn counterclockwise
-					elif bump_mode and time.time() - bump_time < (backup_time + (corner_time * 1.5)): # If not having to back up and bumped into something, but been a while...
-						# If the roomba has turned more than 90 degrees, or the heading crossed over theta_initial...
-						if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2) or (theta > theta_initial and old_theta < theta_initial) or (theta < theta_initial and old_theta > theta_initial):
-							bump_mode = False
-						else:
-							f = 100 # Go forward
-							if bump_code == 1: # If bump right...
-								s = 50 # Turn more clockwise
-							if bump_code == 2 or bump_code == 3: # If bump left or center...
-								s = -50 # Turn more counterclockwise
-					elif bump_mode:
-					# If the roomba has turned more than 90 degrees, or the heading crossed over theta_initial...
-						if theta - theta_threshold > (math.pi/2) or theta - theta_threshold < (math.pi/-2) or (theta > theta_initial and old_theta < theta_initial) or (theta < theta_initial and old_theta > theta_initial):
-							bump_mode = False
-						else:
-							f = 100 # Go forward
-							if bump_code == 1: # If bump right...
-								s = 100 # Turn hard clockwise
-							if bump_code == 2 or bump_code == 3: # If bump left or center...
-								s = -100 # Turn hard counterclockwise
-					'''
 					else: # If haven't bumped into anything yet...
 						if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 radians...
 							s_set = 100 # Spin faster
@@ -464,12 +443,34 @@ while True:
 			current_point = point
 		except KeyboardInterrupt:
 			break
-	if bump_break:
+	if bump_break: # If the roomba has bumped into something and broken out of the loop...
+        # Reset variables responsible for bumping operations
 		bump_break = False
 		bump_time = time.time() - 3.0
-		MyWorld = removePointFromWorld(point,MyWorld)
-		print("Removing: {0}".format(point))
-		path = A_star(current_point,goal,MyWorld)
+        bump_count = 0
+		for p1 in new_points: # Check if the current point, point to the left, or point to the right are not too close to another point or too close to a current wall
+			point_check = True
+			for p2 in MyWorld.points:
+				if distance(p1,p2) < 10:
+					point_check = False
+					break
+			for wall in MyWorld.walls:
+				if distance(p1,wall) < 200:
+					point_check = False
+					break
+			if boolean == True:
+				new_list.append(p1)
+		for p1 in new_list: # Check if any of the cleared points from the last loop can be moved to
+			for p2 in MyWorld.points:
+				point_check = True
+				if p2 != p1:
+					for wall in MyWorld.walls:
+						if CanMakeEdge(p1,p2,wall) == False:
+							point_check = False
+							break
+					if point_check == True:
+						addEdgeToWorld(p1,p2)
+		path = A_star(current_point,goal,MyWorld) # Generate a new path with updated walls, points, and edges
 	else:
 		start = goal
 		while True: #Loop that asks for initial x and y coordinates
