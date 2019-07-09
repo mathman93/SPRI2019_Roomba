@@ -473,7 +473,7 @@ while True:
                             point_check = False
                             break
                     if point_check == True:
-                        addEdgeToWorld(p1,p2)
+                        MyWorld.addEdgeToWorld(p1,p2)
         path = A_star(current_point,goal,MyWorld) # Generate a new path with updated walls, points, and edges
     else:
         start = goal
