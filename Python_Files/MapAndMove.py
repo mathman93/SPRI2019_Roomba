@@ -447,7 +447,7 @@ while True:
         # Reset variables responsible for bumping operations
 		bump_break = False
 		bump_time = time.time() - 3.0
-        bump_count = 0
+		bump_count = 0
 		for p1 in new_points: # Check if the current point, point to the left, or point to the right are not too close to another point or too close to a current wall
 			point_check = True
 			for p2 in MyWorld.points:
