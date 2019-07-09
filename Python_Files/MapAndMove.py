@@ -291,7 +291,6 @@ bump_mode = False # Used to tell whether or not the roomba has bumped into somet
 bump_code = 0 # Used to distinguish if the right, left, or center bumpers are being triggered
 bump_count = 0 # Keeps track of how many times the bumper has detected a bump
 new_points = [0,0,0] # Initializes list of new points to be used to recalculated path after bumping into object
-new_list = [] # List of points viable for the roomba to move to after bumping into an object
 
 while True: #Loop that asks for initial x and y coordinates
     try:
@@ -397,15 +396,12 @@ while True:
                     elif time.time() - bump_time < 2.5: # If done backing up...
                         bump_break = True # Validates that the roomba has broken out of the loop
                         new_points[0] = (x_pos_int,y_pos_int) # Current point after backing up from wall
-                        MyWorld.points.append(new_points[0])
                         np1x = int(x_pos_int + (350 * math.cos(theta+wall_dir+(math.pi/2)))) # X position of point to right of roomba
                         np1y = int(y_pos_int + (350 * math.sin(theta+wall_dir+(math.pi/2)))) # Y position of point to right of roomba
                         new_points[1] = (np1x,np1y)
-                        MyWorld.points.append(new_points[1])
                         np2x = int(x_pos_int + (350 * math.cos(theta+wall_dir-(math.pi/2)))) # X position of point to left of roomba
                         np2y = int(y_pos_int + (350 * math.sin(theta+wall_dir-(math.pi/2)))) # Y position of point to left of roomba
                         new_points[2] = (np2x,np2y)
-                        MyWorld.points.append(new_points[2])
                         break
 
                     else: # If haven't bumped into anything yet...
@@ -455,6 +451,7 @@ while True:
         bump_break = False
         bump_time = time.time() - 3.0
         bump_count = 0
+        new_list = [] # List of points viable for the roomba to move to after bumping into an object
         for p1 in new_points: # Check if the current point, point to the left, or point to the right are not too close to another point or too close to a current wall
             point_check = True
             for p2 in MyWorld.points:
@@ -467,7 +464,9 @@ while True:
                     break
             if point_check == True:
                 new_list.append(p1)
-                MyWorld.edges[p1]= []
+        for point in new_list:
+            MyWorld.points.append(point)
+            MyWorld.edges[point[ = []
         print("Points: {0}".format(MyWorld.points))
         print("new_list: {0}".format(new_list))
         for p1 in new_list: # Check if any of the cleared points from the last loop can be moved to
