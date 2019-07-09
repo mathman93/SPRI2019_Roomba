@@ -201,7 +201,7 @@ def CanMakeEdge(start,goal,wall):
     else:
         m=(x2-x1)/(y2-y1)
         b1 = x1 - m*y1
-        b2 = xc + (yc/mc)
+        b2 = xc + (yc/m)
         y = (b2-b1)/(m+(1/m))
         x = m*y+b1
         outside = (x<x1 and x<x2) or (x>x1 and x>x2)
