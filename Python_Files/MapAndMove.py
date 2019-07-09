@@ -469,6 +469,7 @@ while True:
                 new_list.append(p1)
                 MyWorld.edges[p1]= []
         print("Points: {0}".format(MyWorld.points))
+        print("new_list: {0}".format(new_list))
         for p1 in new_list: # Check if any of the cleared points from the last loop can be moved to
             for p2 in MyWorld.points:
                 point_check = True
