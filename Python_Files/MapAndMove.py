@@ -507,7 +507,7 @@ while True:
                 pass_for_new_coords = False
                 if goal not in MyWorld.points:
                     goal_check = True
-                    for wall in walls:
+                    for wall in MyWorld.walls:
                         if distance(goal,wall) < 200:
                             print("Too close to a wall")
                             goal_check = False
@@ -518,7 +518,7 @@ while True:
                         for p in MyWorld.points:
                             goal_check = True
                             if p != goal:
-                                for wall in walls:
+                                for wall in MyWorld.walls:
                                     if CanMakeEdge(p,goal,wall) == False:
                                         goal_check = False
                                         break
