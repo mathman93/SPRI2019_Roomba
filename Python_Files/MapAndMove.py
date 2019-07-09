@@ -460,7 +460,7 @@ while True:
                 if distance(p1,p2) < 10:
                     point_check = False
                     break
-            '''
+                '''
             for wall in MyWorld.walls:
                 if distance(p1,wall) < 200:
                     point_check = False
