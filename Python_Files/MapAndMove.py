@@ -392,7 +392,7 @@ while True:
                         bump_time = time.time() #Sets up timer that tells how long to back up
 
                     if time.time() - bump_time < 2.0: # If has bumped into something less than 2 seconds ago, back up
-                        f = -100
+                        f = -200
                         s = 0
                     elif time.time() - bump_time < 2.5: # If done backing up...
                         bump_break = True # Validates that the roomba has broken out of the loop
