@@ -68,8 +68,6 @@ class GridWorld:
         self.points.remove(xy)
         self.walls.append(xy)
     def addEdgeToWorld(self,point1,point2): # Adds an edge from the world between two given tuple coordinate points
-        self.points.append(point1)
-        self.points.append(point2)
         print("{0},{1}".format(point1,point2))
         if point1 in self.points and point2 in self.points:
             ls1 = self.edges[point1]
@@ -467,6 +465,7 @@ while True:
             if point_check == True:
                 new_list.append(p1)
                 MyWorld.edges[p1]= []
+        print("Points: {0}".format(MyWorld.points))
         for p1 in new_list: # Check if any of the cleared points from the last loop can be moved to
             for p2 in MyWorld.points:
                 point_check = True
@@ -478,6 +477,7 @@ while True:
                     if point_check == True:
                         MyWorld.addEdgeToWorld(p1,p2)
                         print("Made an edge")
+            
         for point in MyWorld.edges.keys():
             value = MyWorld.edges[point]
             print("{0}:{1}".format(point,value))
