@@ -474,6 +474,9 @@ while True:
                             break
                     if point_check == True:
                         MyWorld.addEdgeToWorld(p1,p2)
+        for point in MyWorld.edges.keys():
+            value = MyWorld.edges[point]
+            print("{0}:{1}".format(point,value))
         path = A_star(current_point,goal,MyWorld) # Generate a new path with updated walls, points, and edges
     else:
         start = goal
