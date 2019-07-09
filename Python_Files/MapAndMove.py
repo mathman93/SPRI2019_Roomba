@@ -397,12 +397,15 @@ while True:
                     elif time.time() - bump_time < 2.5: # If done backing up...
                         bump_break = True # Validates that the roomba has broken out of the loop
                         new_points[0] = (x_pos_int,y_pos_int) # Current point after backing up from wall
+                        MyWorld.points.append(new_points[0])
                         np1x = int(x_pos_int + (350 * math.cos(theta+wall_dir+(math.pi/2)))) # X position of point to right of roomba
                         np1y = int(y_pos_int + (350 * math.sin(theta+wall_dir+(math.pi/2)))) # Y position of point to right of roomba
                         new_points[1] = (np1x,np1y)
+                        MyWorld.points.append(new_points[1])
                         np2x = int(x_pos_int + (350 * math.cos(theta+wall_dir-(math.pi/2)))) # X position of point to left of roomba
                         np2y = int(y_pos_int + (350 * math.sin(theta+wall_dir-(math.pi/2)))) # Y position of point to left of roomba
                         new_points[2] = (np2x,np2y)
+                        MyWorld.points.append(new_points[2])
                         break
 
                     else: # If haven't bumped into anything yet...
