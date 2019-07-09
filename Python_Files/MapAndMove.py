@@ -455,12 +455,12 @@ while True:
         new_list = [] # List of points viable for the roomba to move to after bumping into an object
         for p1 in new_points: # Check if the current point, point to the left, or point to the right are not too close to another point or too close to a current wall
             point_check = True
-            for p2 in MyWorld.points:
             '''
+            for p2 in MyWorld.points:
                 if distance(p1,p2) < 10:
                     point_check = False
                     break
-                '''
+            '''
             for wall in MyWorld.walls:
                 if distance(p1,wall) < 200:
                     point_check = False
