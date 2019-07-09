@@ -77,7 +77,7 @@ class GridWorld:
 			self.edges[point2] = ls2
 		else:
 			print("Point is not in world")
-	def removeEdgeFromWorld(self,point1,point2) # Removes an edge from the world between two given tuple coordinate points
+	def removeEdgeFromWorld(self,point1,point2): # Removes an edge from the world between two given tuple coordinate points
 		if point1 in self.points and point2 in self.points:
 			p1 = self.edges[point1]
 			p1.remove(point2)
