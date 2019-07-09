@@ -390,7 +390,7 @@ while True:
                             MyWorld.walls.append((x_wall,y_wall)) # Adds the coordinate position of the wall to the list of walls
                             points_to_remove = []
                             for point in MyWorld.points:
-                                if distance(point,(x_wall,y_wall)) < 200
+                                if distance(point,(x_wall,y_wall)) < 200:
                                     points_to_remove.append(point)
                             for p in points_to_remove:
                                 MyWorld.removePointFromWorld(p)
