@@ -503,6 +503,30 @@ while True:
             try:
                 x_final = int(input("X axis coordinate:"))
                 y_final = int(input("Y axis coordinate:"))
+                goal = (x_final,y_final)
+                pass_for_new_coords = False
+                if goal not in MyWorld.points:
+                    goal_check = True
+                    for wall in walls:
+                        if distance(goal,wall) < 200:
+                            print("Too close to a wall")
+                            goal_check = False
+                            break
+                    if goal_check:
+                        MyWorld.edges[goal] = []
+                        MyWorld.points.append(goal)
+                        for p in MyWorld.points:
+                            goal_check = True
+                            if p != goal:
+                                for wall in walls:
+                                    if CanMakeEdge(p,goal,wall) == False:
+                                        goal_check = False
+                                        break
+                                if goal_check:
+                                    MyWorld.addEdgeToWorld(p,goal)
+                                    break
+                    pass
+                
                 break
             except ValueError:
                 print("Please input a number")
