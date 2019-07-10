@@ -1,7 +1,7 @@
 ''' MapAndMove.py
 Purpose: Draws a virtual map with the origin and the coordinates given, and moves from the start to its goal. Also adds points that it bumps into to the map as walls
      that it will attempt to move around to get to the goal, and keep the walls in memory for its movement in the future
-Last Modified: 7/9/2019
+Last Modified: 7/10/2019
 '''
 
 ## Import libraries ##
@@ -389,6 +389,7 @@ while True:
                             y_wall = int(y_pos_int + (200*math.sin(theta + wall_dir))) # Calculates y position of wall
                             MyWorld.walls.append((x_wall,y_wall)) # Adds the coordinate position of the wall to the list of walls
                             points_to_remove = []
+                            # Removes all points too close to new wall
                             for point in MyWorld.points:
                                 if distance(point,(x_wall,y_wall)) < 200:
                                     points_to_remove.append(point)
@@ -489,14 +490,18 @@ while True:
                     if point_check == True:
                         MyWorld.addEdgeToWorld(p1,p2)
                         print("Made an edge")
-            
+        print("Points: {0}".format(MyWorld.points))
+        print("new_list: {0}".format(new_list))
         for point in MyWorld.edges.keys():
             value = MyWorld.edges[point]
             print("{0}:{1}".format(point,value))
+        print("World Walls: {0}".format(MyWorld.walls))
         path = A_star(current_point,goal,MyWorld) # Generate a new path with updated walls, points, and edges
     else:
         print("World Points: {0}".format(MyWorld.points))
-        print("World Edges: {0}".format(MyWorld.edges))
+        for point in MyWorld.edges.keys():
+            value = MyWorld.edges[point]
+            print("{0}:{1}".format(point,value))
         print("World Walls: {0}".format(MyWorld.walls))
         start = goal
         while True: #Loop that asks for initial x and y coordinates
@@ -504,7 +509,6 @@ while True:
                 x_final = int(input("X axis coordinate:"))
                 y_final = int(input("Y axis coordinate:"))
                 goal = (x_final,y_final)
-                pass_for_new_coords = False
                 if goal not in MyWorld.points:
                     goal_check = True
                     for wall in MyWorld.walls:
@@ -525,13 +529,18 @@ while True:
                                 if goal_check:
                                     MyWorld.addEdgeToWorld(p,goal)
                                     break
-                    pass
-                
+                else:
+                    continue
                 break
             except ValueError:
                 print("Please input a number")
                 continue
-        goal = (x_final,y_final)
+        print("Points: {0}".format(MyWorld.points))
+        print("new_list: {0}".format(new_list))
+        for point in MyWorld.edges.keys():
+            value = MyWorld.edges[point]
+            print("{0}:{1}".format(point,value))
+        print("World Walls: {0}".format(MyWorld.walls))
         path = A_star(start,goal,MyWorld)
         print(path)
 
