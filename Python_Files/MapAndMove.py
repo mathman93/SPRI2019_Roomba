@@ -530,8 +530,8 @@ while True:
                                 if goal_check:
                                     MyWorld.addEdgeToWorld(p,goal)
                                     break
-                else:
-                    continue
+                    else:
+                        continue
                 break
             except ValueError:
                 print("Please input a number")
