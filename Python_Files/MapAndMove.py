@@ -66,7 +66,6 @@ class GridWorld:
         for p in neighborlist:
             self.edges[p].remove(xy)
         self.points.remove(xy)
-        self.walls.append(xy)
     def addEdgeToWorld(self,point1,point2): # Adds an edge from the world between two given tuple coordinate points
         print("{0},{1}".format(point1,point2))
         if point1 in self.points and point2 in self.points:
