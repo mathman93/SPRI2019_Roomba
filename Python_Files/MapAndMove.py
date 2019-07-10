@@ -528,7 +528,6 @@ while True:
                                         break
                                 if goal_check:
                                     MyWorld.addEdgeToWorld(p,goal)
-                                    break
                     else:
                         continue
                 break
