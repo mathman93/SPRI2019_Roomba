@@ -389,7 +389,7 @@ while True:
                             y_wall = int(y_pos_int + (200*math.sin(theta + wall_dir))) # Calculates y position of wall
                             MyWorld.walls.append((x_wall,y_wall)) # Adds the coordinate position of the wall to the list of walls
                             points_to_remove = []
-                            print("New Wall Made: {0}".format((x_wall,y_wall))
+                            print("New Wall Made: {0}".format((x_wall,y_wall)))
                             # Removes all points too close to new wall
                             for point in MyWorld.points:
                                 if distance(point,(x_wall,y_wall)) < 200:
