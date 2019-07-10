@@ -326,7 +326,7 @@ while True:
         distance_to_end = math.sqrt((current_goal[0]-x_position)**2 +(current_goal[1]-y_position)**2) # Distance of straight line between where the roomba is and where the end point is
         theta_initial = math.atan2((current_goal[1]-y_position),(current_goal[0]-x_position)) # Angle of the line between the x-axis and the initial distance to end line
         theta_d = theta_initial-theta # Rotation needed from current heading to face goal
-        print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}".format(time.time()-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d))
+        #print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}".format(time.time()-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d))
         Roomba.StartQueryStream(7,43,44,45) # Start getting bumper values
         try:
             while distance_to_end > 3:
@@ -442,7 +442,7 @@ while True:
                         else:
                             f = f_set
                     Roomba.Move(f,s) # Move with given forward and spin values
-                    print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}, bump_count:{8}".format(data_time2-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d,bump_count))
+                    #print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}, bump_count:{8}".format(data_time2-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d,bump_count))
                     left_start = left_encoder
                     right_start = right_encoder
             Roomba.PauseQueryStream() #Pauses the query stream while new coordinates are being input
