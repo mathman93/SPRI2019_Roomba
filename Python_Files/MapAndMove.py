@@ -518,10 +518,10 @@ while True:
         break
 for k in range(2):
     for p in MyWorld.points:
-        file.write("{0}".format(p[k]))
+        file.write("{0}\n".format(p[k]))
 for k in range(2):
     for p in MyWorld.walls:
-        file.write("{0}".format(p[k]))
+        file.write("{0}\n".format(p[k]))
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
 if Roomba.Available()>0:
