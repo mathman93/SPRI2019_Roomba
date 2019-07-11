@@ -179,37 +179,20 @@ def angle_cost(previous,current,next):
             theta_d += 2*math.pi
         return abs(theta_d)
 
-''' Finds if it is possible for a path to be formed without intersecting a circle drawn around a given wall point
+''' Finds if it is possible for a path to be formed without intersecting a circle drawn around a given wall tuple coordinate
     '''
 def CanMakeEdge(start,goal,wall):
-    x1 = start[0]
-    x2 = goal[0]
-    y1 = start[1]
-    y2 = goal[1]
-    xc = wall[0]
-    yc = wall[1]
-
-
-    if y1 == y2:
-        x=xc
-        y=y1
-        outside = (x<x1 and x<x2) or (x>x1 and x>x2)
-    elif x1==x2:
-        x = x1
-        y = yc
-        outside = (y<y1 and y<y2) or (y>y1 and y>y2)
-    else:
-        m=(x2-x1)/(y2-y1)
-        b1 = x1 - m*y1
-        b2 = xc + (yc/m)
-        y = (b2-b1)/(m+(1/m))
-        x = m*y+b1
-        outside = (x<x1 and x<x2) or (x>x1 and x>x2)
-    print(x)
-    print(y)
-    if outside:
+    ax = goal[0] - start[0]
+    ay = goal[1] - start[1]
+    bx = wall[0] - start[0]
+    by = wall[1] - start[1]
+    norm_a = distance(ax,ay)
+    dot_ab = (ax*bx) + (ay*by)
+    b1 = dot_ab / norm_a
+    norm_b = distance(bx,by)
+    if b1 >= norm_a or b1 <= 0:
         return True
-    elif distance((x,y),(xc,yc))>200:
+    elif (norm_b**2) - (b1**2) > (200**2)
         return True
     else:
         return False
