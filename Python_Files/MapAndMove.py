@@ -232,6 +232,13 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 GPIO.output(gled, GPIO.LOW)
 
+# Open a text file for data retrieval
+file_name_input = input("Name for data file: ")
+dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
+file = open(file_name, "w") # Open a text file for storing data
+	# Will overwrite anything that was in the text file previously
+
 start_time = time.time()
 [left_start,right_start]=Roomba.Query(43,44)
 
@@ -284,14 +291,14 @@ print(path)
 #print(MyWorld.Location((5,2)))
 
 while True:
-    for point in path:
-        current_goal = point
-        distance_to_end = math.sqrt((current_goal[0]-x_position)**2 +(current_goal[1]-y_position)**2) # Distance of straight line between where the roomba is and where the end point is
-        theta_initial = math.atan2((current_goal[1]-y_position),(current_goal[0]-x_position)) # Angle of the line between the x-axis and the initial distance to end line
-        theta_d = theta_initial-theta # Rotation needed from current heading to face goal
-        #print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}".format(time.time()-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d))
-        Roomba.StartQueryStream(7,43,44,45) # Start getting bumper values
-        try:
+    try:
+        for point in path:
+            current_goal = point
+            distance_to_end = math.sqrt((current_goal[0]-x_position)**2 +(current_goal[1]-y_position)**2) # Distance of straight line between where the roomba is and where the end point is
+            theta_initial = math.atan2((current_goal[1]-y_position),(current_goal[0]-x_position)) # Angle of the line between the x-axis and the initial distance to end line
+            theta_d = theta_initial-theta # Rotation needed from current heading to face goal
+            #print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}".format(time.time()-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d))
+            Roomba.StartQueryStream(7,43,44,45) # Start getting bumper values
             while distance_to_end > 3:
                 if Roomba.Available()>0:
                     data_time2 = time.time()
@@ -418,104 +425,110 @@ while True:
             if bump_break: # If had to break out of the loop after bumping...
                 break
             current_point = point
-        except KeyboardInterrupt:
-            break
-    if bump_break: # If the roomba has bumped into something and broken out of the loop...
-        # Reset variables responsible for bumping operations
-        bump_break = False
-        bump_time = time.time() - 2.0
-        bump_count = 0
-        new_list = [] # List of points viable for the roomba to move to after bumping into an object
-        for p1 in new_points: # Check if the current point, point to the left, or point to the right are not too close to another point or too close to a current wall
-            point_check = True
-            for p2 in MyWorld.points:
-                if distance(p1,p2) < 10:
-                    point_check = False
-                    break
-            for wall in MyWorld.walls:
-                if distance(p1,wall) < 200:
-                    point_check = False
-                    break
-            if point_check == True:
-                new_list.append(p1)
-        for point in new_list:
-            MyWorld.points.append(point)
-            MyWorld.edges[point] = []
-        print("Points: {0}".format(MyWorld.points))
-        print("new_list: {0}".format(new_list))
-        for p1 in new_list: # Check if any of the cleared points from the last loop can be moved to
-            for p2 in MyWorld.points:
+        if bump_break: # If the roomba has bumped into something and broken out of the loop...
+            # Reset variables responsible for bumping operations
+            bump_break = False
+            bump_time = time.time() - 2.0
+            bump_count = 0
+            new_list = [] # List of points viable for the roomba to move to after bumping into an object
+            for p1 in new_points: # Check if the current point, point to the left, or point to the right are not too close to another point or too close to a current wall
                 point_check = True
-                if p2 != p1:
-                    for wall in MyWorld.walls:
-                        if CanMakeEdge(p1,p2,wall) == False:
-                            point_check = False
-                            break
-                    if point_check == True:
-                        MyWorld.addEdgeToWorld(p1,p2)
-                        print("Made an edge")
-        print("Points: {0}".format(MyWorld.points))
-        print("new_list: {0}".format(new_list))
-        for point in MyWorld.edges.keys():
-            value = MyWorld.edges[point]
-            print("{0}:{1}".format(point,value))
-        print("World Walls: {0}".format(MyWorld.walls))
-        if goal_wall_break: # If the goal was too close to a wall to be reached...
-            goal_wall_break = False
-            goal = current_point # Will immediately be at end of path, and will give new coordinate prompt
-        path = A_star(current_point,goal,MyWorld) # Generate a new path with updated walls, points, and edges
-    else:
-        print("World Points: {0}".format(MyWorld.points))
-        for point in MyWorld.edges.keys():
-            value = MyWorld.edges[point]
-            print("{0}:{1}".format(point,value))
-        print("World Walls: {0}".format(MyWorld.walls))
-        start = current_point
-        while True: #Loop that asks for initial x and y coordinates
-            try:
-                x_final = int(input("X axis coordinate:"))
-                y_final = int(input("Y axis coordinate:"))
-                goal = (x_final,y_final)
-                if goal not in MyWorld.points:
-                    goal_check = True
-                    for wall in MyWorld.walls:
-                        if distance(goal,wall) < 200:
-                            print("Too close to a wall")
-                            goal_check = False
-                            break
-                    if goal_check:
-                        MyWorld.edges[goal] = []
-                        MyWorld.points.append(goal)
-                        for p in MyWorld.points:
-                            goal_check = True
-                            if p != goal:
-                                for wall in MyWorld.walls:
-                                    if CanMakeEdge(p,goal,wall) == False:
-                                        goal_check = False
-                                        break
-                                if goal_check:
-                                    MyWorld.addEdgeToWorld(p,goal)
-                    else:
-                        continue
-                break
-            except ValueError:
-                print("Please input a number")
-                continue
-        print("Points: {0}".format(MyWorld.points))
-        print("new_list: {0}".format(new_list))
-        for point in MyWorld.edges.keys():
-            value = MyWorld.edges[point]
-            print("{0}:{1}".format(point,value))
-        print("World Walls: {0}".format(MyWorld.walls))
-        path = A_star(start,goal,MyWorld)
-        print(path)
-
+                for p2 in MyWorld.points:
+                    if distance(p1,p2) < 10:
+                        point_check = False
+                        break
+                for wall in MyWorld.walls:
+                    if distance(p1,wall) < 200:
+                        point_check = False
+                        break
+                if point_check == True:
+                    new_list.append(p1)
+            for point in new_list:
+                MyWorld.points.append(point)
+                MyWorld.edges[point] = []
+            print("Points: {0}".format(MyWorld.points))
+            print("new_list: {0}".format(new_list))
+            for p1 in new_list: # Check if any of the cleared points from the last loop can be moved to
+                for p2 in MyWorld.points:
+                    point_check = True
+                    if p2 != p1:
+                        for wall in MyWorld.walls:
+                            if CanMakeEdge(p1,p2,wall) == False:
+                                point_check = False
+                                break
+                        if point_check == True:
+                            MyWorld.addEdgeToWorld(p1,p2)
+                            print("Made an edge")
+            print("Points: {0}".format(MyWorld.points))
+            print("new_list: {0}".format(new_list))
+            for point in MyWorld.edges.keys():
+                value = MyWorld.edges[point]
+                print("{0}:{1}".format(point,value))
+            print("World Walls: {0}".format(MyWorld.walls))
+            if goal_wall_break: # If the goal was too close to a wall to be reached...
+                goal_wall_break = False
+                goal = current_point # Will immediately be at end of path, and will give new coordinate prompt
+            path = A_star(current_point,goal,MyWorld) # Generate a new path with updated walls, points, and edges
+        else:
+            print("World Points: {0}".format(MyWorld.points))
+            for point in MyWorld.edges.keys():
+                value = MyWorld.edges[point]
+                print("{0}:{1}".format(point,value))
+            print("World Walls: {0}".format(MyWorld.walls))
+            start = current_point
+            while True: #Loop that asks for initial x and y coordinates
+                try:
+                    x_final = int(input("X axis coordinate:"))
+                    y_final = int(input("Y axis coordinate:"))
+                    goal = (x_final,y_final)
+                    if goal not in MyWorld.points:
+                        goal_check = True
+                        for wall in MyWorld.walls:
+                            if distance(goal,wall) < 200:
+                                print("Too close to a wall")
+                                goal_check = False
+                                break
+                        if goal_check:
+                            MyWorld.edges[goal] = []
+                            MyWorld.points.append(goal)
+                            for p in MyWorld.points:
+                                goal_check = True
+                                if p != goal:
+                                    for wall in MyWorld.walls:
+                                        if CanMakeEdge(p,goal,wall) == False:
+                                            goal_check = False
+                                            break
+                                    if goal_check:
+                                        MyWorld.addEdgeToWorld(p,goal)
+                        else:
+                            continue
+                    break
+                except ValueError:
+                    print("Please input a number")
+                    continue
+            print("Points: {0}".format(MyWorld.points))
+            print("new_list: {0}".format(new_list))
+            for point in MyWorld.edges.keys():
+                value = MyWorld.edges[point]
+                print("{0}:{1}".format(point,value))
+            print("World Walls: {0}".format(MyWorld.walls))
+            path = A_star(start,goal,MyWorld)
+            print(path)
+    except KeyboardInterrupt:
+        break
+for k in range(2)
+    for p in MyWorld.points
+        file.write("{0}".format(p[k]))
+for k in range(2)
+    for p in MyWorld.walls
+        file.write("{0}".format(p[k]))
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
 if Roomba.Available()>0:
     z = Roomba.DirectRead(Roomba.Available())
     print(z)
 time.sleep(0.1)
+file.close() # Close data file
 ## -- Ending Code Starts Here -- ##
 Roomba.ShutDown() # Shutdown Roomba serial connection
 GPIO.cleanup() # Reset GPIO pins for next program
