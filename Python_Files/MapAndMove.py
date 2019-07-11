@@ -186,10 +186,10 @@ def CanMakeEdge(start,goal,wall):
     ay = goal[1] - start[1]
     bx = wall[0] - start[0]
     by = wall[1] - start[1]
-    norm_a = distance(ax,ay)
+    norm_a = math.sqrt((ax**2)+(ay**2))
     dot_ab = (ax*bx) + (ay*by)
     b1 = dot_ab / norm_a
-    norm_b = distance(bx,by)
+    norm_b = math.sqrt((bx**2)+(by**2))
     if b1 >= norm_a or b1 <= 0:
         return True
     elif (norm_b**2) - (b1**2) > (200**2):
