@@ -104,26 +104,6 @@ def makeworld(start,goal):
     MyWorld.edges[goal] = []
     MyWorld.addEdgeToWorld(start,goal)
     return MyWorld
-'''
-    # Create points that exist in the world
-    for x in range(x_range):
-        for y in range(y_range):
-            MyWorld.points.append((x,y))
-    # Finds the neighbors of the points and determines if they are in the world
-    for point in MyWorld.points:
-        x = point[0]
-        y = point[1]
-        # All eight directions around the position of the roomba. Could do just the four next to the point.
-        neighbors = [(x+1,y+1),(x+1,y),(x+1,y-1),(x,y-1),(x,y+1),(x-1,y-1),(x-1,y),(x-1,y+1)]
-        group = []
-        # Checking points to make sure that they are in the world 
-        for point1 in neighbors:
-            if point1 in MyWorld.points:
-                group.append(point1)
-        # Update points that are connect by edges
-        MyWorld.edges[point] = group
-    return MyWorld
-    '''
 
 ''' Uses A* method of pathfinding to find best path the fastest between a given start and goal on the given plane "MyWorld"
     '''
@@ -260,7 +240,7 @@ backup_time = 1.0 # Amount of time spent backing up
 corner_time = 1.5 # Amount of time that it takes before the roomba starts turning more sharply (makes sure it turns around corners)
 f = 0 # Forward/Backward speed
 s = 0 # Rotation Speed
-bump_time = time.time() - 3.0 # Assures that the roomba doesn't start in backup mode
+bump_time = time.time() - 2.0 # Assures that the roomba doesn't start in backup mode
 bump_count = 0 # Keeps track of how many times the roomba has bumped into a wall
 theta = 0 # Current heading
 wheel_diameter = 72
@@ -380,10 +360,10 @@ while True:
                                 MyWorld.removePointFromWorld(p)
                         bump_time = time.time() #Sets up timer that tells how long to back up
 
-                    if time.time() - bump_time < 2.0: # If has bumped into something less than 2 seconds ago, back up
+                    if time.time() - bump_time < 1.0: # If has bumped into something less than 2 seconds ago, back up
                         f = -100
                         s = 0
-                    elif time.time() - bump_time < 2.5: # If done backing up...
+                    elif time.time() - bump_time < 1.5: # If done backing up...
                         current_point = (x_pos_int,y_pos_int)
                         bump_break = True # Validates that the roomba has broken out of the loop
                         new_points[0] = (x_pos_int,y_pos_int) # Current point after backing up from wall
@@ -440,17 +420,15 @@ while True:
     if bump_break: # If the roomba has bumped into something and broken out of the loop...
         # Reset variables responsible for bumping operations
         bump_break = False
-        bump_time = time.time() - 3.0
+        bump_time = time.time() - 2.0
         bump_count = 0
         new_list = [] # List of points viable for the roomba to move to after bumping into an object
         for p1 in new_points: # Check if the current point, point to the left, or point to the right are not too close to another point or too close to a current wall
             point_check = True
-            '''
             for p2 in MyWorld.points:
                 if distance(p1,p2) < 10:
                     point_check = False
                     break
-            '''
             for wall in MyWorld.walls:
                 if distance(p1,wall) < 200:
                     point_check = False
