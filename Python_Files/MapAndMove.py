@@ -1,7 +1,7 @@
 ''' MapAndMove.py
 Purpose: Draws a virtual map with the origin and the coordinates given, and moves from the start to its goal. Also adds points that it bumps into to the map as walls
      that it will attempt to move around to get to the goal, and keep the walls in memory for its movement in the future
-Last Modified: 7/10/2019
+Last Modified: 7/11/2019
 '''
 
 ## Import libraries ##
@@ -363,7 +363,7 @@ while True:
                                     print("Goal Point is Inaccessible, Too Close to Wall")
                                     goal_wall_break = True
                         bump_time = time.time() #Sets up timer that tells how long to back up
-                    if time.time() - bump_time < 1.0: # If has bumped into something less than 2 seconds ago, back up
+                    if time.time() - bump_time < 1.0: # If has bumped into something less than 1 second ago, back up
                         f = -100
                         s = 0
                     elif time.time() - bump_time < 1.5: # If done backing up...
@@ -415,12 +415,6 @@ while True:
                 z = Roomba.DirectRead(Roomba.Available())
                 print(z)
             Roomba.Move(0,0)
-            if goal_wall_break:
-                goal_wall_break = False
-                bump_break = False
-                bump_count = 0
-                bump_time = time.time() - 2.0
-                break
             if bump_break: # If had to break out of the loop after bumping...
                 break
             current_point = point
@@ -466,6 +460,9 @@ while True:
             value = MyWorld.edges[point]
             print("{0}:{1}".format(point,value))
         print("World Walls: {0}".format(MyWorld.walls))
+        if goal_wall_break: # If the goal was too close to a wall to be reached...
+            goal_wall_break = False
+            path = A_star(current_point,current_point,MyWorld) # Will immediately be at end of path, and will give new coordinate prompt
         path = A_star(current_point,goal,MyWorld) # Generate a new path with updated walls, points, and edges
     else:
         print("World Points: {0}".format(MyWorld.points))
