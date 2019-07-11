@@ -271,6 +271,7 @@ MyWorld = makeworld(start,goal) # Creates a grid world for the roomba to move in
 path = A_star(start,goal,MyWorld) # Creates the optimal pathway between the start and goal
 current_point = start # Saves grid coordinate that the roomba just came from
 bump_break = False # Checks if the roomba has bumped into something and broken out of the loop
+goal_wall_break = False
 
 #Print Stuff
 print(path)
@@ -358,6 +359,10 @@ while True:
                                     points_to_remove.append(point)
                             for p in points_to_remove:
                                 MyWorld.removePointFromWorld(p)
+                                if p == goal:
+                                    print("Goal Point is Inaccessible, Too Close to Wall")
+                                    goal_wall_break = True
+                                    break
                         bump_time = time.time() #Sets up timer that tells how long to back up
 
                     if time.time() - bump_time < 1.0: # If has bumped into something less than 2 seconds ago, back up
@@ -412,6 +417,9 @@ while True:
                 z = Roomba.DirectRead(Roomba.Available())
                 print(z)
             Roomba.Move(0,0)
+            if goal_wall_break:
+                goal_wall_break = False
+                break
             if bump_break: # If had to break out of the loop after bumping...
                 break
             current_point = point
@@ -464,7 +472,7 @@ while True:
             value = MyWorld.edges[point]
             print("{0}:{1}".format(point,value))
         print("World Walls: {0}".format(MyWorld.walls))
-        start = goal
+        start = current_point
         while True: #Loop that asks for initial x and y coordinates
             try:
                 x_final = int(input("X axis coordinate:"))
