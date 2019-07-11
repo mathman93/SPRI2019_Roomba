@@ -366,10 +366,6 @@ while True:
                     if time.time() - bump_time < 1.0: # If has bumped into something less than 2 seconds ago, back up
                         f = -100
                         s = 0
-                    elif time.time() - bump_time < 1.5 and goal_wall_break == True: # If done backing up and goal point is too close to a wall...
-                        bump_count = 0
-                        bump_time = time.time() - 2.0
-                        break
                     elif time.time() - bump_time < 1.5: # If done backing up...
                         current_point = (x_pos_int,y_pos_int)
                         bump_break = True # Validates that the roomba has broken out of the loop
@@ -421,6 +417,9 @@ while True:
             Roomba.Move(0,0)
             if goal_wall_break:
                 goal_wall_break = False
+                bump_break = False
+                bump_count = 0
+                bump_time = time.time() - 2.0
                 break
             if bump_break: # If had to break out of the loop after bumping...
                 break
