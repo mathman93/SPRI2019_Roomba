@@ -516,11 +516,11 @@ while True:
             print(path)
     except KeyboardInterrupt:
         break
-for k in range(2)
-    for p in MyWorld.points
+for k in range(2):
+    for p in MyWorld.points:
         file.write("{0}".format(p[k]))
-for k in range(2)
-    for p in MyWorld.walls
+for k in range(2):
+    for p in MyWorld.walls:
         file.write("{0}".format(p[k]))
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
