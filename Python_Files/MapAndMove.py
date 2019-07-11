@@ -366,7 +366,7 @@ while True:
                     if time.time() - bump_time < 1.0: # If has bumped into something less than 2 seconds ago, back up
                         f = -100
                         s = 0
-                    if time.time() - bump_time < 1.5 and goal_wall_break == True: # If done backing up and goal point is too close to a wall...
+                    elif time.time() - bump_time < 1.5 and goal_wall_break == True: # If done backing up and goal point is too close to a wall...
                         bump_count = 0
                         bump_time = time.time() - 2.0
                         break
