@@ -462,7 +462,7 @@ while True:
         print("World Walls: {0}".format(MyWorld.walls))
         if goal_wall_break: # If the goal was too close to a wall to be reached...
             goal_wall_break = False
-            path = A_star(current_point,current_point,MyWorld) # Will immediately be at end of path, and will give new coordinate prompt
+            goal = current_point # Will immediately be at end of path, and will give new coordinate prompt
         path = A_star(current_point,goal,MyWorld) # Generate a new path with updated walls, points, and edges
     else:
         print("World Points: {0}".format(MyWorld.points))
