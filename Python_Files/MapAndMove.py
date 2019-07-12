@@ -500,7 +500,6 @@ while True:
                     print("Please input a number")
                     continue
             print("Points: {0}".format(MyWorld.points))
-            print("new_list: {0}".format(new_list))
             for point in MyWorld.edges.keys():
                 value = MyWorld.edges[point]
                 print("{0}:{1}".format(point,value))
