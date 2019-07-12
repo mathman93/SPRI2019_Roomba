@@ -88,7 +88,7 @@ class GridWorld:
         else:
             print("Point is not in world")
     # Inserts a point into the world and attaches edges to it from all other points as long as there is not a wall in the way
-    def integrateIntoWorld(point)
+    def integrateIntoWorld(point):
         self.edges[point] = [] # Create an edge dictionary entry for the point
         self.points.append(point) # Add point to the world
         for p in self.points:
