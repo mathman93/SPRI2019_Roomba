@@ -1,7 +1,7 @@
 ''' MapAndMove.py
 Purpose: Draws a virtual map with the origin and the coordinates given, and moves from the start to its goal. Also adds points that it bumps into to the map as walls
      that it will attempt to move around to get to the goal, and keep the walls in memory for its movement in the future
-Last Modified: 7/11/2019
+Last Modified: 7/12/2019
 '''
 
 ## Import libraries ##
@@ -27,7 +27,8 @@ def DisplayDateTime():
     date_time = time.strftime("%B %d, %Y, %H:%M:%S", time.gmtime())
     print("Program run: ", date_time)
 
-''' Queue that allows for elements with a higher priority (lower priority value) to be put closer to the front of the line
+''' Queue that allows for elements with a higher priority (lower priority value) to be put closer to the front of the line.
+    Created using documentation from https://www.redblobgames.com/pathfinding/a-star/implementation.html
     '''
 class PriorityQueue:
     def __init__(self):
@@ -42,7 +43,8 @@ class PriorityQueue:
     def get(self):
         return heapq.heappop(self.elements)[1]
 
-''' Defines a world, finds the neighbors of certain points, and the location of thos points
+''' Defines a world, finds the neighbors of certain points, and the location of thos points.
+    Created using documentation from https://www.redblobgames.com/pathfinding/a-star/implementation.html
     '''
 class GridWorld:
     def __init__(self):
@@ -56,17 +58,14 @@ class GridWorld:
     # Note: ID needs to be a tuple 
     def neighbors(self,id):
         return self.edges.get(id,[])
-    # Gives the physical world location 
-    def Location(self,id):
-        x_pos = (id[0]*300)+150
-        y_pos = (id[1]*300)+150
-        return(x_pos,y_pos)
-    def removePointFromWorld(self,xy): # Removes the point from the world at the specified tuple 'xy' from the world 'MyWorld'
+    # Removes the point from the world at the specified tuple 'xy' from the world 'MyWorld'
+    def removePointFromWorld(self,xy):
         neighborlist = self.edges.pop(xy)
         for p in neighborlist:
             self.edges[p].remove(xy)
         self.points.remove(xy)
-    def addEdgeToWorld(self,point1,point2): # Adds an edge from the world between two given tuple coordinate points
+    # Adds an edge from the world between two given tuple coordinate points
+    def addEdgeToWorld(self,point1,point2):
         print("{0},{1}".format(point1,point2))
         if point1 in self.points and point2 in self.points:
             ls1 = self.edges[point1]
@@ -77,7 +76,8 @@ class GridWorld:
             self.edges[point2] = ls2
         else:
             print("Point is not in world")
-    def removeEdgeFromWorld(self,point1,point2): # Removes an edge from the world between two given tuple coordinate points
+    # Removes an edge from the world between two given tuple coordinate points
+    def removeEdgeFromWorld(self,point1,point2):
         if point1 in self.points and point2 in self.points:
             p1 = self.edges[point1]
             p1.remove(point2)
@@ -162,14 +162,17 @@ def angle_cost(previous,current,next):
 ''' Finds if it is possible for a path to be formed without intersecting a circle drawn around a given wall tuple coordinate
     '''
 def CanMakeEdge(start,goal,wall):
+    #Gets values for vectors from start to goal and from start to wall
     ax = goal[0] - start[0]
     ay = goal[1] - start[1]
     bx = wall[0] - start[0]
     by = wall[1] - start[1]
+    # Normalizes both vectors
     norm_a = math.sqrt((ax**2)+(ay**2))
     dot_ab = (ax*bx) + (ay*by)
     b1 = dot_ab / norm_a
     norm_b = math.sqrt((bx**2)+(by**2))
+    # Checks if line can be drawn from start to goal and won't collide with wall
     if b1 >= norm_a or b1 <= 0:
         return True
     elif (norm_b**2) - (b1**2) > (200**2):
@@ -362,13 +365,13 @@ while True:
                             print("New Wall Made: {0}".format((x_wall,y_wall)))
                             # Removes all points too close to new wall
                             for point in MyWorld.points:
-                                if distance(point,(x_wall,y_wall)) < 200:
-                                    points_to_remove.append(point)
+                                if distance(point,(x_wall,y_wall)) < 200: # If the point is withing 200 mm to wall point...
+                                    points_to_remove.append(point) # Add point to list of points to remove
                             for p in points_to_remove:
                                 MyWorld.removePointFromWorld(p)
                                 if p == goal: # If the goal point is close enough to the new wall to be removed...
                                     print("Goal Point is Inaccessible, Too Close to Wall")
-                                    goal_wall_break = True
+                                    goal_wall_break = True # Verifies that the goal point has been removed
                         bump_time = time.time() #Sets up timer that tells how long to back up
                     if time.time() - bump_time < 1.0: # If has bumped into something less than 1 second ago, back up
                         f = -100
@@ -434,30 +437,30 @@ while True:
             for p1 in new_points: # Check if the current point, point to the left, or point to the right are not too close to another point or too close to a current wall
                 point_check = True
                 for p2 in MyWorld.points:
-                    if distance(p1,p2) < 10:
-                        point_check = False
+                    if distance(p1,p2) < 10: # If point is within 10mm of another point...
+                        point_check = False # Don't add it
                         break
                 for wall in MyWorld.walls:
-                    if distance(p1,wall) < 200:
+                    if distance(p1,wall) < 200: # If point is within 200mm of a wall...
                         point_check = False
                         break
-                if point_check == True:
-                    new_list.append(p1)
+                if point_check == True: # If point is fine to place...
+                    new_list.append(p1) # Add point to list of points to add to world
             for point in new_list:
-                MyWorld.points.append(point)
-                MyWorld.edges[point] = []
+                MyWorld.points.append(point) # Add points to the world
+                MyWorld.edges[point] = [] # Create an edge dictionary entry
             print("Points: {0}".format(MyWorld.points))
             print("new_list: {0}".format(new_list))
             for p1 in new_list: # Check if any of the cleared points from the last loop can be moved to
                 for p2 in MyWorld.points:
                     point_check = True
-                    if p2 != p1:
+                    if p2 != p1: # If the two points are not the same...
                         for wall in MyWorld.walls:
-                            if CanMakeEdge(p1,p2,wall) == False:
-                                point_check = False
+                            if CanMakeEdge(p1,p2,wall) == False: # If cannot make an edge between the two points...
+                                point_check = False # Don't add the edge to the world
                                 break
-                        if point_check == True:
-                            MyWorld.addEdgeToWorld(p1,p2)
+                        if point_check == True: # If can add the edge to the world...
+                            MyWorld.addEdgeToWorld(p1,p2) # Add the edge to the world
                             print("Made an edge")
             print("Points: {0}".format(MyWorld.points))
             print("new_list: {0}".format(new_list))
@@ -481,24 +484,24 @@ while True:
                     x_final = int(input("X axis coordinate:"))
                     y_final = int(input("Y axis coordinate:"))
                     goal = (x_final,y_final)
-                    if goal not in MyWorld.points:
+                    if goal not in MyWorld.points: # If the goal does not already exist in the world...
                         goal_check = True
                         for wall in MyWorld.walls:
-                            if distance(goal,wall) < 200:
+                            if distance(goal,wall) < 200: # If the goal is too close to an existing wall...
                                 print("Too close to a wall")
-                                goal_check = False
+                                goal_check = False # Don't add it to the world
                                 break
-                        if goal_check:
-                            MyWorld.edges[goal] = []
-                            MyWorld.points.append(goal)
+                        if goal_check: # If the point can be placed...
+                            MyWorld.edges[goal] = [] # Create an edge dictionary entry for the goal
+                            MyWorld.points.append(goal) # Add goal point to the world
                             for p in MyWorld.points:
                                 goal_check = True
-                                if p != goal:
+                                if p != goal: # If the points aren't the same...
                                     for wall in MyWorld.walls:
-                                        if CanMakeEdge(p,goal,wall) == False:
-                                            goal_check = False
+                                        if CanMakeEdge(p,goal,wall) == False: # If cannot make edge between point and goal...
+                                            goal_check = False # Don't make an edge
                                             break
-                                    if goal_check:
+                                    if goal_check: # If can make an edge...
                                         MyWorld.addEdgeToWorld(p,goal)
                         else:
                             continue
