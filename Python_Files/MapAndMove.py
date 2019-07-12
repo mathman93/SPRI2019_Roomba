@@ -87,6 +87,19 @@ class GridWorld:
             self.edges[point2] = p2
         else:
             print("Point is not in world")
+    # Inserts a point into the world and attaches edges to it from all other points as long as there is not a wall in the way
+    def integrateIntoWorld(point)
+        self.edges[point] = [] # Create an edge dictionary entry for the point
+        self.points.append(point) # Add point to the world
+        for p in self.points:
+            point_check = True
+            if p != point: # If the points aren't the same...
+                for wall in self.walls:
+                    if CanMakeEdge(p,point,wall) == False: # If cannot make edge between the two points...
+                        point_check = False # Don't make an edge
+                        break
+                if point_check: # If can make an edge...
+                    self.addEdgeToWorld(p,point) # Add the edge between the points
 
 ''' Calculates euclidian distance between two given tuple coordinate points
     '''
@@ -150,9 +163,10 @@ def angle_cost(previous,current,next):
     if previous == None: # If first movement...
         return 0
     else:
-        theta = math.atan2(current[1]-previous[1],current[0]-previous[0])
-        theta_initial = math.atan2(next[1]-current[1],next[0]-current[0])
-        theta_d = theta_initial - theta
+        theta = math.atan2(current[1]-previous[1],current[0]-previous[0]) # Finds current rotation
+        theta_initial = math.atan2(next[1]-current[1],next[0]-current[0]) # Finds angle of rotation towards next goal
+        theta_d = theta_initial - theta # Finds difference between the two angles
+        # Normalizes difference between 0 to 2pi
         if theta_d > math.pi:
             theta_d -= 2*math.pi
         elif theta_d <= -math.pi:
@@ -446,24 +460,10 @@ while True:
                         break
                 if point_check == True: # If point is fine to place...
                     new_list.append(p1) # Add point to list of points to add to world
+            print("new_list: {0}".format(new_list))
             for point in new_list:
-                MyWorld.points.append(point) # Add points to the world
-                MyWorld.edges[point] = [] # Create an edge dictionary entry
+                MyWorld.integrateIntoWorld(point)
             print("Points: {0}".format(MyWorld.points))
-            print("new_list: {0}".format(new_list))
-            for p1 in new_list: # Check if any of the cleared points from the last loop can be moved to
-                for p2 in MyWorld.points:
-                    point_check = True
-                    if p2 != p1: # If the two points are not the same...
-                        for wall in MyWorld.walls:
-                            if CanMakeEdge(p1,p2,wall) == False: # If cannot make an edge between the two points...
-                                point_check = False # Don't add the edge to the world
-                                break
-                        if point_check == True: # If can add the edge to the world...
-                            MyWorld.addEdgeToWorld(p1,p2) # Add the edge to the world
-                            print("Made an edge")
-            print("Points: {0}".format(MyWorld.points))
-            print("new_list: {0}".format(new_list))
             for point in MyWorld.edges.keys():
                 value = MyWorld.edges[point]
                 print("{0}:{1}".format(point,value))
@@ -492,17 +492,7 @@ while True:
                                 goal_check = False # Don't add it to the world
                                 break
                         if goal_check: # If the point can be placed...
-                            MyWorld.edges[goal] = [] # Create an edge dictionary entry for the goal
-                            MyWorld.points.append(goal) # Add goal point to the world
-                            for p in MyWorld.points:
-                                goal_check = True
-                                if p != goal: # If the points aren't the same...
-                                    for wall in MyWorld.walls:
-                                        if CanMakeEdge(p,goal,wall) == False: # If cannot make edge between point and goal...
-                                            goal_check = False # Don't make an edge
-                                            break
-                                    if goal_check: # If can make an edge...
-                                        MyWorld.addEdgeToWorld(p,goal)
+                            MyWorld.integrateIntoWorld(goal)
                         else:
                             continue
                     break
