@@ -105,7 +105,7 @@ for i in range(len(dict.keys())):
 			x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
 			y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
 			# Print and write the time, left encoder, right encoder, x position, y position, and theta
-			print("{0},{1},{2},{3},{4},{5}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
+			print("Time: {0}\nLeft Encoder:{1} Right Encoder: {2}\nX Position:{3} Y Position:{4} Theta:{5}".format(data_time2-data_time,left_encoder,right_encoder,x_position,y_position,theta))
 			print("")
 			file.write("{0},{1},{2},{3},{4},{5}\n".format(data_time2-data_time,left_encoder, right_encoder,x_position,y_position,theta))
 			left_start = left_encoder

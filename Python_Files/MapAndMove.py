@@ -461,7 +461,7 @@ while True:
                 if point_check == True: # If point is fine to place...
                     new_list.append(p1) # Add point to list of points to add to world
             print("new_list: {0}".format(new_list))
-            for point in new_list:
+            for point in new_list: # For every point to be added to the world, adds to world and adds all edges possible to it from other points
                 MyWorld.integrateIntoWorld(point)
             print("Points: {0}".format(MyWorld.points))
             for point in MyWorld.edges.keys():
@@ -504,7 +504,7 @@ while True:
                 value = MyWorld.edges[point]
                 print("{0}:{1}".format(point,value))
             print("World Walls: {0}".format(MyWorld.walls))
-            path = A_star(start,goal,MyWorld)
+            path = A_star(start,goal,MyWorld) # Draw a new path to the goal with new coordinate information
             print(path)
     except KeyboardInterrupt:
         break
