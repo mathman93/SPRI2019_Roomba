@@ -221,6 +221,23 @@ def BumpAngle(bumper,l_bumper):
             return math.radians(-20)
         else: 
             return math.radians(-45)
+
+''' Returns a list of points generated in a spiral from the given starting coordinate (x_pos_init,y_pos_init) using the 'unit' length between points
+    up to the limit of times of 'threshold'
+    '''
+def SpiralPath(x_pos_init,y_pos_init,threshold,unit):
+    count = 0
+    path = [(x_pos_init,y_pos_init)]
+    while count <= threshold:
+        count += 1
+        for n in range(count):
+            next_x = (path[-1])[0] + pow(-1,count+1)*(n+1)*unit
+            path.append(next_x,(path[-1])[1])
+        for n in range(count):
+            next_y = (path[-1])[1] + pow(-1,count+1)*(n+1)*unit
+            path.append((path[-1])[0],next_y)
+    return path
+
 ## -- Code Starts Here -- ##
 # Setup Code #
 GPIO.setmode(GPIO.BCM) # Use BCM pin numbering for GPIO
@@ -277,13 +294,14 @@ bump_code = 0 # Used to distinguish if the right, left, or center bumpers are be
 bump_count = 0 # Keeps track of how many times the bumper has detected a bump
 new_points = [0,0,0] # Initializes list of new points to be used to recalculated path after bumping into object
 spiral_count = 0: # Counter that keeps track of how many points to add in a direction when creating the initial spiral of coordinate points
-spiral_size = 21: # Constant limit of how many times the spiral function will operate
+spiral_size = 20: # Constant limit of how many times the spiral function will operate
 unit = 400: # Distance between points on the spiral map that are directly left,right,up,down
+y_position = 0 # Current position on the y-axis
+x_position = 0 # Current position on the x-axis
+spiral_path = [(x_position,y_position)]
 
-while count < spiral_size:
-	count += 1
-	
-
+print(SpiralPath(x_position,y_position,spiral_size,unit))
+'''
 while True: #Loop that asks for initial x and y coordinates
     try:
         x_final = int(input("X axis coordinate:"))
@@ -293,8 +311,6 @@ while True: #Loop that asks for initial x and y coordinates
         print("Please input a number")
         continue
 
-y_position = 0 # Current position on the y-axis
-x_position = 0 # Current position on the x-axis
 start = (0,0) # Starting position in the MyWorld grid
 goal = (x_final,y_final) # Final goal
 MyWorld = makeworld(start,goal) # Creates a grid world for the roomba to move in with two points, the start and goal, and draws a line between them
@@ -522,6 +538,7 @@ for k in range(2):
         #file.write("{0}\n".format(p[k]))
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
+'''
 if Roomba.Available()>0:
     z = Roomba.DirectRead(Roomba.Available())
     print(z)
