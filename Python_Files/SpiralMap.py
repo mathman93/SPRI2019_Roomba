@@ -232,10 +232,10 @@ def SpiralPath(x_pos_init,y_pos_init,threshold,unit):
         count += 1
         for n in range(count):
             next_x = (path[-1])[0] + pow(-1,count+1)*(n+1)*unit
-            path.append(next_x,(path[-1])[1])
+            path.append((next_x,(path[-1])[1]))
         for n in range(count):
             next_y = (path[-1])[1] + pow(-1,count+1)*(n+1)*unit
-            path.append((path[-1])[0],next_y)
+            path.append(((path[-1])[0],next_y))
     return path
 
 ## -- Code Starts Here -- ##
