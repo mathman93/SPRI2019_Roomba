@@ -228,7 +228,7 @@ def BumpAngle(bumper,l_bumper):
 def SpiralPath(x_pos_init,y_pos_init,threshold,unit):
     count = 0
     path = [(x_pos_init,y_pos_init)]
-    while count <= threshold:
+    while count < threshold:
         count += 1
         for n in range(count):
             next_x = (path[-1])[0] + pow(-1,count+1)*unit
@@ -299,7 +299,10 @@ y_position = 0 # Current position on the y-axis
 x_position = 0 # Current position on the x-axis
 spiral_path = [(x_position,y_position)]
 
-print(SpiralPath(x_position,y_position,spiral_size,unit))
+spiral_path = SpiralPath(x_position,y_position,spiral_size,unit)
+
+print(spiral_path)
+
 '''
 while True: #Loop that asks for initial x and y coordinates
     try:
@@ -309,9 +312,10 @@ while True: #Loop that asks for initial x and y coordinates
     except ValueError:
         print("Please input a number")
         continue
+'''
 
-start = (0,0) # Starting position in the MyWorld grid
-goal = (x_final,y_final) # Final goal
+start = spiral_path[0] # Starting position in the MyWorld grid
+goal = spiral_path[1] # Final goal
 MyWorld = makeworld(start,goal) # Creates a grid world for the roomba to move in with two points, the start and goal, and draws a line between them
 path = A_star(start,goal,MyWorld) # Creates the optimal pathway between the start and goal
 current_point = start # Saves grid coordinate that the roomba just came from
@@ -328,7 +332,7 @@ print(path)
 #print(MyWorld.neighbors((5,1)))
 #print(MyWorld.Location((5,2)))
 
-while True:
+for spiral_point in spiral_path:
     try:
         for point in path:
             current_goal = point
@@ -537,7 +541,7 @@ for k in range(2):
         #file.write("{0}\n".format(p[k]))
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
-'''
+
 if Roomba.Available()>0:
     z = Roomba.DirectRead(Roomba.Available())
     print(z)
