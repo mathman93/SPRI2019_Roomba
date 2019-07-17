@@ -425,6 +425,7 @@ while True:
                                 if p == goal: # If the goal point is close enough to the new wall to be removed...
                                     print("Goal Point is Inaccessible, Too Close to Wall")
                                     goal_wall_break = True # Verifies that the goal point has been removed
+                                    spiral_bump_break = True
                         bump_time = time.time() #Sets up timer that tells how long to back up
                     if time.time() - bump_time < 1.0: # If has bumped into something less than 1 second ago, back up
                         f = -100
@@ -517,8 +518,15 @@ while True:
                 value = MyWorld.edges[point]
                 print("{0}:{1}".format(point,value))
             print("World Walls: {0}".format(MyWorld.walls))
+            spiral_bump_start = start
             start = current_point
+            if spiral_bump_break:
+                spiral_bump_break = False
+                start = spiral_bump_start
             goal = NextCoordinate(start,unit)
+            for wall in MyWorld.walls:
+                while distance(goal,wall) < 200:
+                    NextCoordinate(goal,unit)
             MyWorld.integrateIntoWorld(goal)
             print("Points: {0}".format(MyWorld.points))
             for point in MyWorld.edges.keys():
