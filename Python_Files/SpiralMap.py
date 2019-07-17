@@ -280,10 +280,10 @@ print(" ROOMBA Setup Complete")
 GPIO.output(gled, GPIO.LOW)
 
 # Open a text file for data retrieval
-#file_name_input = input("Name for data file: ")
-#dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
-#file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
-#file = open(file_name, "w") # Open a text file for storing data
+file_name_input = input("Name for data file: ")
+dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
+file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
 
 start_time = time.time()
@@ -316,17 +316,6 @@ spiral_path = [(x_position,y_position)]
 spiral_path = SpiralPath(x_position,y_position,spiral_size,unit)
 
 print(spiral_path)
-
-'''
-while True: #Loop that asks for initial x and y coordinates
-    try:
-        x_final = int(input("X axis coordinate:"))
-        y_final = int(input("Y axis coordinate:"))
-        break
-    except ValueError:
-        print("Please input a number")
-        continue
-'''
 
 start = (x_position,y_position) # Starting position in the MyWorld grid
 goal = NextCoordinate(start,unit) # First goal
@@ -538,14 +527,13 @@ while True:
             print(path)
     except KeyboardInterrupt:
         break
-'''
+        
 for k in range(2):
     for p in MyWorld.points:
         file.write("{0}\n".format(p[k]))
 for k in range(2):
     for p in MyWorld.walls:
         file.write("{0}\n".format(p[k]))
-        '''
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
 
