@@ -541,7 +541,7 @@ if Roomba.Available()>0:
     z = Roomba.DirectRead(Roomba.Available())
     print(z)
 time.sleep(0.1)
-#file.close() # Close data file
+file.close() # Close data file
 ## -- Ending Code Starts Here -- ##
 Roomba.ShutDown() # Shutdown Roomba serial connection
 GPIO.cleanup() # Reset GPIO pins for next program
