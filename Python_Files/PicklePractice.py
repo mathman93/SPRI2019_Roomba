@@ -292,11 +292,11 @@ with open(file_name, "rb") as file:
     edges = pickle.load(file)
     walls = pickle.load(file)
 
-print("Points: {0}".format(MyWorld.points))
-for point in MyWorld.edges.keys():
-    value = MyWorld.edges[point]
+print("Points: {0}".format(points))
+for point in edges.keys():
+    value = edges[point]
 print("{0}:{1}".format(point,value))
-print("World Walls: {0}".format(MyWorld.walls))
+print("World Walls: {0}".format(walls))
 
 '''
 # Open a text file for data retrieval
