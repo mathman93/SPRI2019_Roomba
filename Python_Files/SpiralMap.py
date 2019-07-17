@@ -335,6 +335,7 @@ path = A_star(start,goal,MyWorld) # Creates the optimal pathway between the star
 current_point = start # Saves grid coordinate that the roomba just came from
 bump_break = False # Checks if the roomba has bumped into something and broken out of the loop
 goal_wall_break = False # Checks if the goal point is unreachable because it is too close to a wall
+spiral_bump_break = False # Checks if the next spiral point needs to be calculated differently due to a wall
 
 #Print Stuff
 print(path)
