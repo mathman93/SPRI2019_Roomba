@@ -284,10 +284,279 @@ points = [(0,0),(100,0),(100,100),(0,100)]
 edges = {(0,0):[(100,0),(100,100),(0,100)]}
 walls = [(-100,100)]
 
+dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+file_name = os.path.join(dir_path, "Dill.txt") # text file extension
+
 with open(file_name, "wb") as file:
-    pickle.dump(points,file)
-    pickle.dump(edges,file)
-    pickle.dump(walls,file)
+    pickle.dump(points, file)
+    pickle.dump(edges, file)
+    pickle.dump(walls, file)
+
+'''
+# Open a text file for data retrieval
+file_name_input = input("Name for data file: ")
+dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
+file = open(file_name, "w") # Open a text file for storing data
+	# Will overwrite anything that was in the text file previously
+
+dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+file_name = os.path.join(dir_path, "Dill.txt") # text file extension
+
+start_time = time.time()
+[left_start,right_start]=Roomba.Query(43,44)
+
+# Variables and Constants
+backup_time = 1.0 # Amount of time spent backing up
+corner_time = 1.5 # Amount of time that it takes before the roomba starts turning more sharply (makes sure it turns around corners)
+f = 0 # Forward/Backward speed
+s = 0 # Rotation Speed
+bump_time = time.time() - 2.0 # Assures that the roomba doesn't start in backup mode
+bump_count = 0 # Keeps track of how many times the roomba has bumped into a wall
+theta = 0 # Current heading
+wheel_diameter = 72
+counts_per_rev = 508.8
+distance_between_wheels = 235
+C_theta = (wheel_diameter*math.pi)/(counts_per_rev*distance_between_wheels)
+distance_per_count = (wheel_diameter*math.pi)/counts_per_rev
+data_time = time.time()
+bump_mode = False # Used to tell whether or not the roomba has bumped into something and is supposed to be "tracking"
+bump_code = 0 # Used to distinguish if the right, left, or center bumpers are being triggered
+bump_count = 0 # Keeps track of how many times the bumper has detected a bump
+new_points = [0,0,0] # Initializes list of new points to be used to recalculated path after bumping into object
+spiral_size = 20 # Constant limit of how many times the spiral function will operate
+unit = 400 # Distance between points on the spiral map that are directly left,right,up,down
+y_position = 0 # Current position on the y-axis
+x_position = 0 # Current position on the x-axis
+spiral_path = [(x_position,y_position)]
+
+spiral_path = SpiralPath(x_position,y_position,spiral_size,unit)
+
+print(spiral_path)
+
+start = (x_position,y_position) # Starting position in the MyWorld grid
+goal = NextCoordinate(start,unit) # First goal
+MyWorld = makeworld(start,goal) # Creates a grid world for the roomba to move in with two points, the start and goal, and draws a line between them
+path = A_star(start,goal,MyWorld) # Creates the optimal pathway between the start and goal
+current_point = start # Saves grid coordinate that the roomba just came from
+bump_break = False # Checks if the roomba has bumped into something and broken out of the loop
+goal_wall_break = False # Checks if the goal point is unreachable because it is too close to a wall
+spiral_bump_break = False # Checks if the next spiral point needs to be calculated differently due to a wall
+
+#Print Stuff
+print(path)
+#for point in MyWorld.edges.keys():
+#   value = MyWorld.edges[point]
+#   print("{0}:{1}".format(point,value))
+
+#print(MyWorld.neighbors((10,1)))
+#print(MyWorld.neighbors((5,1)))
+#print(MyWorld.Location((5,2)))
+
+while True:
+    try:
+        for point in path:
+            current_goal = point
+            distance_to_end = math.sqrt((current_goal[0]-x_position)**2 +(current_goal[1]-y_position)**2) # Distance of straight line between where the roomba is and where the end point is
+            theta_initial = math.atan2((current_goal[1]-y_position),(current_goal[0]-x_position)) # Angle of the line between the x-axis and the initial distance to end line
+            theta_d = theta_initial-theta # Rotation needed from current heading to face goal
+            #print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}".format(time.time()-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d))
+            Roomba.StartQueryStream(7,43,44,45) # Start getting bumper values
+            while distance_to_end > 3:
+                if Roomba.Available()>0:
+                    data_time2 = time.time()
+                    # Get bump value, then get left and right encoder values and find the change in each
+                    [bump,left_encoder, right_encoder, l_bump] = Roomba.ReadQueryStream(7,43,44,45)
+                    delta_l = left_encoder-left_start
+                    if delta_l < -1*(2**15): #Checks if the encoder values have rolled over, and if so, subtracts/adds accordingly to assure normal delta values
+                        delta_l += (2**16)
+                    elif delta_l > (2**15):
+                        delta_l -+ (2**16)
+                    delta_r = right_encoder-right_start
+                    if delta_r < -1*(2**15):
+                        delta_r += (2**16)
+                    elif delta_r > (2**15):
+                        delta_r -+ (2**16)
+                    # Determine the change in theta and what that is currently
+                    delta_theta = (delta_l-delta_r)*C_theta
+                    old_theta = theta # Heading of last iteration
+                    theta += delta_theta
+                    # If theta great than 2pi subtract 2pi and vice versus. Normalize theta to 0-2pi to show what my heading is.
+                    if theta >= 2*math.pi:
+                        theta -= 2*math.pi
+                    elif theta < 0:
+                        theta += 2*math.pi
+                    # Determine what method to use to find the change in distance
+                    if delta_l-delta_r == 0:
+                        delta_d = 0.5*(delta_l+delta_r)*distance_per_count
+                    else:
+                        delta_d = 2*(235*(delta_l/(delta_l-delta_r)-.5))*math.sin(delta_theta/2)                        
+
+                    # Find new x and y position, and their integer versions
+                    x_position = x_position + delta_d*math.cos(theta-.5*delta_theta)
+                    y_position = y_position + delta_d*math.sin(theta-.5*delta_theta)
+                    x_pos_int = int(x_position)
+                    y_pos_int = int(y_position)
+                    # Find distance to end and theta_initial
+                    distance_to_end = math.sqrt((current_goal[0]-x_position)**2 +(current_goal[1]-y_position)**2)
+
+                    theta_initial = math.atan2((current_goal[1]-y_position),(current_goal[0]-x_position))
+                    # Normalize what theta initial is to between 0-2pi
+                    if theta_initial <0:
+                        theta_initial += 2*math.pi
+                    # Calculate theta_d and normalize it to 0-2pi
+                    # This value is the difference between the direction were supposed to be going and the direction we are going
+                    theta_d = ((theta_initial-theta)%(2*math.pi))
+                    # get theta_d between -pi and pi
+                    if theta_d > math.pi:
+                        theta_d -= 2*math.pi
+
+                    # Checks if the roomba is bumping into something, and if so, activates wall detection protocol
+                    if(bump%4) > 0: # If the roomba bumps into something...
+                        bump_count += 1 # Updates the amount of times the bumpers have detected a bump
+                        wall_dir = BumpAngle(bump,l_bump) # Keeps track of what the light bumper detected when the roomba bumped
+                        print('Bump Angle: {0:.4f}'.format(wall_dir))
+                        if bump_count == 1:# If first bump in the cycle...
+                            MyWorld.removeEdgeFromWorld(current_point,current_goal) # Remove the edge from the previous starting point to the goal
+                            x_wall = int(x_pos_int + (200*math.cos(theta + wall_dir))) # Calculates x position of wall
+                            y_wall = int(y_pos_int + (200*math.sin(theta + wall_dir))) # Calculates y position of wall
+                            MyWorld.walls.append((x_wall,y_wall)) # Adds the coordinate position of the wall to the list of walls
+                            points_to_remove = []
+                            print("New Wall Made: {0}".format((x_wall,y_wall)))
+                            # Removes all points too close to new wall
+                            for point in MyWorld.points:
+                                if distance(point,(x_wall,y_wall)) < 200: # If the point is withing 200 mm to wall point...
+                                    points_to_remove.append(point) # Add point to list of points to remove
+                            for p in points_to_remove:
+                                MyWorld.removePointFromWorld(p)
+                                if p == goal: # If the goal point is close enough to the new wall to be removed...
+                                    print("Goal Point is Inaccessible, Too Close to Wall")
+                                    goal_wall_break = True # Verifies that the goal point has been removed
+                                    spiral_bump_break = True
+                        bump_time = time.time() #Sets up timer that tells how long to back up
+                    if time.time() - bump_time < 1.0: # If has bumped into something less than 1 second ago, back up
+                        f = -100
+                        s = 0
+                    elif time.time() - bump_time < 1.5: # If done backing up...
+                        current_point = (x_pos_int,y_pos_int)
+                        bump_break = True # Validates that the roomba has broken out of the loop
+                        new_points[0] = (x_pos_int,y_pos_int) # Current point after backing up from wall
+                        np1x = int(x_pos_int + (400 * math.cos(theta+wall_dir+(math.pi/2)))) # X position of point to right of roomba
+                        np1y = int(y_pos_int + (400 * math.sin(theta+wall_dir+(math.pi/2)))) # Y position of point to right of roomba
+                        new_points[1] = (np1x,np1y)
+                        np2x = int(x_pos_int + (400 * math.cos(theta+wall_dir-(math.pi/2)))) # X position of point to left of roomba
+                        np2y = int(y_pos_int + (400 * math.sin(theta+wall_dir-(math.pi/2)))) # Y position of point to left of roomba
+                        new_points[2] = (np2x,np2y)
+                        break
+
+                    else: # If haven't bumped into anything yet...
+                        if abs(theta_d) > (math.pi / 4): #If theta_d is greater than pi/4 radians...
+                            s_set = 100 # Spin faster
+                        elif abs(theta_d) > (math.pi / 36): #If theta_d is getting closer...
+                            s_set = 60 # Spin normal speed
+                        else: # otherwise, if theta_d is fairly small
+                            s_set = 20 # Spin slow
+                        if distance_to_end > 150: #If distance_to_end is greater than 150 mm...
+                            f_set = 120 #Go faster
+                        elif distance_to_end > 50: # If distance_to_end is greater than 50 mm...
+                            f_set = 80 #Go fast
+                        else: #otherwise, if distance_to_end is less than 50 mm...
+                            f_set = 40 #Go slow     
+
+                        radius = ((235 / 2) * (f_set / s_set)) #Radius of circle of the roomba's turn for the given f_set and s_set values
+
+                        if theta_d > 0: #Rotates clockwise if theta_d is positive
+                            s = s_set
+                        elif theta_d < 0: #Rotates counterclockwise if theta_d is negative
+                            s = s_set * -1
+                        else:
+                            s = 0
+                        if theta_d > (math.pi / 3) or theta_d < (math.pi / -3): #If the end point is beyond 90 degrees in either direction, the roomba will rotate in place
+                            f = 0
+                        elif abs(2*radius*math.sin(theta_d)) > distance_to_end: #If the end point is within the circle that is drawn by the roomba's turn path, then the roomba will rotate in place 
+                            f = 0
+                        else:
+                            f = f_set
+                    Roomba.Move(f,s) # Move with given forward and spin values
+                    #print("{0:.6f},{1},{2},{3:.3f},{4:.3f},{5:.6f},{6:.6f},{7:.6f}, bump_count:{8}".format(data_time2-data_time,left_start,right_start,x_position,y_position,theta,distance_to_end,theta_d,bump_count))
+                    left_start = left_encoder
+                    right_start = right_encoder
+            Roomba.PauseQueryStream() #Pauses the query stream while new coordinates are being input
+            if Roomba.Available()>0:
+                z = Roomba.DirectRead(Roomba.Available())
+                print(z)
+            Roomba.Move(0,0)
+            if bump_break: # If had to break out of the loop after bumping...
+                break
+            current_point = point
+        if bump_break: # If the roomba has bumped into something and broken out of the loop...
+            # Reset variables responsible for bumping operations
+            bump_break = False
+            bump_time = time.time() - 2.0
+            bump_count = 0
+            new_list = [] # List of points viable for the roomba to move to after bumping into an object
+            for p1 in new_points: # Check if the current point, point to the left, or point to the right are not too close to another point or too close to a current wall
+                point_check = True
+                for p2 in MyWorld.points:
+                    if distance(p1,p2) < 10: # If point is within 10mm of another point...
+                        point_check = False # Don't add it
+                        break
+                for wall in MyWorld.walls:
+                    if distance(p1,wall) < 200: # If point is within 200mm of a wall...
+                        point_check = False
+                        break
+                if point_check == True: # If point is fine to place...
+                    new_list.append(p1) # Add point to list of points to add to world
+            print("new_list: {0}".format(new_list))
+            for point in new_list: # For every point to be added to the world, adds to world and adds all edges possible to it from other points
+                MyWorld.integrateIntoWorld(point)
+            print("Points: {0}".format(MyWorld.points))
+            for point in MyWorld.edges.keys():
+                value = MyWorld.edges[point]
+                print("{0}:{1}".format(point,value))
+            print("World Walls: {0}".format(MyWorld.walls))
+            if goal_wall_break: # If the goal was too close to a wall to be reached...
+                goal_wall_break = False
+                goal = current_point # Will immediately be at end of path, and will give new coordinate prompt
+            path = A_star(current_point,goal,MyWorld) # Generate a new path with updated walls, points, and edges
+        else:
+            print("World Points: {0}".format(MyWorld.points))
+            for point in MyWorld.edges.keys():
+                value = MyWorld.edges[point]
+                print("{0}:{1}".format(point,value))
+            print("World Walls: {0}".format(MyWorld.walls))
+            spiral_bump_start = start
+            start = current_point
+            if spiral_bump_break:
+                spiral_bump_break = False
+                start = spiral_bump_start
+            goal = NextCoordinate(start,unit)
+            for wall in MyWorld.walls:
+                while distance(goal,wall) < 200:
+                    goal = NextCoordinate(goal,unit)
+            MyWorld.integrateIntoWorld(goal)
+            print("Points: {0}".format(MyWorld.points))
+            for point in MyWorld.edges.keys():
+                value = MyWorld.edges[point]
+                print("{0}:{1}".format(point,value))
+            print("World Walls: {0}".format(MyWorld.walls))
+            path = A_star(start,goal,MyWorld) # Draw a new path to the goal with new coordinate information
+            print(path)
+    except KeyboardInterrupt:
+        break
+
+for k in range(2):
+    for p in MyWorld.points:
+        file.write("{0}\n".format(p[k]))
+for k in range(2):
+    for p in MyWorld.walls:
+        file.write("{0}\n".format(p[k]))
+Roomba.Move(0,0)
+    '''
+with open(file_name, "wb") as file:
+    pickle.dump(MyWorld.points,file)
+    pickle.dump(MyWorld.edges,file)
+    pickle.dump(MyWorld.walls,file)
 if Roomba.Available()>0:
     z = Roomba.DirectRead(Roomba.Available())
     print(z)
