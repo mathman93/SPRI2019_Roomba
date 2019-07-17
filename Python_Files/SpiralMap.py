@@ -527,7 +527,7 @@ while True:
             goal = NextCoordinate(start,unit)
             for wall in MyWorld.walls:
                 while distance(goal,wall) < 200:
-                    NextCoordinate(goal,unit)
+                    goal = NextCoordinate(goal,unit)
             MyWorld.integrateIntoWorld(goal)
             print("Points: {0}".format(MyWorld.points))
             for point in MyWorld.edges.keys():
