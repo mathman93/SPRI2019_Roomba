@@ -281,7 +281,7 @@ print(" ROOMBA Setup Complete")
 GPIO.output(gled, GPIO.LOW)
 
 points = [(0,0),(100,0),(100,100),(0,100)]
-edges = {(0,0):(100,0),(100,100),(0,100)}
+edges = {(0,0):[(100,0),(100,100),(0,100)]}
 walls = [(-100,100)]
 
 with open(file_name, "wb") as file:
