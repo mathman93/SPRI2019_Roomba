@@ -287,10 +287,16 @@ walls = [(-100,100)]
 dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
 file_name = os.path.join(dir_path, "Dill.txt") # text file extension
 
-with open(file_name, "wb") as file:
-    pickle.dump(points, file)
-    pickle.dump(edges, file)
-    pickle.dump(walls, file)
+with open(file_name, "rb") as file:
+    points = pickle.load(file)
+    edges = pickle.load(file)
+    walls = pickle.load(file)
+
+print("Points: {0}".format(MyWorld.points))
+for point in MyWorld.edges.keys():
+    value = MyWorld.edges[point]
+print("{0}:{1}".format(point,value))
+print("World Walls: {0}".format(MyWorld.walls))
 
 '''
 # Open a text file for data retrieval
