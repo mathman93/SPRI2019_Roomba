@@ -553,10 +553,6 @@ for k in range(2):
         file.write("{0}\n".format(p[k]))
 Roomba.Move(0,0)
     '''
-with open(file_name, "wb") as file:
-    pickle.dump(MyWorld.points,file)
-    pickle.dump(MyWorld.edges,file)
-    pickle.dump(MyWorld.walls,file)
 if Roomba.Available()>0:
     z = Roomba.DirectRead(Roomba.Available())
     print(z)
