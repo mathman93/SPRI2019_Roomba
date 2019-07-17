@@ -238,6 +238,20 @@ def SpiralPath(x_pos_init,y_pos_init,threshold,unit):
             path.append(((path[-1])[0],next_y))
     return path
 
+''' Returns the next coordinate point in a spiral pattern using the last point 'previous_point' that it was at
+    '''
+def NextCoordinate(previous_point,unit):
+    (x,y) = previous_point
+    N = max(abs(x),abs(y)) # Find maximum value from x and y coordinates to find the side of the 'square' made by the spiral
+    if (x == N and y == -N) or (y == -N and x < N):
+        return (x+unit,y) # Move up to next radius of spiral / Move upwards
+    if x == N and y < N:
+        return (x,y+unit) # Move right
+    if y == N and x > -N:
+        return (x-unit,y) # Move down
+    if x == -N and y > -N:
+        return (x,y-unit) # Move left
+
 ## -- Code Starts Here -- ##
 # Setup Code #
 GPIO.setmode(GPIO.BCM) # Use BCM pin numbering for GPIO
@@ -314,8 +328,8 @@ while True: #Loop that asks for initial x and y coordinates
         continue
 '''
 
-start = spiral_path[0] # Starting position in the MyWorld grid
-goal = spiral_path[1] # Final goal
+start = (x_position,y_position) # Starting position in the MyWorld grid
+goal = NextCoordinate(start,unit) # First goal
 MyWorld = makeworld(start,goal) # Creates a grid world for the roomba to move in with two points, the start and goal, and draws a line between them
 path = A_star(start,goal,MyWorld) # Creates the optimal pathway between the start and goal
 current_point = start # Saves grid coordinate that the roomba just came from
@@ -332,7 +346,7 @@ print(path)
 #print(MyWorld.neighbors((5,1)))
 #print(MyWorld.Location((5,2)))
 
-for spiral_point in spiral_path:
+while True:
     try:
         for point in path:
             current_goal = point
@@ -504,26 +518,8 @@ for spiral_point in spiral_path:
                 print("{0}:{1}".format(point,value))
             print("World Walls: {0}".format(MyWorld.walls))
             start = current_point
-            while True: #Loop that asks for initial x and y coordinates
-                try:
-                    x_final = int(input("X axis coordinate:"))
-                    y_final = int(input("Y axis coordinate:"))
-                    goal = (x_final,y_final)
-                    if goal not in MyWorld.points: # If the goal does not already exist in the world...
-                        goal_check = True
-                        for wall in MyWorld.walls:
-                            if distance(goal,wall) < 200: # If the goal is too close to an existing wall...
-                                print("Too close to a wall")
-                                goal_check = False # Don't add it to the world
-                                break
-                        if goal_check: # If the point can be placed...
-                            MyWorld.integrateIntoWorld(goal)
-                        else:
-                            continue
-                    break
-                except ValueError:
-                    print("Please input a number")
-                    continue
+            goal = NextCoordinate(start,unit)
+            MyWorld.integrateIntoWorld(goal)
             print("Points: {0}".format(MyWorld.points))
             for point in MyWorld.edges.keys():
                 value = MyWorld.edges[point]
@@ -533,12 +529,14 @@ for spiral_point in spiral_path:
             print(path)
     except KeyboardInterrupt:
         break
+'''
 for k in range(2):
     for p in MyWorld.points:
-        #file.write("{0}\n".format(p[k]))
+        file.write("{0}\n".format(p[k]))
 for k in range(2):
     for p in MyWorld.walls:
-        #file.write("{0}\n".format(p[k]))
+        file.write("{0}\n".format(p[k]))
+        '''
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
 
