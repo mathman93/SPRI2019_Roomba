@@ -545,10 +545,9 @@ for k in range(2):
 for k in range(2):
     for p in MyWorld.walls:
         file.write("{0}\n".format(p[k]))
-Roomba.Move(0,0)
-Roomba.PauseQueryStream()
     '''
 Roomba.Move(0,0)
+Roomba.PauseQueryStream()
 pickle_end_input = int(input("Would you like to (1) write new data to a new file, (2) overwrite data on current file, or (3) not write data at all?"))
 if pickle_end_input == 1:
     pickle_name_input = input("Name of pickle file to write to:")
