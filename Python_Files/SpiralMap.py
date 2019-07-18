@@ -60,10 +60,10 @@ class GridWorld:
         return self.edges.get(id,[])
     # Removes the point from the world at the specified tuple 'xy' from the world 'MyWorld'
     def removePointFromWorld(self,xy):
-        neighborlist = self.edges.pop(xy)
-        for p in neighborlist:
-            self.edges[p].remove(xy)
+        for p in self.neighbors(xy):
+            removeEdgeFromWorld(p,xy)
         self.points.remove(xy)
+        self.edges.remove(xy)
     # Adds an edge from the world between two given tuple coordinate points
     def addEdgeToWorld(self,point1,point2):
         print("{0},{1}".format(point1,point2))
