@@ -1,6 +1,6 @@
 ''' SpiralMap.py
 Purpose: Draws a spiral of coordinate points out from the origin onto a map and then attempts to move to all of those points, detecting walls and removing points too close to walls
-Last Modified: 7/16/2019
+Last Modified: 7/18/2019
 '''
 
 ## Import libraries ##
@@ -279,12 +279,14 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 GPIO.output(gled, GPIO.LOW)
 
+'''
 # Open a text file for data retrieval
 file_name_input = input("Name for data file: ")
 dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
 file_name = os.path.join(dir_path, file_name_input+".txt") # text file extension
 file = open(file_name, "w") # Open a text file for storing data
 	# Will overwrite anything that was in the text file previously
+    '''
 
 start_time = time.time()
 [left_start,right_start]=Roomba.Query(43,44)
@@ -313,10 +315,6 @@ y_position = 0 # Current position on the y-axis
 x_position = 0 # Current position on the x-axis
 spiral_path = [(x_position,y_position)]
 
-spiral_path = SpiralPath(x_position,y_position,spiral_size,unit)
-
-print(spiral_path)
-
 start = (x_position,y_position) # Starting position in the MyWorld grid
 goal = NextCoordinate(start,unit) # First goal
 MyWorld = makeworld(start,goal) # Creates a grid world for the roomba to move in with two points, the start and goal, and draws a line between them
@@ -335,6 +333,18 @@ print(path)
 #print(MyWorld.neighbors((10,1)))
 #print(MyWorld.neighbors((5,1)))
 #print(MyWorld.Location((5,2)))
+
+'''
+pickle_start_message = int(input("Would you like to (1) use previous world data or (2) create all new world data?"))
+if pickle_start_message == 1:
+    pickle_name_input = input("Name of pickle file to pull from:")
+    pickle_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+    pickle_name = os.path.join(os.path.join(pickle_path, pickle_name_input+".txt")
+    with open(pickle_name, "rb") as file:
+        MyWorld.points = pickle.load(file)
+        MyWorld.edges = pickle.load(file)
+        MyWorld.walls = pickle.load(file)
+    '''
 
 while True:
     try:
@@ -527,7 +537,7 @@ while True:
             print(path)
     except KeyboardInterrupt:
         break
-        
+'''
 for k in range(2):
     for p in MyWorld.points:
         file.write("{0}\n".format(p[k]))
@@ -536,12 +546,29 @@ for k in range(2):
         file.write("{0}\n".format(p[k]))
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
+    '''
+
+pickle_end_input = int(input("Would you like to (1) write new data to a new file, (2) overwrite data on current file, or (3) not write data at all?"))
+if pickle_end_input == 1:
+    pickle_name_input = input("Name of pickle file to write to:")
+    pickle_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
+    pickle_name = os.path.join(os.path.join(pickle_path, pickle_name_input+".txt")
+    with open(pickle_name, "wb") as file:
+        pickle.load(MyWorld.points,file)
+        pickle.load(MyWorld.edges,file)
+        pickle.load(MyWorld.walls,file)
+elif pickle_end_input == 2:
+    with open(pickle_name, "wb") as file:
+        pickle.load(MyWorld.points,file)
+        pickle.load(MyWorld.edges,file)
+        pickle.load(MyWorld.walls,file)
+
 
 if Roomba.Available()>0:
     z = Roomba.DirectRead(Roomba.Available())
     print(z)
 time.sleep(0.1)
-file.close() # Close data file
+#file.close() # Close data file
 ## -- Ending Code Starts Here -- ##
 Roomba.ShutDown() # Shutdown Roomba serial connection
 GPIO.cleanup() # Reset GPIO pins for next program

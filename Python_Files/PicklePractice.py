@@ -1,6 +1,6 @@
 ''' PicklePractice.py
 Purpose: Practice with pickling (not to be confused with pickleball practice)
-Last Modified: 7/17/2019
+Last Modified: 7/18/2019
 '''
 
 ## Import libraries ##
