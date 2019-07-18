@@ -335,17 +335,16 @@ print(path)
 #print(MyWorld.neighbors((5,1)))
 #print(MyWorld.Location((5,2)))
 
-'''
+
 pickle_start_message = int(input("Would you like to (1) use previous world data or (2) create all new world data?"))
 if pickle_start_message == 1:
     pickle_name_input = input("Name of pickle file to pull from:")
     pickle_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
-    pickle_name = os.path.join(os.path.join(pickle_path, pickle_name_input+".txt")
+    pickle_name = os.path.join(os.path.join(pickle_path, pickle_name_input+".txt"))
     with open(pickle_name, "rb") as file:
         MyWorld.points = pickle.load(file)
         MyWorld.edges = pickle.load(file)
         MyWorld.walls = pickle.load(file)
-    '''
 
 while True:
     try:
