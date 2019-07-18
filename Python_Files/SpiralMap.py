@@ -4,6 +4,7 @@ Last Modified: 7/18/2019
 '''
 
 ## Import libraries ##
+import pickle
 import serial
 import time
 import RPi.GPIO as GPIO
