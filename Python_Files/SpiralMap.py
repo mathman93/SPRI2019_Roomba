@@ -555,14 +555,14 @@ if pickle_end_input == 1:
     pickle_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
     pickle_name = os.path.join(os.path.join(pickle_path, pickle_name_input+".txt"))
     with open(pickle_name, "wb") as file:
-        pickle.load(MyWorld.points,file)
-        pickle.load(MyWorld.edges,file)
-        pickle.load(MyWorld.walls,file)
+        pickle.dump(MyWorld.points,file)
+        pickle.dump(MyWorld.edges,file)
+        pickle.dump(MyWorld.walls,file)
 elif pickle_end_input == 2:
     with open(pickle_name, "wb") as file:
-        pickle.load(MyWorld.points,file)
-        pickle.load(MyWorld.edges,file)
-        pickle.load(MyWorld.walls,file)
+        pickle.dump(MyWorld.points,file)
+        pickle.dump(MyWorld.edges,file)
+        pickle.dump(MyWorld.walls,file)
 
 if Roomba.Available()>0:
     z = Roomba.DirectRead(Roomba.Available())
