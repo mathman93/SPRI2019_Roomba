@@ -410,6 +410,7 @@ while True:
                         wall_dir = BumpAngle(bump,l_bump) # Keeps track of what the light bumper detected when the roomba bumped
                         print('Bump Angle: {0:.4f}'.format(wall_dir))
                         if bump_count == 1:# If first bump in the cycle...
+                            print ("Current Point: {0}, Current Goal: {1}".format(current_point,current_goal))
                             MyWorld.removeEdgeFromWorld(current_point,current_goal) # Remove the edge from the previous starting point to the goal
                             x_wall = int(x_pos_int + (200*math.cos(theta + wall_dir))) # Calculates x position of wall
                             y_wall = int(y_pos_int + (200*math.sin(theta + wall_dir))) # Calculates y position of wall
