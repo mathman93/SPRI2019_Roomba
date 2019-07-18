@@ -280,9 +280,7 @@ if Roomba.Available() > 0: # If anything is in the Roomba receive buffer
 print(" ROOMBA Setup Complete")
 GPIO.output(gled, GPIO.LOW)
 
-points = [(0,0),(100,0),(100,100),(0,100)]
-edges = {(0,0):[(100,0),(100,100),(0,100)]}
-walls = [(-100,100)]
+
 
 dir_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
 file_name = os.path.join(dir_path, "Dill.txt") # text file extension
