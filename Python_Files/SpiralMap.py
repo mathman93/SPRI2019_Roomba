@@ -553,7 +553,7 @@ pickle_end_input = int(input("Would you like to (1) write new data to a new file
 if pickle_end_input == 1:
     pickle_name_input = input("Name of pickle file to write to:")
     pickle_path = "/home/pi/SPRI2019_Roomba/Data_Files/" # Directory path to save file
-    pickle_name = os.path.join(os.path.join(pickle_path, pickle_name_input+".txt")
+    pickle_name = os.path.join(os.path.join(pickle_path, pickle_name_input+".txt"))
     with open(pickle_name, "wb") as file:
         pickle.load(MyWorld.points,file)
         pickle.load(MyWorld.edges,file)
