@@ -548,7 +548,7 @@ for k in range(2):
 Roomba.Move(0,0)
 Roomba.PauseQueryStream()
     '''
-
+Roomba.Move(0,0)
 pickle_end_input = int(input("Would you like to (1) write new data to a new file, (2) overwrite data on current file, or (3) not write data at all?"))
 if pickle_end_input == 1:
     pickle_name_input = input("Name of pickle file to write to:")
@@ -563,7 +563,6 @@ elif pickle_end_input == 2:
         pickle.load(MyWorld.points,file)
         pickle.load(MyWorld.edges,file)
         pickle.load(MyWorld.walls,file)
-
 
 if Roomba.Available()>0:
     z = Roomba.DirectRead(Roomba.Available())
