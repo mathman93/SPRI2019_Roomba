@@ -1,6 +1,5 @@
 ''' Dock_Test.py
-Purpose: Read and save data from IMU while Roomba is moving
-Also calculate Directional Cosine Matrix (DCM) to determine orientation
+Purpose: Python code for automated Roomba docking to charging station
 Last Modified: 6/28/2019
 '''
 
