@@ -364,14 +364,14 @@ for i in range(len(dict.keys())):
 			theta_imu += delta_theta_imu # New estimate of heading from IMU
 			if theta_imu < 0:
 				theta_imu += 2*math.pi
-			elif theta_imu >= 2*math.pi
+			elif theta_imu >= 2*math.pi:
 				theta_imu -= 2*math.pi
 			
 			delta_theta_avg = (2*delta_theta_enc + delta_theta_imu)/(3)
 			theta_avg += delta_theta_avg
 			if theta_avg < 0:
 				theta_avg += 2*math.pi
-			elif theta_avg >= 2*math.pi
+			elif theta_avg >= 2*math.pi:
 				theta_avg -= 2*math.pi
 			
 			theta = theta_enc
